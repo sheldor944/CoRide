@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class Register extends AppCompatActivity {
 
@@ -86,7 +87,14 @@ public class Register extends AppCompatActivity {
                                     Log.d("tag1", "createUserWithEmail:success");
                                     Toast.makeText(Register.this, "Authentication Success." + email + password,
                                             Toast.LENGTH_SHORT).show();
-//                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    FirebaseUser user = mAuth.getCurrentUser();
+
+                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(name)
+                                            .build();
+
+                                    // Update the user's profile.
+                                    user.updateProfile(profileUpdates);
 //                                    updateUI(user);
                                 }
                                 else {
