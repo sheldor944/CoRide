@@ -2,6 +2,7 @@ package com.example.myapplication.ui.home;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -25,6 +26,14 @@ public class startRide extends AppCompatActivity {
 
     private MapView mapView;
     private IMapController mapController;
+    SearchView searchView;
+    private void hideKeyboard() {
+        // Get the input manager
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        // Hide the keyboard
+        inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+    }
 
     private void displayLocationOnMap(@NonNull String locationName) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -74,11 +83,12 @@ public class startRide extends AppCompatActivity {
         // Call the displayLocationOnMap() function to display the initial location.
         displayLocationOnMap("Burhanuddin College");
 
-        SearchView searchView = findViewById(R.id.SearchBar);
+        searchView = findViewById(R.id.SearchBar);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 // Return true to prevent the SearchView from closing.
+                hideKeyboard();
                 displayLocationOnMap(s);
                 return true;
             }

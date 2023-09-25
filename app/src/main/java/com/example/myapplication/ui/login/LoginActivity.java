@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -45,6 +46,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
+    public ProgressDialog progressDialog ;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,10 +61,17 @@ public class LoginActivity extends AppCompatActivity {
         EditText pass = (EditText) findViewById(R.id.password);
 
         Button button = findViewById(R.id.login);
+//        progressDialog.findViewById(R.id.loading);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
 
         button.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+                progressDialog.show();
+
                 String email = String.valueOf(emailText.getText());
                 String password= String.valueOf(pass.getText());
                 if(email.length()>0 && password.length()>0)
@@ -93,5 +104,13 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Dismiss the progressbar when the new intent has loaded
+//        progressDialog.dismiss();
     }
 }
