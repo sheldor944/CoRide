@@ -54,4 +54,6 @@ dependencies {
     implementation 'org.osmdroid:osmdroid-android:6.1.1'
     implementation 'org.osmdroid:osmdroid-android:6.1.10'
     implementation 'org.osmdroid:osmdroid-mapsforge:6.1.10'
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.firebase:firebase-database:latest_version'
 }
