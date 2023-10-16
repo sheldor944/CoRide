@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentHomeBinding;
@@ -72,7 +73,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 locationDB.getLocation();
+                Intent intent = new Intent(getContext() , ChatActivity.class);
+                startActivity(intent);
             }
+
         });
         Button testButton =  (Button)(root.findViewById(R.id.testButton));
         testButton.setOnClickListener(new View.OnClickListener() {

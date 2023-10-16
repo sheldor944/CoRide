@@ -1,21 +1,35 @@
 package com.example.myapplication.ui.notifications;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.Manifest;
+
+
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myapplication.MyFirebaseMessagingService;
 import com.example.myapplication.R;
 import com.example.myapplication.UserModel;
 import com.example.myapplication.databinding.FragmentNotificationsBinding;
+import com.example.myapplication.ui.login.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +38,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
+
 public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
@@ -31,12 +47,14 @@ public class NotificationsFragment extends Fragment {
     String email ;
     String name ;
     String phone;
+    ImageView imageView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         Log.d("entered" , "notificationFragment o dukse ");
+        MyFirebaseMessagingService m = new MyFirebaseMessagingService();
         NotificationsViewModel notificationsViewModel =
                 new ViewModelProvider(this).get(NotificationsViewModel.class);
 
@@ -99,13 +117,89 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
+        Button upload = root.findViewById(R.id.upload);
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+                }
+
+                Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                int PICK_PHOTO_REQUEST = 1234;
+                startActivityForResult(pickPhotoIntent, PICK_PHOTO_REQUEST);
+
+
+
+
+
+            }
+        });
+
+        Button logout = root.findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
 
 //        Intent intent = getIntent();
 
         // Rest of your code
 
+        imageView = root.findViewById(R.id.imageView);
+
         return root;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == getActivity().RESULT_OK) {
+            if (requestCode == 1234) { // This is the PICK_PHOTO_REQUEST
+                Uri selectedImage = data.getData();
+
+                try {
+                    // Convert the Uri to a Bitmap
+                    Bitmap originalBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
+
+                    // Define the desired width and height. For this example, I'm using the width and height of the ImageView.
+                    int imageViewWidth = imageView.getWidth();
+                    int imageViewHeight = imageView.getHeight();
+
+                    float originalBitmapAspectRatio = (float) originalBitmap.getWidth() / originalBitmap.getHeight();
+                    float imageViewAspectRatio = (float) imageViewWidth / imageViewHeight;
+
+                    int scaledWidth, scaledHeight;
+
+                    if (originalBitmapAspectRatio > imageViewAspectRatio) {
+                        // Original image is wider relative to the ImageView
+                        scaledWidth = imageViewWidth;
+                        scaledHeight = (int) (imageViewWidth / originalBitmapAspectRatio);
+                    } else {
+                        // Original image is taller relative to the ImageView
+                        scaledHeight = imageViewHeight;
+                        scaledWidth = (int) (imageViewHeight * originalBitmapAspectRatio);
+                    }
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, true);
+
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    imageView.setImageBitmap(scaledBitmap);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // Handle the exception
+                }
+            }
+
+        }
+    }
+
 
 
     @Override
@@ -113,4 +207,7 @@ public class NotificationsFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+
+
 }
