@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,9 +22,28 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ChatActivity extends AppCompatActivity {
     String receiverUID, receiverName, SenderUID;
@@ -118,7 +138,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
                 textMessage.setText("");
-                sendNotification(message);
+//                sendNotification(message);
                 Date date = new Date();
                 Message messagess = new Message(SenderUID, receiverUID , message , date.getTime());
 
@@ -147,13 +167,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
     }
-    void sendNotification(String message)
-    {
 
-    }
-    void callApi()
-    {
 
-    }
 
 }
