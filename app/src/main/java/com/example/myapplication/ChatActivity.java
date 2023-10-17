@@ -116,7 +116,9 @@ public class ChatActivity extends AppCompatActivity {
                     Toast.makeText(ChatActivity.this, "Enter The Message First", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 textMessage.setText("");
+                sendNotification(message);
                 Date date = new Date();
                 Message messagess = new Message(SenderUID, receiverUID , message , date.getTime());
 
@@ -145,4 +147,13 @@ public class ChatActivity extends AppCompatActivity {
         });
 
     }
+    void sendNotification(String message)
+    {
+
+    }
+    void callApi()
+    {
+
+    }
+
 }

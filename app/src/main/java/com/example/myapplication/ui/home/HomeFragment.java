@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.home;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,9 +18,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
+import com.example.myapplication.Register;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class HomeFragment extends Fragment {
@@ -34,18 +41,21 @@ public class HomeFragment extends Fragment {
     {
 
     }
-    public void getFCMtoken()
-    {
-        final String[] token = new String[1];
+    public interface TokenCallback {
+        void onTokenReceived(String token);
+    }
+
+    public void getFCMtoken(Register.TokenCallback callback) {
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
             @Override
             public void onComplete(@NonNull Task<String> task) {
-                if(task.isSuccessful()){
-                    token[0] = task.getResult();
-                    Log.d("token", "onComplete: " + token[0]);
-                }
-                else{
-                    Log.d("token", "onComplete: token generation faied|");
+                if (task.isSuccessful()) {
+                    String token = task.getResult();
+                    Log.d("token", "onComplete: " + token);
+                    callback.onTokenReceived(token);
+                } else {
+                    Log.d("token", "onComplete: token generation failed");
+                    callback.onTokenReceived(null);
                 }
             }
         });
@@ -61,7 +71,23 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        getFCMtoken();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
+        getFCMtoken(new Register.TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
+                Log.d(TAG, "onTokenReceived: " + userId + "     kita   " + token);
+                // Use the token here
+                databaseReference.child(userId).child("fcmToken").setValue(token)
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e(TAG, "Error updating token", e);
+                            }
+                        });
+            }
+        });
 
         Button button =  (Button)(root.findViewById(R.id.button2));
         button.setOnClickListener(new View.OnClickListener() {
