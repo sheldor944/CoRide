@@ -196,7 +196,7 @@ public class startRide extends AppCompatActivity {
                 // Return true to prevent the SearchView from closing.
                 hideKeyboard();
                 displayLocationOnMap(s);
-                locationDB.updateLocation("");
+                locationDB.updateLocation("" , "Rider");
 //                getRoute(s);
                 return true;
             }

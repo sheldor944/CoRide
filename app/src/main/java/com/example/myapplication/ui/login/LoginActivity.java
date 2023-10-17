@@ -57,21 +57,6 @@ public class LoginActivity extends AppCompatActivity {
     public ProgressDialog progressDialog ;
 
 
-    public void getFCMtoken()
-    {
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if(task.isSuccessful()){
-                    String token = task.getResult();
-                    Log.d("token", "onComplete: " + token);
-                }
-                else{
-                    Log.d("token", "onComplete: token generation faied|");
-                }
-            }
-        });
-    }
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -112,7 +97,6 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         EditText emailText = (EditText) findViewById(R.id.username);
         EditText pass = (EditText) findViewById(R.id.password);
-        getFCMtoken();
 
         Button button = findViewById(R.id.login);
 //        progressDialog.findViewById(R.id.loading);
@@ -120,6 +104,11 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         askNotificationPermission();
+
+//        if(mAuth.getCurrentUser() != null){
+//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            startActivity(intent);
+//        }
 
         button.setOnClickListener(new View.OnClickListener() {
 

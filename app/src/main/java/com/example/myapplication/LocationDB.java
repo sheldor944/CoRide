@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.myapplication.data.model.LocationData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,21 +16,28 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.protobuf.DescriptorProtos;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import io.grpc.internal.JsonUtil;
 
 public class LocationDB {
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+    DatabaseReference databaseReference;
 
-    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
+    String userId ; // Assuming the user is already authenticated
 //    String location = latitude + "," + longitude;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseFirestore db ;
 
 
-    public void updateLocation(String location)
+    public void updateLocation(String location , String type )
     {
+         databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+         userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
+//    String location = latitude + "," + longitude;
+         db = FirebaseFirestore.getInstance();
 
          double MIN_LATITUDE = -90;
         double MAX_LATITUDE = 90;
@@ -47,24 +55,31 @@ public class LocationDB {
         location = lat + "," + longi;
 
         try {
-            databaseReference.child(userId).child("location").setValue(location);
+//            databaseReference.child(userId).child("location").setValue(location);
+            databaseReference.child(userId).child("location").child(type).setValue(location);
+
             System.out.println(userId);
+            Log.d("updateLocation", "updateLocation: " + userId + location);
 
         }
         catch (Exception e)
         {
             System.out.println(e);
         }
+        getLocation("Rider");
     }
 
-    public void getLocation()
+    public ArrayList<LocationData> getLocation(String type)
     {
+        ArrayList<LocationData> locationDataArrayList = new ArrayList<>();
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String userId = userSnapshot.getKey();
-                    String location = userSnapshot.child("location").getValue(String.class);
+//                    String location = userSnapshot.child("location").getValue(String.class);
+                    String location = userSnapshot.child("location").child(type).getValue(String.class);
+
 
                     DocumentReference userDocRef = db.collection("users").document(userId);
                     userDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -75,8 +90,9 @@ public class LocationDB {
                                 if (document.exists()) {
                                     Log.d("TAG", "DocumentSnapshot data: " + document.getData());
                                     try{
-                                        String name = document.getString("firstName");
-                                        System.out.println(name + " " + location);
+//                                        String name = document.getString("firstName");
+//                                        System.out.println(name + " " + location);
+                                        locationDataArrayList.add(new LocationData(type , location , userId));
                                         // Use the document data
                                     }
                                     catch (Exception e)
@@ -104,5 +120,6 @@ public class LocationDB {
                 // Handle database error
             }
         });
+        return locationDataArrayList;
     }
 }

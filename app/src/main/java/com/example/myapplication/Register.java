@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.myapplication.ui.login.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -21,8 +22,11 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 //import com.google.firebase.firestore.DocumentData;
 
 public class Register extends AppCompatActivity {
@@ -31,28 +35,49 @@ public class Register extends AppCompatActivity {
     Button button ;
     private FirebaseAuth mAuth;
 
-    public  void registerToMainMenu(View view)
-    {
-        Intent intent = new Intent(getApplicationContext() , MainActivity.class);
-        intent.putExtra("email" , email);
-        intent.putExtra("name" , name);
-        intent.putExtra("phone" , phone);
-        Log.d("kita" , name);
-        System.out.println(email + " " + name +" hello  " + phone );
-
-
-        startActivity(intent);
-
+    public interface TokenCallback {
+        void onTokenReceived(String token);
     }
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if(currentUser != null){
-////            reload();
-//        }
+
+    public void getFCMtoken(TokenCallback callback) {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    String token = task.getResult();
+                    Log.d("token", "onComplete: " + token);
+                    callback.onTokenReceived(token);
+                } else {
+                    Log.d("token", "onComplete: token generation failed");
+                    callback.onTokenReceived(null);
+                }
+            }
+        });
+    }
+
+//    public String getFCMtoken()
+//    {
+//        final String[] token = new String[1];
+//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+//            @Override
+//            public void onComplete(@NonNull Task<String> task) {
+//                if(task.isSuccessful()){
+//                    token[0] = task.getResult();
+//                    Log.d("token", "onComplete: " + token[0]);
+//                }
+//                else{
+//                    Log.d("token", "onComplete: token generation faied|");
+//                }
+//            }
+//        });
+//        return token[0];
 //    }
+
+
+
+
+
+//
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,35 +112,48 @@ public class Register extends AppCompatActivity {
                 name = String.valueOf(nameText.getText());
                 phone = String.valueOf(numberText.getText());
                 String lastName = String.valueOf(lastNameText.getText());
+                Log.d(TAG, "onClick: o dukse ");
 
 
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
+
                             @Override
                             public void onComplete(Task<AuthResult> task) {
+                                Log.d(TAG, "onComplete: mAuth create user o dukse");
 
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("tag1", "createUserWithEmail:success");
-//                                    Toast.makeText(Register.this, "Authentication Success." + email + password,
-//                                            Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Register.this, "Authentication Success." + email + password,
+                                            Toast.LENGTH_SHORT).show();
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    Log.d(TAG, "onComplete:1 " + user.getUid());
                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                                     // Create a new user with a first and last name
                                     DocumentReference userRef = db.collection("users").document(user.getUid());
                                     UserModel data = new UserModel(name , lastName , email , phone , "123123" , password);
+//
+//                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
-                                    // Create a new DocumentData object with the data that you want to write to Firestore
-//                                    DocumentData data = new DocumentData();
-//                                    data.put("name", name);
-//                                    data.put("lastName", lastName);
-//                                    data.put("email", email);
-//                                    data.put("phone", phone);
-//                                    data.put("password", password);
+                                   String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
+                                    getFCMtoken(new TokenCallback() {
+                                        @Override
+                                        public void onTokenReceived(String token) {
+                                            Log.d(TAG, "onTokenReceived: " + userId + "     kita   " + token);
+                                            // Use the token here
+                                            databaseReference.child(userId).child("fcmToken").setValue(token);
+                                        }
+                                    });
+
+//                                    String token = getFCMtoken();
+//                                    Log.d(TAG, "onComplete: " + userId+"     kita   " + token);
+//                                    databaseReference.child(userId).child("fcmToken").setValue(token);
 
                                     // Use the set() method on the DocumentReference instance to write the data to Firestore
                                     userRef.set(data);
-//                                    updateUI(user);
+//
                                 }
                                 else {
 
@@ -131,9 +169,6 @@ public class Register extends AppCompatActivity {
                             }
                         });
                 Intent intent = new Intent(getApplicationContext() , MainActivity.class);
-                intent.putExtra("email" , email);
-                intent.putExtra("name" , name);
-                intent.putExtra("phone" , phone);
                 startActivity(intent);
 
             }

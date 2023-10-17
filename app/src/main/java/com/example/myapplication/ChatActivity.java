@@ -38,6 +38,7 @@ public class ChatActivity extends AppCompatActivity {
     ArrayList<Message> messagesArrayList;
     MessageAdapter msgAdapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +46,9 @@ public class ChatActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
-
-        receiverName = "Dybala";
-        receiverUID = "kitareBalaNi";
+        // data fetching system should be implemented
+        receiverName = "messi";
+        receiverUID = "ItIDT7jlUDOMRheIs4fif8DTc0A2";
 
         messagesArrayList = new ArrayList<>();
 

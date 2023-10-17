@@ -2,6 +2,7 @@ package com.example.myapplication.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,9 @@ import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class HomeFragment extends Fragment {
 
@@ -30,6 +34,22 @@ public class HomeFragment extends Fragment {
     {
 
     }
+    public void getFCMtoken()
+    {
+        final String[] token = new String[1];
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if(task.isSuccessful()){
+                    token[0] = task.getResult();
+                    Log.d("token", "onComplete: " + token[0]);
+                }
+                else{
+                    Log.d("token", "onComplete: token generation faied|");
+                }
+            }
+        });
+    }
 
 
 
@@ -40,6 +60,8 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        getFCMtoken();
 
         Button button =  (Button)(root.findViewById(R.id.button2));
         button.setOnClickListener(new View.OnClickListener() {
@@ -67,12 +89,12 @@ public class HomeFragment extends Fragment {
             }
         });
         LocationDB locationDB = new LocationDB();
-
+//
         Button readButton =  (Button)(root.findViewById(R.id.readButton));
         readButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                locationDB.getLocation();
+                locationDB.getLocation("Rider");
                 Intent intent = new Intent(getContext() , ChatActivity.class);
                 startActivity(intent);
             }
@@ -82,7 +104,7 @@ public class HomeFragment extends Fragment {
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                locationDB.updateLocation("");
+                locationDB.updateLocation("" , "Rider");
             }
         });
 
