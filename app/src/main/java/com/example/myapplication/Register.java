@@ -55,30 +55,6 @@ public class Register extends AppCompatActivity {
         });
     }
 
-//    public String getFCMtoken()
-//    {
-//        final String[] token = new String[1];
-//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-//            @Override
-//            public void onComplete(@NonNull Task<String> task) {
-//                if(task.isSuccessful()){
-//                    token[0] = task.getResult();
-//                    Log.d("token", "onComplete: " + token[0]);
-//                }
-//                else{
-//                    Log.d("token", "onComplete: token generation faied|");
-//                }
-//            }
-//        });
-//        return token[0];
-//    }
-
-
-
-
-
-//
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +110,7 @@ public class Register extends AppCompatActivity {
                                     DocumentReference userRef = db.collection("users").document(user.getUid());
                                     UserModel data = new UserModel(name , lastName , email , phone , "123123" , password);
 //
-//                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
                                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
                                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
@@ -153,6 +129,8 @@ public class Register extends AppCompatActivity {
 
                                     // Use the set() method on the DocumentReference instance to write the data to Firestore
                                     userRef.set(data);
+                                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                                    startActivity(intent);
 //
                                 }
                                 else {
@@ -168,8 +146,6 @@ public class Register extends AppCompatActivity {
                                 }
                             }
                         });
-                Intent intent = new Intent(getApplicationContext() , MainActivity.class);
-                startActivity(intent);
 
             }
 
