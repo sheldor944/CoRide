@@ -19,6 +19,7 @@ import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
 import com.example.myapplication.Register;
+import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,6 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
@@ -120,7 +123,15 @@ public class HomeFragment extends Fragment {
         readButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                locationDB.getLocation("Rider");
+                try {
+
+                    // null pointer der ota dekha lagbo
+                    ArrayList<LocationData> locationDataArrayList = locationDB.getLocation("Rider");
+
+                }
+                catch (Exception e){
+                    System.out.println(e);
+                }
                 Intent intent = new Intent(getContext() , ChatActivity.class);
                 startActivity(intent);
             }
