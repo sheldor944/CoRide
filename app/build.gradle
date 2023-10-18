@@ -97,7 +97,11 @@ dependencies {
     //googlemaps
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'com.google.android.material:material:1.4.0'  // Note: You have two versions here
-    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+//    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.gms:play-services-maps:latest.release'
+    implementation 'com.google.android.libraries.places:places:3.1.0'
+//    utility for google directions
+    implementation 'com.google.maps.android:android-maps-utils:3.4.0'
 
     //osm
     implementation 'org.osmdroid:osmdroid-android:6.1.1'

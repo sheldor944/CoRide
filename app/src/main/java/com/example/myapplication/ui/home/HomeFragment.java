@@ -30,6 +30,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class HomeFragment extends Fragment {
 
+    private final String TAG = "HomeFragment";
     private FragmentHomeBinding binding;
 
 
@@ -93,7 +94,8 @@ public class HomeFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getContext() , startRide.class);
+                Log.d(TAG, "onClick: clicked on Start Ride");
+                Intent i = new Intent(getContext() , StartRideActivity.class);
                 startActivity(i);
             }
         });

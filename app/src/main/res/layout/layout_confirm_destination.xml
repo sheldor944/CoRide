@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/confirmDestinationCardView"
+    android:visibility="visible"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:elevation="8dp"
+    android:radius="10dp"
+    app:cardBackgroundColor="#00FFFFFF"
+    app:cardElevation="0dp"
+    android:layout_gravity="center">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/confirmDestinationButton"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm Destination"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_button" />
+
+</androidx.cardview.widget.CardView>
