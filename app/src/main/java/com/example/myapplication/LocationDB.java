@@ -30,14 +30,17 @@ public class LocationDB {
 //    String location = latitude + "," + longitude;
     FirebaseFirestore db ;
 
+    public LocationDB() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
+//    String location = latitude + "," + longitude;
+        db = FirebaseFirestore.getInstance();
+
+    }
 
     public void updateLocation(String location , String type )
     {
-         databaseReference = FirebaseDatabase.getInstance().getReference("users");
-
-         userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
-//    String location = latitude + "," + longitude;
-         db = FirebaseFirestore.getInstance();
 
          double MIN_LATITUDE = -90;
         double MAX_LATITUDE = 90;
@@ -92,6 +95,7 @@ public class LocationDB {
                                     try{
 //                                        String name = document.getString("firstName");
 //                                        System.out.println(name + " " + location);
+                                        Log.d("addingToarrayList", "onComplete: " + type +"  " + location +" " +userId );
                                         locationDataArrayList.add(new LocationData(type , location , userId));
                                         // Use the document data
                                     }
@@ -106,10 +110,9 @@ public class LocationDB {
                             } else {
                                 Log.d("TAG", "get failed with ", task.getException());
                             }
+
                         }
                     });
-
-
                     System.out.println(userId + " " + location);
                     // Do something with the user's location
                 }
@@ -120,6 +123,8 @@ public class LocationDB {
                 // Handle database error
             }
         });
+
+
         return locationDataArrayList;
     }
 }
