@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.myapplication.data.model.LocationData;
+import com.example.myapplication.helper.LocationCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -69,10 +70,10 @@ public class LocationDB {
         {
             System.out.println(e);
         }
-        getLocation("Rider");
+//        getLocation("Rider");
     }
 
-    public ArrayList<LocationData> getLocation(String type)
+    public void getLocation(String type, LocationCallback callback)
     {
         ArrayList<LocationData> locationDataArrayList = new ArrayList<>();
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -84,38 +85,40 @@ public class LocationDB {
                     String location = userSnapshot.child("location").child(type).getValue(String.class);
 
 
-                    DocumentReference userDocRef = db.collection("users").document(userId);
-                    userDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    Log.d("TAG", "DocumentSnapshot data: " + document.getData());
-                                    try{
-//                                        String name = document.getString("firstName");
-//                                        System.out.println(name + " " + location);
-                                        Log.d("addingToarrayList", "onComplete: " + type +"  " + location +" " +userId );
-                                        locationDataArrayList.add(new LocationData(type , location , userId));
-                                        // Use the document data
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        System.out.println(e);
-                                    }
-
-                                } else {
-                                    Log.d("TAG", "No such document");
-                                }
-                            } else {
-                                Log.d("TAG", "get failed with ", task.getException());
-                            }
-
-                        }
-                    });
+//                    DocumentReference userDocRef = db.collection("users").document(userId);
+//                    userDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                            if (task.isSuccessful()) {
+//                                DocumentSnapshot document = task.getResult();
+//                                if (document.exists()) {
+//                                    Log.d("TAG", "DocumentSnapshot data: " + document.getData());
+//                                    try{
+////                                        String name = document.getString("firstName");
+////                                        System.out.println(name + " " + location);
+//                                        Log.d("addingToarrayList", "onComplete: " + type +"  " + location +" " +userId );
+//                                        locationDataArrayList.add(new LocationData(type , location , userId));
+//                                        // Use the document data
+//                                    }
+//                                    catch (Exception e)
+//                                    {
+//                                        System.out.println(e);
+//                                    }
+//
+//                                } else {
+//                                    Log.d("TAG", "No such document");
+//                                }
+//                            } else {
+//                                Log.d("TAG", "get failed with ", task.getException());
+//                            }
+//
+//                        }
+//                    });
                     System.out.println(userId + " " + location);
+                    locationDataArrayList.add(new LocationData(type, location, userId));
                     // Do something with the user's location
                 }
+                callback.onLocationDataReceived(locationDataArrayList);
             }
 
             @Override
@@ -123,8 +126,5 @@ public class LocationDB {
                 // Handle database error
             }
         });
-
-
-        return locationDataArrayList;
     }
 }

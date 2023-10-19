@@ -75,10 +75,10 @@ public class RouteFetcherThread extends Thread {
             routeFetcherListener.onRouteFetchComplete(jsonObject);
         } catch (MalformedURLException e) {
             // Handle the MalformedURLException
-            Log.d(TAG, "displayRoute: Malformed URL");
+            Log.d(TAG, "run: Malformed URL");
             e.printStackTrace();
         } catch (IOException e) {
-            Log.d(TAG, "displayRoute: IOException.");;
+            Log.d(TAG, "run: IOException.");;
             // Handle the IOException
             e.printStackTrace();
         } catch (JSONException e) {

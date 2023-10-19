@@ -125,18 +125,18 @@ public class HomeFragment extends Fragment {
         readButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    ArrayList<LocationData> locationDataArrayList = locationDB.getLocation("Rider");
-                    Log.d("print in home ", "getLocation: print oibo ekhn ");
-                    for(LocationData u : locationDataArrayList)
-                    {
-                        System.out.println(u.getType() +" type  " + u.getLocation()+" " + u.getUserID());
-                    }
-                    Log.d("print in home ", "getLocation: print oiges ");
-                }
-                catch(Exception e ){
-                    System.out.println(e);
-                }
+//                try {
+//                    ArrayList<LocationData> locationDataArrayList = locationDB.getLocation("Rider");
+//                    Log.d("print in home ", "getLocation: print oibo ekhn ");
+//                    for(LocationData u : locationDataArrayList)
+//                    {
+//                        System.out.println(u.getType() +" type  " + u.getLocation()+" " + u.getUserID());
+//                    }
+//                    Log.d("print in home ", "getLocation: print oiges ");
+//                }
+//                catch(Exception e ){
+//                    System.out.println(e);
+//                }
 //                Intent intent = new Intent(getContext() , ChatActivity.class);
 //                startActivity(intent);
             }

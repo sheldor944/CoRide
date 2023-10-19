@@ -34,7 +34,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.loader.content.AsyncTaskLoader;
 
+import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
+import com.example.myapplication.data.model.LocationData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -230,6 +232,15 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             Log.d(TAG, "init: clicked on Find a Ride");
             mFindARideLinearLayout.setVisibility(View.GONE);
             mSearchingARideLayout.setVisibility(View.VISIBLE);
+
+            getRiderInformation();
+        });
+    }
+
+    private void getRiderInformation() {
+        LocationDB locationDB = new LocationDB();
+        locationDB.getLocation("Rider", locationDataList -> {
+            Log.d(TAG, "getRiderInformation: location of the first rider: " + locationDataList.get(0).getLocation());
         });
     }
 
