@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.AutoCompleteTextView;
 
+import com.example.myapplication.helper.DistanceCalculatorCallback;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -145,7 +146,8 @@ public class GoogleMapAPIHandler {
         routeFetcherThread.start();
     }
 
-    public static void getDistanceBetweenTwoLatLng(LatLng srcLatLng, LatLng destLatLng) {
+    public static void getDistanceBetweenTwoLatLng(LatLng srcLatLng, LatLng destLatLng, DistanceCalculatorCallback callback) {
+        Log.d(TAG, "getDistanceBetweenTwoLatLng: getting distance from " + srcLatLng.toString());
         RouteFetcherThread routeFetcherThread = new RouteFetcherThread(
                 API_KEY,
                 srcLatLng,
@@ -156,6 +158,7 @@ public class GoogleMapAPIHandler {
                         try {
                             int distance = GoogleMapAPIHandler.parseDistanceFromJSON(jsonObject);
 //                            do callback here
+                            callback.onDistanceCalculated(distance);
                         } catch(JSONException e) {
                             Log.d(TAG, "onRouteFetchComplete: could not parse distance from json. JSONException: " + e.getMessage());
                         }

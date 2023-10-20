@@ -37,6 +37,8 @@ import androidx.loader.content.AsyncTaskLoader;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
+import com.example.myapplication.data.model.RiderTrip;
+import com.example.myapplication.helper.DistanceCalculatorCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -73,6 +75,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -241,7 +245,41 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         LocationDB locationDB = new LocationDB();
         locationDB.getLocation("Rider", locationDataList -> {
             Log.d(TAG, "getRiderInformation: location of the first rider: " + locationDataList.get(0).getLocation());
+            ArrayList <RiderTrip> riderTrips = new ArrayList<>();
+            for(LocationData locationData : locationDataList) {
+                Log.d(TAG, "getRiderInformation: " + locationData.getLocation());
+                if(locationData.getLocation() == null) continue;
+//                String[] info = locationData.getLocation().split(",");
+//                if(info.length != 2) continue;
+                String[] info = {"24.899497010394843", "91.86879692014429"};
+                GoogleMapAPIHandler.getDistanceBetweenTwoLatLng(
+                        new LatLng(Double.parseDouble(info[0]), Double.parseDouble(info[1])),
+                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                        new DistanceCalculatorCallback() {
+                            @Override
+                            public void onDistanceCalculated(int distance) {
+                                riderTrips.add(new RiderTrip(
+                                        locationData, distance
+                                ));
+//                                fix the condition, check if all riders have been added
+                                if(riderTrips.size() == 1) {
+                                    onRiderTripsFound(riderTrips);
+                                }
+                            }
+                        }
+                );
+            }
         });
+    }
+
+    private void onRiderTripsFound(ArrayList<RiderTrip> riderTrips) {
+        Collections.sort(riderTrips, new Comparator<RiderTrip>() {
+            @Override
+            public int compare(RiderTrip riderTrip, RiderTrip t1) {
+                return riderTrip.getTotalDistance() - t1.getTotalDistance();
+            }
+        });
+        Log.d(TAG, "onRiderTripsFound: best choice: " + riderTrips.get(0).getTotalDistance());
     }
 
     private void getLocationPermission(){
