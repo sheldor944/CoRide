@@ -4,19 +4,20 @@
     android:id="@+id/confirmDestinationCardView"
     android:visibility="visible"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:elevation="8dp"
-    android:radius="10dp"
-    app:cardBackgroundColor="#00FFFFFF"
-    app:cardElevation="0dp"
-    android:layout_gravity="center">
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/confirmDestinationButton"
-        android:padding="10dp"
-        android:layout_width="wrap_content"
+        android:paddingVertical="20dp"
+        android:paddingHorizontal="40dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Confirm Destination"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="15sp"
         android:gravity="center"
         android:layout_gravity="center"
         android:background="@drawable/rounded_button" />

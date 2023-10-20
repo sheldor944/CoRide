@@ -127,7 +127,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private AppCompatButton mFindARideButton;
     private AppCompatButton mConfirmDestinationButton;
     private CardView mConfirmDestinationCardView;
-    private LinearLayout mFindARideLinearLayout;
+    private CardView mFindARideLinearLayout;
     private LinearLayout mSearchingARideLayout;
 
 
@@ -141,7 +141,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         mFindARideButton = (AppCompatButton) findViewById(R.id.findARideButton);
         mConfirmDestinationButton = (AppCompatButton) findViewById(R.id.confirmDestinationButton);
         mConfirmDestinationCardView = (CardView) findViewById(R.id.confirmDestinationCardView);
-        mFindARideLinearLayout = (LinearLayout) findViewById(R.id.findARideLinearLayout);
+        mFindARideLinearLayout = findViewById(R.id.findARideLayout);
         mSearchingARideLayout = (LinearLayout) findViewById(R.id.searchingARideLinearLayout);
 
         if(isServicesOK()) {
