@@ -106,7 +106,7 @@ public class HomeFragment extends Fragment {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getContext() , joinRide.class);
+                Intent i = new Intent(getContext() , ProvideARideActivity.class);
                 startActivity(i);
             }
         });

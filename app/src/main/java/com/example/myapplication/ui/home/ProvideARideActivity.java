@@ -80,7 +80,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class StartRideActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class ProvideARideActivity extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
@@ -102,7 +102,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         }
     }
 
-    private static final String TAG = "StartRideActivity";
+    private static final String TAG = "ProvideARideActivity";
     private static final String API_KEY = "AIzaSyDICnj_kc22dTrmOIUJg46B5fOgu6QhxFM";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -135,14 +135,9 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start_ride);
+        setContentView(R.layout.activity_provide_a_ride);
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
-        mFindARideButton = (AppCompatButton) findViewById(R.id.findARideButton);
-        mConfirmDestinationButton = (AppCompatButton) findViewById(R.id.confirmDestinationButton);
-        mConfirmDestinationCardView = (CardView) findViewById(R.id.confirmDestinationCardView);
-        mFindARideLinearLayout = (LinearLayout) findViewById(R.id.findARideLinearLayout);
-        mSearchingARideLayout = (LinearLayout) findViewById(R.id.searchingARideLinearLayout);
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -152,7 +147,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     public boolean isServicesOK() {
         Log.d(TAG, "checking google services");
 
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(StartRideActivity.this);
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(ProvideARideActivity.this);
         if(available == ConnectionResult.SUCCESS) {
             Log.d(TAG, "Connected successfully!");
             return true;
@@ -160,7 +155,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
             Log.d(TAG, "Could not connect but it is resolvable.");
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(
-                    StartRideActivity.this,
+                    ProvideARideActivity.this,
                     available,
                     ERROR_DIALOG_REQUEST
             );
@@ -225,62 +220,6 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                     mMap
             );
         });
-
-        mConfirmDestinationButton.setOnClickListener(view -> {
-            Log.d(TAG, "init: destination confirmed");
-            mConfirmDestinationCardView.setVisibility(View.GONE);
-            mFindARideLinearLayout.setVisibility(View.VISIBLE);
-        });
-
-        mFindARideButton.setOnClickListener(view -> {
-            Log.d(TAG, "init: clicked on Find a Ride");
-            mFindARideLinearLayout.setVisibility(View.GONE);
-            mSearchingARideLayout.setVisibility(View.VISIBLE);
-
-            getRiderInformation();
-        });
-    }
-
-    private void getRiderInformation() {
-        LocationDB locationDB = new LocationDB();
-        locationDB.getLocation("Rider", locationDataList -> {
-            Log.d(TAG, "getRiderInformation: location of the first rider: " + locationDataList.get(0).getLocation());
-            ArrayList <RiderTrip> riderTrips = new ArrayList<>();
-            for(LocationData locationData : locationDataList) {
-                Log.d(TAG, "getRiderInformation: " + locationData.getLocation());
-                if(locationData.getLocation() == null) continue;
-//                String[] info = locationData.getLocation().split(",");
-//                if(info.length != 2) continue;
-                String[] info = {"24.899497010394843", "91.86879692014429"};
-                GoogleMapAPIHandler.getDistanceBetweenTwoLatLng(
-                        new LatLng(Double.parseDouble(info[0]), Double.parseDouble(info[1])),
-                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                        new DistanceCalculatorCallback() {
-                            @Override
-                            public void onDistanceCalculated(int distance) {
-                                riderTrips.add(new RiderTrip(
-                                        locationData, distance
-                                ));
-                                // TODO: ২০/১০/২৩  
-//                                fix the condition, check if all riders have been added
-                                if(riderTrips.size() == 1) {
-                                    onRiderTripsFound(riderTrips);
-                                }
-                            }
-                        }
-                );
-            }
-        });
-    }
-
-    private void onRiderTripsFound(ArrayList<RiderTrip> riderTrips) {
-        Collections.sort(riderTrips, new Comparator<RiderTrip>() {
-            @Override
-            public int compare(RiderTrip riderTrip, RiderTrip t1) {
-                return riderTrip.getTotalDistance() - t1.getTotalDistance();
-            }
-        });
-        Log.d(TAG, "onRiderTripsFound: best choice: " + riderTrips.get(0).getTotalDistance());
     }
 
     private void getLocationPermission(){
@@ -346,7 +285,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         Log.d(TAG, "Initializing Map");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(StartRideActivity.this);
+        mapFragment.getMapAsync(ProvideARideActivity.this);
     }
 
     private void getDeviceLocation() {
