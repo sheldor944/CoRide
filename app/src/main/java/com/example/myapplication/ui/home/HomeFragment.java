@@ -149,10 +149,6 @@ public class HomeFragment extends Fragment {
                 locationDB.updateLocation("" , "Rider");
             }
         });
-
-
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

@@ -1,95 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context=".ui.home.HomeFragment">
 
-
-    <TextView
-        android:id="@+id/text_home"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.781" />
+        app:cardElevation="4dp"
+        android:clickable="true">
 
-    <LinearLayout
-        android:id="@+id/LinearLayout2"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/bike"
+                android:layout_weight="1"
+                android:layout_gravity="center"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@color/black"
+                android:outlineAmbientShadowColor="@color/black"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="GET A RIDE"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_margin="10dp"
+                />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/text_home"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.384"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:text="GET A RIDE"
+        android:textColor="@android:color/white"
+        android:onClick="startRide" />
 
-        >
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:text="PROVIDE A RIDE"
+        android:textColor="@android:color/white"
+        android:onClick="joinRide" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-
-            android:onClick="startRide"
-            android:padding="16dp"
-            android:text="Start Ride"
-            android:textColor="@android:color/white" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:textColor="@android:color/white"
-            android:padding="16dp"
-            android:text="Join Ride"
-            android:onClick="joinRide"/>
-
-
-        <Button
-            android:id="@+id/button6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-
-            android:textColor="@android:color/white"
-            android:padding="16dp"
-            android:text="Schedule Ride"
-            android:onClick="scheduleRide"
-            />
-    </LinearLayout>
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:text="Schedule Ride"
+        android:textColor="@android:color/white"
+        android:onClick="scheduleRide" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="124dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <SearchView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:queryHint="search the Location" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp">
     </LinearLayout>
 
     <Button
@@ -97,19 +98,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button"
-        tools:layout_editor_absoluteX="153dp"
-        tools:layout_editor_absoluteY="432dp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/readButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="read"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.904"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.718" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp" />
+</LinearLayout>
