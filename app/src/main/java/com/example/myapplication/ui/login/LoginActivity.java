@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -98,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
         EditText emailText = (EditText) findViewById(R.id.username);
         EditText pass = (EditText) findViewById(R.id.password);
 
-        Button button = findViewById(R.id.login);
+        AppCompatButton button = findViewById(R.id.login);
 //        progressDialog.findViewById(R.id.loading);
 
         progressDialog = new ProgressDialog(this);
