@@ -133,14 +133,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        Button button1 =  (Button)(root.findViewById(R.id.button3));
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getContext() , ProvideARideActivity.class);
-                startActivity(i);
-            }
-        });
+//        Button button1 =  (Button)(root.findViewById(R.id.button3));
+//        button1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent i = new Intent(getContext() , ProvideARideActivity.class);
+//                startActivity(i);
+//            }
+//        });
 
 //        Button button2 =  (Button)(root.findViewById(R.id.button6));
 //        button2.setOnClickListener(new View.OnClickListener() {
@@ -152,10 +152,10 @@ public class HomeFragment extends Fragment {
 //        });
         LocationDB locationDB = new LocationDB();
 //
-        Button readButton =  (Button)(root.findViewById(R.id.readButton));
-        readButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+//        Button readButton =  (Button)(root.findViewById(R.id.readButton));
+//        readButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
 //                try {
 //                    ArrayList<LocationData> locationDataArrayList = locationDB.getLocation("Rider");
 //                    Log.d("print in home ", "getLocation: print oibo ekhn ");
@@ -170,16 +170,16 @@ public class HomeFragment extends Fragment {
 //                }
 //                Intent intent = new Intent(getContext() , ChatActivity.class);
 //                startActivity(intent);
-            }
-
-        });
-        Button testButton =  (Button)(root.findViewById(R.id.testButton));
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                locationDB.updateLocation("" , "Rider");
-            }
-        });
+//            }
+//
+//        });
+//        Button testButton =  (Button)(root.findViewById(R.id.testButton));
+//        testButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                locationDB.updateLocation("" , "Rider");
+//            }
+//        });
         return root;
     }
 
