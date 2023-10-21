@@ -3,15 +3,18 @@ package com.example.myapplication.ui.home;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.rpc.context.AttributeContext;
 
 import java.util.ArrayList;
 
@@ -93,15 +97,42 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        Button button =  (Button)(root.findViewById(R.id.button2));
-        button.setOnClickListener(new View.OnClickListener() {
+//        Button button =  (Button)(root.findViewById(R.id.button2));
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d(TAG, "onClick: clicked on Start Ride");
+//                Intent i = new Intent(getContext() , StartRideActivity.class);
+//                startActivity(i);
+//            }
+//        });
+
+        CardView getARideCardView = (CardView) (root.findViewById(R.id.get_a_ride_cardview));
+        getARideCardView.setOnClickListener(view -> {
+            Log.d(TAG, "onClick: clicked on Start Ride");
+            Intent i = new Intent(getContext() , StartRideActivity.class);
+            startActivity(i);
+        });
+
+        getARideCardView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: clicked on Start Ride");
-                Intent i = new Intent(getContext() , StartRideActivity.class);
-                startActivity(i);
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Change background color and elevation when touched
+                        getARideCardView.setCardBackgroundColor(getResources().getColor(R.color.gray)); // Change to desired color
+                        getARideCardView.setCardElevation(8); // Adjust the elevation as needed
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // Restore original background color and elevation when touch is released
+                        getARideCardView.setCardBackgroundColor(getResources().getColor(R.color.white));
+                        getARideCardView.setCardElevation(4); // Restore the original elevation
+                        break;
+                }
+                return false;
             }
         });
+
         Button button1 =  (Button)(root.findViewById(R.id.button3));
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,14 +142,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        Button button2 =  (Button)(root.findViewById(R.id.button6));
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getContext() , scheduleRide.class);
-                startActivity(i);
-            }
-        });
+//        Button button2 =  (Button)(root.findViewById(R.id.button6));
+//        button2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent i = new Intent(getContext() , scheduleRide.class);
+//                startActivity(i);
+//            }
+//        });
         LocationDB locationDB = new LocationDB();
 //
         Button readButton =  (Button)(root.findViewById(R.id.readButton));
