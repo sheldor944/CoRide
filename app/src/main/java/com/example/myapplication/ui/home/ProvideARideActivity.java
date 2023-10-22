@@ -3,6 +3,7 @@ package com.example.myapplication.ui.home;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -34,6 +35,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.loader.content.AsyncTaskLoader;
 
+import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
@@ -172,12 +174,29 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         Log.d(TAG, "addRiderToDB: adding rider to DB ");
         LocationDB locationDB = new LocationDB();
 //        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
-        locationDB.updateLocation("24.9059,91.8721" , "Rider");
+        locationDB.addToPendingRider("24.9059,91.8721");
     }
+
+
 
     private void onPassengerFound()
     {
 
+    }
+
+    private void searchPassenger() {
+        LocationDB locationDB = new LocationDB();
+        locationDB.getBookedPassenger(passengerId -> {
+            Log.d(TAG, "searchPassenger: " + passengerId);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
+                    intent.putExtra("UID" , passengerId);
+                    startActivity(intent);
+                }
+            });
+        });
     }
     private void init() {
         Log.d(TAG, "init: initializing");
@@ -185,7 +204,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         // call after confirm
         addRiderToDB();
 
-        onPassengerFound();
+        searchPassenger();
 
 
         Log.d(TAG, "init: initializing Places");

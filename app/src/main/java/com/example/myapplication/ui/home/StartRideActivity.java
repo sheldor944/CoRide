@@ -244,8 +244,18 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             mFindARideLinearLayout.setVisibility(View.GONE);
             mSearchingARideLayout.setVisibility(View.VISIBLE);
 
-          switchToChat();
+            String UID = FirebaseAuth.getInstance().getUid();
+            String RID ="5eEHiNS0mIW9CAC6xqbFVdvplnH3";
+
+            insertIntoBookedPassengerRider(UID , RID);
+
+            switchToChat();
         });
+    }
+    private void insertIntoBookedPassengerRider(String PID , String RID)
+    {
+        LocationDB locationDB = new LocationDB() ;
+        locationDB.insetIntoPassengerRider(PID,RID);
     }
 
     private void switchToChat()
@@ -256,7 +266,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
 //            getRiderInformation();
         //get a rider
         String riderUID = "5eEHiNS0mIW9CAC6xqbFVdvplnH3";
-        database.getReference().child("Passenger-Rider").push().setValue(UID+riderUID);
+//        database.getReference().child("Passenger-Rider").push().setValue(UID+riderUID);
 
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra("UID" , riderUID);
