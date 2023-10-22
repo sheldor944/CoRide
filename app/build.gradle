@@ -31,6 +31,13 @@ android {
     buildFeatures {
         viewBinding true
     }
+    sourceSets {
+        main {
+            assets {
+                srcDirs 'src/main/assets'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -117,6 +124,5 @@ dependencies {
 
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
-
-
+    implementation 'com.airbnb.android:lottie:4.0.0'
 }
