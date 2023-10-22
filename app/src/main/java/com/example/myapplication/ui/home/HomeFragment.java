@@ -40,6 +40,7 @@ public class HomeFragment extends Fragment {
 
     private final String TAG = "HomeFragment";
     private FragmentHomeBinding binding;
+    private CardView mProvideARideCardView;
 
 
     public void joinRide (View view)
@@ -104,6 +105,13 @@ public class HomeFragment extends Fragment {
                 Intent intent = new Intent(getContext() , testerActivity.class);
                 startActivity(intent);
             }
+        });
+
+        mProvideARideCardView = root.findViewById(R.id.provide_a_ride_cardview);
+        mProvideARideCardView.setOnClickListener(view -> {
+            Log.d(TAG, "onClick: clicked on Start Ride");
+            Intent i = new Intent(getContext() , ProvideARideActivity.class);
+            startActivity(i);
         });
 
 //        Button button =  (Button)(root.findViewById(R.id.button2));
