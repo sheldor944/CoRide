@@ -167,9 +167,26 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         return false;
     }
 
+    private void addRiderToDB()
+    {
+        Log.d(TAG, "addRiderToDB: adding rider to DB ");
+        LocationDB locationDB = new LocationDB();
+//        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
+        locationDB.updateLocation("24.9059,91.8721" , "Rider");
+    }
+
+    private void onPassengerFound()
+    {
+
+    }
     private void init() {
         Log.d(TAG, "init: initializing");
         GoogleMapAPIHandler.setApiKey(API_KEY);
+        // call after confirm
+        addRiderToDB();
+
+        onPassengerFound();
+
 
         Log.d(TAG, "init: initializing Places");
         if(!Places.isInitialized()) {

@@ -38,6 +38,19 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        super.onMessageReceived(remoteMessage);
 
+        // Check if message contains a data payload.
+        if (remoteMessage.getData().size() > 0) {
+            if ("SOME_VALUE".equals(remoteMessage.getData().get("key_name"))) {
+                triggerMethod();
+            }
+        }
+    }
 
+    private void triggerMethod() {
+        // Your method code here
+    }
 }

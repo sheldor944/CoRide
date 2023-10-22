@@ -42,23 +42,25 @@ public class LocationDB {
 
     public void updateLocation(String location , String type )
     {
+        Log.d("updateLocation", "updateLocation: " + location);
+//         double MIN_LATITUDE = -90;
+//        double MAX_LATITUDE = 90;
+//         double MIN_LONGITUDE = -180;
+//         double MAX_LONGITUDE = 180;
+//
+//        Random random = new Random();
+//
+//        // Generate a random latitude value between -90 and +90
+//        double lat = MIN_LATITUDE + (MAX_LATITUDE - MIN_LATITUDE) * random.nextDouble();
+//
+//        // Generate a random longitude value between -180 and +180
+//        double longi = MIN_LONGITUDE + (MAX_LONGITUDE - MIN_LONGITUDE) * random.nextDouble();
 
-         double MIN_LATITUDE = -90;
-        double MAX_LATITUDE = 90;
-         double MIN_LONGITUDE = -180;
-         double MAX_LONGITUDE = 180;
-
-        Random random = new Random();
-
-        // Generate a random latitude value between -90 and +90
-        double lat = MIN_LATITUDE + (MAX_LATITUDE - MIN_LATITUDE) * random.nextDouble();
-
-        // Generate a random longitude value between -180 and +180
-        double longi = MIN_LONGITUDE + (MAX_LONGITUDE - MIN_LONGITUDE) * random.nextDouble();
-
-        location = lat + "," + longi;
+//        location = lat + "," + longi;
 
         try {
+            Log.d("updateLocation", "updateLocation: 2  " + location);
+
 //            databaseReference.child(userId).child("location").setValue(location);
             databaseReference.child(userId).child("location").child(type).setValue(location);
 
