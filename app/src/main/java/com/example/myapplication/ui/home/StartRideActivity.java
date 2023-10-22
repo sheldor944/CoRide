@@ -3,6 +3,7 @@ package com.example.myapplication.ui.home;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -34,6 +35,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.loader.content.AsyncTaskLoader;
 
+import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
@@ -60,6 +62,8 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.PolyUtil;
 
 import org.json.JSONArray;
@@ -129,6 +133,9 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private CardView mConfirmDestinationCardView;
     private CardView mFindARideLinearLayout;
     private LinearLayout mSearchingARideLayout;
+
+    private FirebaseDatabase database ;
+    private FirebaseAuth currentUser;
 
 
     @Override
@@ -237,8 +244,24 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             mFindARideLinearLayout.setVisibility(View.GONE);
             mSearchingARideLayout.setVisibility(View.VISIBLE);
 
-            getRiderInformation();
+          switchToChat();
         });
+    }
+
+    private void switchToChat()
+    {
+        database = FirebaseDatabase.getInstance();
+        String UID = FirebaseAuth.getInstance().getUid();
+
+//            getRiderInformation();
+        //get a rider
+        String riderUID = "5eEHiNS0mIW9CAC6xqbFVdvplnH3";
+        database.getReference().child("Passenger-Rider").push().setValue(UID+riderUID);
+
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra("UID" , riderUID);
+
+        startActivity(intent);
     }
 
     private void getRiderInformation() {

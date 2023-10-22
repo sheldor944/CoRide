@@ -67,8 +67,10 @@ public class ChatActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
         // data fetching system should be implemented
+        receiverUID = getIntent().getStringExtra("UID");
+
         receiverName = "messi";
-        receiverUID = "ItIDT7jlUDOMRheIs4fif8DTc0A2";
+//        receiverUID = "ItIDT7jlUDOMRheIs4fif8DTc0A2";
 
         messagesArrayList = new ArrayList<>();
 

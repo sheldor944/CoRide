@@ -24,6 +24,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.Register;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.testerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -94,6 +95,14 @@ public class HomeFragment extends Fragment {
                                 Log.e(TAG, "Error updating token", e);
                             }
                         });
+            }
+        });
+        Button button = root.findViewById(R.id.notificationTester);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext() , testerActivity.class);
+                startActivity(intent);
             }
         });
 
