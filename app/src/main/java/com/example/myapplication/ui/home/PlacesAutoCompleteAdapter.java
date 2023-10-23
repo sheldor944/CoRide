@@ -20,7 +20,7 @@ import java.util.List;
 public class PlacesAutoCompleteAdapter extends ArrayAdapter<AutocompletePrediction> {
     private List<AutocompletePrediction> predictions;
 
-    PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient) {
+    public PlacesAutoCompleteAdapter(Context context, PlacesClient placesClient) {
         super(context, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
         this.predictions = new ArrayList<>();
     }
