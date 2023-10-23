@@ -23,6 +23,7 @@
         android:textColor="@color/black"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:fontFamily="@font/josefin_sans_regular"
         android:layout_margin="10dp"
         />
     
