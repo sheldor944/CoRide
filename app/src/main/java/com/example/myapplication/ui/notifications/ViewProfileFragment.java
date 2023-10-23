@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.notifications;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -33,6 +35,8 @@ public class ViewProfileFragment extends Fragment {
     String name ;
     String phone;
     ImageView imageView;
+
+    private AppCompatButton mUpdateButton;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -122,6 +126,12 @@ public class ViewProfileFragment extends Fragment {
         // Rest of your code
 
 //        imageView = root.findViewById(R.id.imageView);
+
+        mUpdateButton = (AppCompatButton) root.findViewById(R.id.update_button);
+        mUpdateButton.setOnClickListener(view -> {
+            Intent intent = new Intent(getContext(), UpdateProfileActivity.class);
+            startActivity(intent);
+        });
 
         return root;
     }
