@@ -177,36 +177,9 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
 //        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
         locationDB.addToPendingRider("24.9059,91.8721");
     }
-
-
-
-    private void onPassengerFound()
-    {
-
-    }
-
-    private void searchPassenger() {
-        LocationDB locationDB = new LocationDB();
-        locationDB.getBookedPassenger(passengerId -> {
-            Log.d(TAG, "searchPassenger: " + passengerId);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
-                    intent.putExtra("UID" , passengerId);
-                    startActivity(intent);
-                }
-            });
-        });
-    }
     private void init() {
         Log.d(TAG, "init: initializing");
         GoogleMapAPIHandler.setApiKey(API_KEY);
-        // call after confirm
-        addRiderToDB();
-
-        searchPassenger();
-
 
         Log.d(TAG, "init: initializing Places");
         if(!Places.isInitialized()) {
