@@ -1,13 +1,20 @@
 package com.example.myapplication;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.example.myapplication.ui.introduction.IntroductionActivity;
+import com.example.myapplication.ui.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -17,6 +24,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private ActionBar mActionBar;
+    private NavigationView mNavigationView;
+    private MenuItem mLogoutItem;
+    private MenuItem mBugReportItem;
+    private MenuItem mAboutUsItem;
 
 
     @Override
@@ -60,6 +72,74 @@ public class MainActivity extends AppCompatActivity {
 
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
+
+        mNavigationView = findViewById(R.id.left_nav_view);
+        mLogoutItem = mNavigationView.getMenu().findItem(R.id.logout);
+        mLogoutItem.setOnMenuItemClickListener(item -> {
+            askForConfirmation();
+            return true;
+        });
+
+        mBugReportItem = mNavigationView.getMenu().findItem(R.id.report_a_bug);
+        mBugReportItem.setOnMenuItemClickListener(item -> {
+            composeEmail();
+            return true;
+        });
+
+        mAboutUsItem = mNavigationView.getMenu().findItem(R.id.about_us);
+        mAboutUsItem.setOnMenuItemClickListener(item -> {
+            Intent intent = new Intent(this, IntroductionActivity.class);
+            startActivity(intent);
+            return true;
+        });
+    }
+
+    private void composeEmail() {
+        String recipient = "abcd@gmail.com";
+        String subject = "Bug Report";
+
+        // Create an Intent with the ACTION_SENDTO action and the mailto URI
+        Uri uri = Uri.parse("mailto:" + recipient);
+        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+        // Set the email subject
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+
+        // Check if there's a Gmail app installed
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            // If Gmail is not installed, handle this case accordingly
+            // For example, you can open a web browser with a mailto link
+            // or display a message to the user.
+            Toast.makeText(
+                    this,
+                    "Gmail is not installed!",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+    }
+
+    private void askForConfirmation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage("Are you sure?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked "Yes," handle the action here
+                        // For example, delete something or proceed with an action
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked "No," handle the action here
+                        // For example, do nothing or close the dialog
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

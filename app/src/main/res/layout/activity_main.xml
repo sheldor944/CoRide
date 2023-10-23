@@ -48,7 +48,7 @@
         android:layout_height="match_parent"
         android:id="@+id/left_nav_view"
         android:background="@color/white"
-        app:menu="@menu/left_nav_view_items"
+        app:menu="@menu/menu_left_nav_view_items"
         android:layout_gravity="start"
         app:headerLayout="@layout/left_nav_view_header"
         >
