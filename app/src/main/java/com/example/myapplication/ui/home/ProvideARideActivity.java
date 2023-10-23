@@ -99,8 +99,6 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             }
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
-            init();
         }
     }
 
@@ -344,6 +342,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                                     "My Location",
                                     mMap
                             );
+                            init();
                         }
                         else {
                             Log.d(TAG, "onComplete: Could not fetch the last location");
