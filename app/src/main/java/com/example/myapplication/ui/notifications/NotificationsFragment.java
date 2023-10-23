@@ -43,6 +43,7 @@ import java.io.IOException;
 public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
+    private static final String TAG = "NotificationsFragment";
 
     String email ;
     String name ;
@@ -53,7 +54,7 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        Log.d("entered" , "notificationFragment o dukse ");
+        Log.d(TAG, "onCreateView: inside notifications fragment");
         MyFirebaseMessagingService m = new MyFirebaseMessagingService();
         NotificationsViewModel notificationsViewModel =
                 new ViewModelProvider(this).get(NotificationsViewModel.class);
@@ -64,7 +65,7 @@ public class NotificationsFragment extends Fragment {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         if(user == null){
-            Log.d("user" , "user is null ");
+            Log.d(TAG, "onCreateView: user is null");
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -136,53 +137,53 @@ public class NotificationsFragment extends Fragment {
 
         // Rest of your code
 
-        imageView = root.findViewById(R.id.imageView);
+//        imageView = root.findViewById(R.id.imageView);
 
         return root;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == 1234) { // This is the PICK_PHOTO_REQUEST
-                Uri selectedImage = data.getData();
-
-                try {
-                    // Convert the Uri to a Bitmap
-                    Bitmap originalBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
-
-                    // Define the desired width and height. For this example, I'm using the width and height of the ImageView.
-                    int imageViewWidth = imageView.getWidth();
-                    int imageViewHeight = imageView.getHeight();
-
-                    float originalBitmapAspectRatio = (float) originalBitmap.getWidth() / originalBitmap.getHeight();
-                    float imageViewAspectRatio = (float) imageViewWidth / imageViewHeight;
-
-                    int scaledWidth, scaledHeight;
-
-                    if (originalBitmapAspectRatio > imageViewAspectRatio) {
-                        // Original image is wider relative to the ImageView
-                        scaledWidth = imageViewWidth;
-                        scaledHeight = (int) (imageViewWidth / originalBitmapAspectRatio);
-                    } else {
-                        // Original image is taller relative to the ImageView
-                        scaledHeight = imageViewHeight;
-                        scaledWidth = (int) (imageViewHeight * originalBitmapAspectRatio);
-                    }
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, true);
-
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    imageView.setImageBitmap(scaledBitmap);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    // Handle the exception
-                }
-            }
-
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == getActivity().RESULT_OK) {
+//            if (requestCode == 1234) { // This is the PICK_PHOTO_REQUEST
+//                Uri selectedImage = data.getData();
+//
+//                try {
+//                    // Convert the Uri to a Bitmap
+//                    Bitmap originalBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
+//
+//                    // Define the desired width and height. For this example, I'm using the width and height of the ImageView.
+//                    int imageViewWidth = imageView.getWidth();
+//                    int imageViewHeight = imageView.getHeight();
+//
+//                    float originalBitmapAspectRatio = (float) originalBitmap.getWidth() / originalBitmap.getHeight();
+//                    float imageViewAspectRatio = (float) imageViewWidth / imageViewHeight;
+//
+//                    int scaledWidth, scaledHeight;
+//
+//                    if (originalBitmapAspectRatio > imageViewAspectRatio) {
+//                        // Original image is wider relative to the ImageView
+//                        scaledWidth = imageViewWidth;
+//                        scaledHeight = (int) (imageViewWidth / originalBitmapAspectRatio);
+//                    } else {
+//                        // Original image is taller relative to the ImageView
+//                        scaledHeight = imageViewHeight;
+//                        scaledWidth = (int) (imageViewHeight * originalBitmapAspectRatio);
+//                    }
+//                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, true);
+//
+//                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                    imageView.setImageBitmap(scaledBitmap);
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    // Handle the exception
+//                }
+//            }
+//
+//        }
+//    }
 
 
 
