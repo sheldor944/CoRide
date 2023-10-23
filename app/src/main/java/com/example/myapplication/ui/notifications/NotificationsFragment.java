@@ -117,35 +117,19 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
-        Button upload = root.findViewById(R.id.upload);
-        upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
-                }
-
-                Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                int PICK_PHOTO_REQUEST = 1234;
-                startActivityForResult(pickPhotoIntent, PICK_PHOTO_REQUEST);
-
-
-
-
-
-            }
-        });
-
-        Button logout = root.findViewById(R.id.logout);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-                startActivity(intent);
-
-            }
-        });
+//        Button upload = root.findViewById(R.id.upload);
+//        upload.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(getActivity(), new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+//                }
+//
+//                Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                int PICK_PHOTO_REQUEST = 1234;
+//                startActivityForResult(pickPhotoIntent, PICK_PHOTO_REQUEST);
+//            }
+//        });
 
 
 //        Intent intent = getIntent();
