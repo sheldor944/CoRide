@@ -25,7 +25,10 @@ import com.example.myapplication.R;
 import com.example.myapplication.Register;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
+import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
+import com.example.myapplication.helper.SaveToCompletedTableCallback;
 import com.example.myapplication.testerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -87,7 +90,6 @@ public class HomeFragment extends Fragment {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
         mOnGoigRide = root.findViewById(R.id.OnGoingRide);
-        checkForOnGoingRide();
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
         getFCMtoken(new Register.TokenCallback() {
@@ -108,8 +110,29 @@ public class HomeFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext() , testerActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getContext() , testerActivity.class);
+//                startActivity(intent);
+                LocationDB locationDB = new LocationDB();
+                checkForOnGoingRide();
+                locationDB.getLocation("Rider", new LocationCallback() {
+                    @Override
+                    public void onLocationDataReceived(ArrayList<LocationData> locationDataArrayList) {
+                        System.out.println("printing riders ");
+                        for(LocationData locationData : locationDataArrayList){
+                            System.out.println(locationData.getUserID() + " " + locationData.getStartLocation() + " " + locationData.getEndLocation());
+                        }
+                    }
+                });
+
+//                locationDB.saveToCompletedTable("IvaNhWsFchZJZcYbr6XGNmHiXGR2", "5eEHiNS0mIW9CAC6xqbFVdvplnH3", 500, new SaveToCompletedTableCallback() {
+//                    @Override
+//                    public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+//                        for( Pair<String , String > u : result)
+//                        {
+//                            System.out.println(u.first +" " + u.second);
+//                        }
+//                    }
+//                }) ;
             }
         });
 
@@ -222,6 +245,20 @@ public class HomeFragment extends Fragment {
                     }
                 } else {
                     // Do something else if there's no ongoing ride
+                }
+            }
+        });
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String user = mAuth.getUid();
+        locationDB.getDataFromCompletedTable(user, new GetDataFromCompletedTableCallback() {
+            @Override
+            public void onGetDataFromCompletedTableComplete(ArrayList<ArrayList<Pair<String, String>>> result) {
+                for(ArrayList<Pair<String , String >> u : result)
+                {
+                    for(Pair<String , String> p : u )
+                    {
+                        System.out.println(" home " + p.first + " -->" +p.second );
+                    }
                 }
             }
         });

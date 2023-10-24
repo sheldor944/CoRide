@@ -275,11 +275,11 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private void getRiderInformation() {
         LocationDB locationDB = new LocationDB();
         locationDB.getLocation("Rider", locationDataList -> {
-            Log.d(TAG, "getRiderInformation: location of the first rider: " + locationDataList.get(0).getLocation());
+            Log.d(TAG, "getRiderInformation: location of the first rider: " + locationDataList.get(0).getStartLocation());
             ArrayList <RiderTrip> riderTrips = new ArrayList<>();
             for(LocationData locationData : locationDataList) {
-                Log.d(TAG, "getRiderInformation: " + locationData.getLocation());
-                if(locationData.getLocation() == null) continue;
+                Log.d(TAG, "getRiderInformation: " + locationData.getEndLocation());
+                if(locationData.getStartLocation() == null) continue;
 //                String[] info = locationData.getLocation().split(",");
 //                if(info.length != 2) continue;
                 String[] info = {"24.899497010394843", "91.86879692014429"};

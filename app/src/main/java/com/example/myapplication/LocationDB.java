@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.util.Pair;
 
@@ -7,8 +8,10 @@ import androidx.annotation.NonNull;
 
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.helper.BookedPassengerListCallback;
+import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
 import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
+import com.example.myapplication.helper.SaveToCompletedTableCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,7 +26,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.ktx.Firebase;
 import com.google.protobuf.DescriptorProtos;
 
+import org.checkerframework.checker.guieffect.qual.UI;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.xml.transform.dom.DOMLocator;
@@ -103,17 +110,16 @@ public class LocationDB {
     public void getLocation(String type, LocationCallback callback)
     {
         ArrayList<LocationData> locationDataArrayList = new ArrayList<>();
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference("PendingRider").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String userId = userSnapshot.getKey();
-//                    String location = userSnapshot.child("location").getValue(String.class);
-                    String location = userSnapshot.child("location").child(type).getValue(String.class);
-                    
-                    System.out.println(userId + " " + location);
-                    locationDataArrayList.add(new LocationData(type, location, userId));
+//
+                    String startLocation = userSnapshot.child("start").getValue(String.class);
+                    String endLocation = userSnapshot.child("Destination").getValue(String.class);
                     // Do something with the user's location
+                    locationDataArrayList.add(new LocationData("Rider" , startLocation , userId , endLocation));
                 }
                 callback.onLocationDataReceived(locationDataArrayList);
             }
@@ -125,8 +131,93 @@ public class LocationDB {
         });
     }
 
-    public void saveToCompletedTable()
+    public void getDataFromCompletedTable(String UID , GetDataFromCompletedTableCallback callback)
     {
+//        DatabaseReference ref = database.getReference("CompletedRide").child("IvaNhWsFchZJZcYbr6XGNmHiXGR2@5eEHiNS0mIW9CAC6xqbFVdvplnH3");
+            DatabaseReference ref = database.getReference("CompletedRide");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+             ArrayList  < ArrayList<Pair<String, String>> > resultList = new ArrayList<>();
+                Log.d(TAG, "onDataChange: dukse to re ba ");
+
+                for(DataSnapshot childIdSnapshot : dataSnapshot.getChildren()){
+                    String k = childIdSnapshot.getKey();
+                    System.out.println(k);
+                    String id[] = k.split("@");
+
+                    if(id[0].equals(UID)){
+                        for (DataSnapshot recordIdSnapshot : childIdSnapshot.getChildren()) {
+                            ArrayList<Pair<String, String>> result = new ArrayList<>();
+
+                            for (DataSnapshot pairSnapshot : recordIdSnapshot.getChildren()) {
+                                String first = pairSnapshot.child("first").getValue(String.class);
+                                String second = pairSnapshot.child("second").getValue(String.class);
+                                System.out.println(first + "  ono " + second);
+
+                                if (first != null && second != null) {
+                                    result.add(new Pair<>(first, second));
+                                }
+                            }
+                            resultList.add(result);
+                        }
+                    }
+                    else if (id[1].equals(UID)){
+                        System.out.println("as a rider ");
+                        for (DataSnapshot recordIdSnapshot : childIdSnapshot.getChildren()) {
+                            ArrayList<Pair<String, String>> result = new ArrayList<>();
+
+                            for (DataSnapshot pairSnapshot : recordIdSnapshot.getChildren()) {
+                                String first = pairSnapshot.child("first").getValue(String.class);
+                                String second = pairSnapshot.child("second").getValue(String.class);
+                                System.out.println(first + "  ono " + second);
+
+                                if (first != null && second != null) {
+                                    result.add(new Pair<>(first, second));
+                                }
+                            }
+                            resultList.add(result);
+                        }
+                    }
+
+                }
+
+                // Iterate through the list of saved pairs
+
+
+                if (callback != null) {
+                    callback.onGetDataFromCompletedTableComplete(resultList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle the error or notify the callback about the failure.
+            }
+        });
+    }
+
+    public void saveToCompletedTable(String passengerID , String riderID , double fare , SaveToCompletedTableCallback callback)
+    {
+        checkForOngoingRide(new RideCheckCallback() {
+            @Override
+            public void onRideCheckCompleted(ArrayList<Pair<String, String>> result) {
+                ArrayList<Pair<String , String>> finalResult = result;
+                Log.d(TAG, "onRideCheckCompleted: save to tabel o dukse ");
+                finalResult.add(new Pair<>("Fair" , ""+fare));
+
+                database.getReference("CompletedRide").child(passengerID+"@"+riderID)
+                        .push().setValue(finalResult);
+
+                // TODO: 10/24/2023
+                // bookedPassengerRider theke delete korte hobe
+                if (callback != null) {
+
+                    callback.onSaveToCompletedTableComplete(finalResult);
+                }
+            }
+
+        });
 
     }
 
@@ -143,6 +234,7 @@ public class LocationDB {
                     String key = childSnapshot.getKey();
                     String id[] = key.split("@");
                     Log.d(TAG, "onDataChange: " + key);
+
 
                     if (UID.equals(id[1]) )
                     {
