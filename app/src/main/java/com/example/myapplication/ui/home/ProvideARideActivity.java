@@ -37,6 +37,7 @@ import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
@@ -222,6 +223,13 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             if(numberOfTimesSearched > MAX_SEARCH_COUNT) {
                 Log.d(TAG, "searchAgainAfterSomeTime: no passenger at all. aborting search.");
                 Toast.makeText(this, "Unfortunately, no passenger found!", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(ProvideARideActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
                 return;
             }
             Thread.sleep(SEARCH_INTERVAL);
