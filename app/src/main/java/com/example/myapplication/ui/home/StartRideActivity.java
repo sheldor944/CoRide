@@ -117,6 +117,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     );
 
     private static final int MAX_SEARCH_COUNT = 5;
+    private static final int SEARCH_INTERVAL = 10000;
     private static int numberOfTimesSearchedForRiders;
 
     //vars
@@ -256,9 +257,14 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
 
     private void switchToChat(String riderUID)
     {
-        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra("UID", riderUID);
-        startActivity(intent);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                intent.putExtra("UID", riderUID);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getRiderInformation() {
@@ -309,7 +315,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                                 Toast.LENGTH_SHORT
                         ).show();
                     }
-                    Thread.sleep(5000);
+                    Thread.sleep(SEARCH_INTERVAL);
                     getRiderInformation();
                 } catch (InterruptedException e) {
                     Log.d(TAG, "run: getRiderInformation: could not make system sleep.");
@@ -320,6 +326,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void onRiderTripsFound(ArrayList<RiderTrip> riderTrips) {
+//        Working on this from another thread, I think
         Log.d(TAG, "onRiderTripsFound: going to sort rider trips");
         Collections.sort(riderTrips, new Comparator<RiderTrip>() {
             @Override
@@ -327,7 +334,19 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                 return riderTrip.getTotalDistance() - t1.getTotalDistance();
             }
         });
-        RiderTrip bestRiderTrip = riderTrips.get(0);
+        RiderTrip bestRiderTrip = null;
+        for(RiderTrip riderTrip : riderTrips) {
+            LocationDB locationDB = new LocationDB();
+            Log.d(TAG, "onRiderTripsFound: checking: " + riderTrip.getLocationData().getUserID());
+            if(locationDB.isRiderAvailable(riderTrip.getLocationData().getUserID())) {
+                bestRiderTrip = riderTrip;
+                break;
+            }
+        }
+        if(bestRiderTrip == null) {
+            searchAgainAfterSomeTime();
+            return;
+        }
         Log.d(TAG, "onRiderTripsFound: sorted. best match user id: " + bestRiderTrip.getLocationData().getUserID());
         switchToChat(bestRiderTrip.getLocationData().getUserID());
     }

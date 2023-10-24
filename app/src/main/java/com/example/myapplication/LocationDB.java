@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.transform.dom.DOMLocator;
 
@@ -204,7 +206,7 @@ public class LocationDB {
             public void onRideCheckCompleted(ArrayList<Pair<String, String>> result) {
                 ArrayList<Pair<String , String>> finalResult = result;
                 Log.d(TAG, "onRideCheckCompleted: save to tabel o dukse ");
-                finalResult.add(new Pair<>("Fair" , ""+fare));
+                finalResult.add(new Pair<>("Fair", "" + fare));
 
                 database.getReference("CompletedRide").child(passengerID+"@"+riderID)
                         .push().setValue(finalResult);
@@ -338,4 +340,47 @@ public class LocationDB {
             }
         });
     }
+
+    public boolean isRiderAvailable(String riderId) {
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean isAvailable = new AtomicBoolean(false);
+
+        database.getReference("PendingRider").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String userId = userSnapshot.getKey();
+                    String startLocation = userSnapshot.child("start").getValue(String.class);
+                    String endLocation = userSnapshot.child("Destination").getValue(String.class);
+                    // Do something with the user's location
+                    if (userId.equals(riderId)) { // Use .equals for string comparison
+                        // TODO: ২৪/১০/২৩ : rider matched. delete him.
+                        isAvailable.set(true);
+                        break;
+                    }
+                }
+
+                // Signal that the database query has finished
+                latch.countDown();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+
+                // Also, signal that the query has finished in case of an error
+                latch.countDown();
+            }
+        });
+
+        try {
+            // Wait for the database query to finish (or for an error to occur)
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore the interrupted status
+        }
+
+        return isAvailable.get();
+    }
+
 }
