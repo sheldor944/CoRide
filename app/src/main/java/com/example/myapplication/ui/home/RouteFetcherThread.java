@@ -31,6 +31,7 @@ public class RouteFetcherThread extends Thread {
     }
 
     public void run() {
+        Log.d(TAG, "run: current thread: " + Thread.currentThread().getName());
         String urlString = "https://maps.googleapis.com/" +
                 "maps/" +
                 "api/" +

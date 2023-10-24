@@ -105,6 +105,7 @@ public class GoogleMapAPIHandler {
                 srcLatLng,
                 destLatLng,
                 jsonObject -> {
+                    Log.d(TAG, "displayRoute: current thread: " + Thread.currentThread().getName());
                     PolylineOptions polylineOptions = new PolylineOptions();
                     Log.d(TAG, "displayRoute: extracting route from json.");
                     try {
