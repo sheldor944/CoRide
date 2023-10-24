@@ -307,7 +307,7 @@ public class LocationDB {
         database.getReference("bookedPassengerRider").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String passengerId = "as";
+                String passengerId = null;
                 
                 Log.d(TAG, "onDataChange: loop er age ");
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
@@ -336,7 +336,7 @@ public class LocationDB {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                callback.onPassengerFound(null);
             }
         });
     }

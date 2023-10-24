@@ -114,6 +114,8 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             new LatLng(-40, -168),
             new LatLng(71, 136)
     );
+    private static final int SEARCH_INTERVAL = 10000;
+    private static final int MAX_SEARCH_COUNT = 5;
 
     //vars
     private Boolean mLocationPermissionsGranted = false;
@@ -132,6 +134,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private AppCompatButton mConfirmButton;
     private TextView mSearchingTextView;
     private LatLng destLatLng;
+    private int numberOfTimesSearched;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,6 +145,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mConfirmButton = findViewById(R.id.confirm_button);
         mSearchingTextView = findViewById(R.id.searching_text_view);
+        numberOfTimesSearched = 0;
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -191,27 +195,45 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     }
 
     private void searchPassenger() {
+        Log.d(TAG, "searchPassenger: starting the search for passenger");
         LocationDB locationDB = new LocationDB();
         locationDB.getBookedPassenger(passengerId -> {
+            if(passengerId == null) {
+                searchAgainAfterSomeTime();
+                return;
+            }
+
             Log.d(TAG, "searchPassenger: " + passengerId);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
                     intent.putExtra("UID" , passengerId);
                     startActivity(intent);
                 }
             });
         });
     }
+
+    private void searchAgainAfterSomeTime() {
+        Log.d(TAG, "searchAgainAfterSomeTime: no passenger found. going to search again after some time.");
+        try {
+            numberOfTimesSearched++;
+            if(numberOfTimesSearched > MAX_SEARCH_COUNT) {
+                Log.d(TAG, "searchAgainAfterSomeTime: no passenger at all. aborting search.");
+                Toast.makeText(this, "Unfortunately, no passenger found!", Toast.LENGTH_LONG).show();
+                return;
+            }
+            Thread.sleep(SEARCH_INTERVAL);
+            searchPassenger();
+        } catch (InterruptedException e) {
+            Log.d(TAG, "searchAgainAfterSomeTime: InterruptedException: " + e.getMessage());
+        }
+    }
+
     private void init() {
         Log.d(TAG, "init: initializing");
         GoogleMapAPIHandler.setApiKey(API_KEY);
-        // call after confirm
-//        addRiderToDB();
-//
-//        searchPassenger();
-
 
         Log.d(TAG, "init: initializing Places");
         if(!Places.isInitialized()) {
@@ -277,6 +299,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             mSearchingTextView.setVisibility(View.VISIBLE);
 
             addRiderToDB();
+            searchPassenger();
         });
     }
 
