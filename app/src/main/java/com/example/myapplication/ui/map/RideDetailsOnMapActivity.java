@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.home;
+package com.example.myapplication.ui.map;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -41,6 +41,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
+import com.example.myapplication.ui.home.PlacesAutoCompleteAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -64,6 +65,8 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.maps.android.PolyUtil;
 
+import com.example.myapplication.ui.home.GoogleMapAPIHandler;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,9 +85,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ProvideARideActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: map is ready");
         mMap = googleMap;
 
@@ -134,7 +138,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_provide_a_ride);
+        setContentView(R.layout.activity_ride_details_on_map);
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
 
@@ -146,7 +150,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     public boolean isServicesOK() {
         Log.d(TAG, "checking google services");
 
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(ProvideARideActivity.this);
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(com.example.myapplication.ui.map.RideDetailsOnMapActivity.this);
         if(available == ConnectionResult.SUCCESS) {
             Log.d(TAG, "Connected successfully!");
             return true;
@@ -154,7 +158,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
             Log.d(TAG, "Could not connect but it is resolvable.");
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(
-                    ProvideARideActivity.this,
+                    com.example.myapplication.ui.map.RideDetailsOnMapActivity.this,
                     available,
                     ERROR_DIALOG_REQUEST
             );
@@ -168,41 +172,17 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
 
     private void addRiderToDB()
     {
+
+        // TODO: 10/24/2023
+        // read oito
         Log.d(TAG, "addRiderToDB: adding rider to DB ");
         LocationDB locationDB = new LocationDB();
 //        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
         locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746, 91.89290421460741");
     }
-
-
-
-    private void onPassengerFound()
-    {
-
-    }
-
-    private void searchPassenger() {
-        LocationDB locationDB = new LocationDB();
-        locationDB.getBookedPassenger(passengerId -> {
-            Log.d(TAG, "searchPassenger: " + passengerId);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
-                    intent.putExtra("UID" , passengerId);
-                    startActivity(intent);
-                }
-            });
-        });
-    }
     private void init() {
         Log.d(TAG, "init: initializing");
         GoogleMapAPIHandler.setApiKey(API_KEY);
-        // call after confirm
-        addRiderToDB();
-
-        searchPassenger();
-
 
         Log.d(TAG, "init: initializing Places");
         if(!Places.isInitialized()) {
@@ -318,7 +298,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         Log.d(TAG, "Initializing Map");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(ProvideARideActivity.this);
+        mapFragment.getMapAsync(com.example.myapplication.ui.map.RideDetailsOnMapActivity.this);
     }
 
     private void getDeviceLocation() {
@@ -327,8 +307,8 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         try {
             if(mLocationPermissionsGranted) {
                 Log.d(TAG, "getDeviceLocation: permission is granted. fetching location.");
-                Task <Location> task = mFusedLocationProviderClient.getLastLocation();
-                task.addOnCompleteListener(new OnCompleteListener <Location> () {
+                Task<Location> task = mFusedLocationProviderClient.getLastLocation();
+                task.addOnCompleteListener(new OnCompleteListener<Location>() {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         Log.d(TAG, "onComplete: Location fetch task completed");

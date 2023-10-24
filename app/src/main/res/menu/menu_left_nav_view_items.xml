@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/about_us"
+            android:title="ABOUT US"
+            android:icon="@drawable/ic_info"
+            />
+
+        <item
+            android:id="@+id/report_a_bug"
+            android:title="REPORT A BUG"
+            android:icon="@drawable/ic_bug_report"
+            />
+
+        <item
+            android:id="@+id/logout"
+            android:title="LOGOUT"
+            android:icon="@drawable/ic_logout"
+            />
+    </group>
+
+</menu>

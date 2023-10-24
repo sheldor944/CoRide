@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.Register;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.helper.RideCheckCallback;
 import com.example.myapplication.testerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,6 +43,7 @@ public class HomeFragment extends Fragment {
     private final String TAG = "HomeFragment";
     private FragmentHomeBinding binding;
     private CardView mProvideARideCardView;
+    private Button mOnGoigRide;
 
 
     public void joinRide (View view)
@@ -82,6 +85,9 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        mOnGoigRide = root.findViewById(R.id.OnGoingRide);
+        checkForOnGoingRide();
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
         getFCMtoken(new Register.TokenCallback() {
@@ -198,6 +204,29 @@ public class HomeFragment extends Fragment {
 //            }
 //        });
         return root;
+    }
+
+    private void checkForOnGoingRide() {
+        LocationDB locationDB = new LocationDB();
+
+        locationDB.checkForOngoingRide(new RideCheckCallback() {
+            @Override
+            public void onRideCheckCompleted(ArrayList<Pair<String , String >> result ) {
+                if (result.size() >0) {
+                    // Do something if there's an ongoing ride
+                    Log.d(TAG, "onRideCheckCompleted: this person has a ride ");
+                    mOnGoigRide.setEnabled(true);
+                    for( Pair<String, String > u : result)
+                    {
+                        System.out.println(u.first+ " "+ u.second);
+                    }
+                } else {
+                    // Do something else if there's no ongoing ride
+                }
+            }
+        });
+
+
     }
 
     @Override

@@ -101,8 +101,6 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             }
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
-            init();
         }
     }
 
@@ -402,6 +400,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                                     "My Location",
                                     mMap
                             );
+                            init();
                         }
                         else {
                             Log.d(TAG, "onComplete: Could not fetch the last location");
