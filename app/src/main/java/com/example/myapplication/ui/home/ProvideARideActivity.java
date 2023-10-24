@@ -217,6 +217,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     }
 
     private void searchAgainAfterSomeTime() {
+        Log.d(TAG, "searchAgainAfterSomeTime: current thread: " + Thread.currentThread().getName());
         Log.d(TAG, "searchAgainAfterSomeTime: no passenger found. going to search again after some time.");
         try {
             numberOfTimesSearched++;

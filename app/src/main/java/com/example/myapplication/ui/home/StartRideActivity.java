@@ -37,6 +37,7 @@ import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
@@ -316,26 +317,27 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void searchAgainAfterSomeTime() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    numberOfTimesSearchedForRiders++;
-                    if(numberOfTimesSearchedForRiders > MAX_SEARCH_COUNT) {
-                        Toast.makeText(
-                                StartRideActivity.this,
-                                "Sorry. Unfortunately, no available riders.",
-                                Toast.LENGTH_SHORT
-                        ).show();
+        Log.d(TAG, "searchAgainAfterSomeTime: current thread: " + Thread.currentThread().getName());
+        Log.d(TAG, "searchAgainAfterSomeTime: no passenger found. going to search again after some time.");
+        try {
+            numberOfTimesSearchedForRiders++;
+            if(numberOfTimesSearchedForRiders > MAX_SEARCH_COUNT) {
+                Log.d(TAG, "searchAgainAfterSomeTime: no passenger at all. aborting search.");
+                Toast.makeText(this, "Unfortunately, no passenger found!", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(StartRideActivity.this, MainActivity.class);
+                        startActivity(intent);
                     }
-                    Thread.sleep(SEARCH_INTERVAL);
-                    getRiderInformation();
-                } catch (InterruptedException e) {
-                    Log.d(TAG, "run: getRiderInformation: could not make system sleep.");
-                    Log.d(TAG, "run: error: " + e.getMessage());
-                }
+                });
+                return;
             }
-        }).start();
+            Thread.sleep(SEARCH_INTERVAL);
+            getRiderInformation();
+        } catch (InterruptedException e) {
+            Log.d(TAG, "searchAgainAfterSomeTime: InterruptedException: " + e.getMessage());
+        }
     }
 
     private void onRiderTripsFound(ArrayList<RiderTrip> riderTrips) {
