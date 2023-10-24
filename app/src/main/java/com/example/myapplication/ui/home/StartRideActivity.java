@@ -41,6 +41,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
+import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -138,6 +139,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private FirebaseDatabase database ;
     private FirebaseAuth currentUser;
     private String mUserId;
+    private LatLng destLatLng;
 
 
     @Override
@@ -225,7 +227,13 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                     mPlacesClient,
                     currentLocation,
                     DEFAULT_ZOOM,
-                    mMap
+                    mMap,
+                    new PlaceFetcherCallback() {
+                        @Override
+                        public void onPlaceFetched(LatLng latLng) {
+                            destLatLng = latLng;
+                        }
+                    }
             );
             mConfirmDestinationButton.setEnabled(true);
             hideSoftKeyboard(view);

@@ -41,6 +41,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
+import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -130,6 +131,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private LinearLayout mSearchingARideLayout;
     private AppCompatButton mConfirmButton;
     private TextView mSearchingTextView;
+    private LatLng destLatLng;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,6 +141,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mConfirmButton = findViewById(R.id.confirm_button);
+        mSearchingTextView = findViewById(R.id.searching_text_view);
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -170,10 +173,14 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
 
     private void addRiderToDB()
     {
-        Log.d(TAG, "addRiderToDB: adding rider to DB ");
+        Log.d(TAG, "addRiderToDB: adding rider to DB. ");
+        Log.d(TAG, "addRiderToDB: src: " + currentLocation.getLatitude() + " " + currentLocation.getLongitude());
+        Log.d(TAG, "addRiderToDB: dest: " + destLatLng.latitude + " " + destLatLng.longitude);
         LocationDB locationDB = new LocationDB();
-//        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
-        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746,91.89290421460741");
+        locationDB.addToPendingRider(
+                currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
+                destLatLng.latitude + "," + destLatLng.longitude
+        );
     }
 
 
@@ -243,7 +250,13 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                     mPlacesClient,
                     currentLocation,
                     DEFAULT_ZOOM,
-                    mMap
+                    mMap,
+                    new PlaceFetcherCallback() {
+                        @Override
+                        public void onPlaceFetched(LatLng latLng) {
+                            destLatLng = latLng;
+                        }
+                    }
             );
             mConfirmButton.setEnabled(true);
             hideSoftKeyboard(view);
@@ -259,6 +272,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         });
 
         mConfirmButton.setOnClickListener(view -> {
+            Log.d(TAG, "init: confirm button pressed");
             mConfirmButton.setVisibility(View.GONE);
             mSearchingTextView.setVisibility(View.VISIBLE);
 

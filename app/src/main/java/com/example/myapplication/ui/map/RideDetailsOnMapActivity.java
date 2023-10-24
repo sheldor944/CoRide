@@ -215,13 +215,16 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
             }
             mSearchText.setText(autocompletePrediction.getFullText(null));
             mSearchText.dismissDropDown();
-            GoogleMapAPIHandler.fetchPlaceAndMoveCamera(
-                    autocompletePrediction,
-                    mPlacesClient,
-                    currentLocation,
-                    DEFAULT_ZOOM,
-                    mMap
-            );
+//            GoogleMapAPIHandler.fetchPlaceAndMoveCamera(
+//                    autocompletePrediction,
+//                    mPlacesClient,
+//                    currentLocation,
+//                    DEFAULT_ZOOM,
+//                    mMap,
+//                    latLng -> {
+//
+//                    }
+//            );
             hideSoftKeyboard(view);
         });
 
