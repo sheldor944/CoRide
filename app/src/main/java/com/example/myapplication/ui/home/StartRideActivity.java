@@ -154,6 +154,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         mSearchingARideLayout = (LinearLayout) findViewById(R.id.searchingARideLinearLayout);
         numberOfTimesSearchedForRiders = 0;
         mUserId = FirebaseAuth.getInstance().getUid();
+        mConfirmDestinationButton.setEnabled(false);
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -203,6 +204,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mConfirmDestinationButton.setEnabled(false);
                 GoogleMapAPIHandler.setAdapter(mSearchText, mPlacesAutoCompleteAdapter, s.toString(), mPlacesClient);
             }
 
@@ -225,6 +227,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                     DEFAULT_ZOOM,
                     mMap
             );
+            mConfirmDestinationButton.setEnabled(true);
             hideSoftKeyboard(view);
         });
 
