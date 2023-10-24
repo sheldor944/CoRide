@@ -128,7 +128,8 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private CardView mConfirmDestinationCardView;
     private LinearLayout mFindARideLinearLayout;
     private LinearLayout mSearchingARideLayout;
-
+    private AppCompatButton mConfirmButton;
+    private TextView mSearchingTextView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,6 +138,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         setContentView(R.layout.activity_provide_a_ride);
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
+        mConfirmButton = findViewById(R.id.confirm_button);
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -221,6 +223,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 GoogleMapAPIHandler.setAdapter(mSearchText, mPlacesAutoCompleteAdapter, s.toString(), mPlacesClient);
+                mConfirmButton.setEnabled(false);
             }
 
             @Override
@@ -242,6 +245,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                     DEFAULT_ZOOM,
                     mMap
             );
+            mConfirmButton.setEnabled(true);
             hideSoftKeyboard(view);
         });
 
@@ -252,6 +256,13 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                     "My Location",
                     mMap
             );
+        });
+
+        mConfirmButton.setOnClickListener(view -> {
+            mConfirmButton.setVisibility(View.GONE);
+            mSearchingTextView.setVisibility(View.VISIBLE);
+
+            addRiderToDB();
         });
     }
 
