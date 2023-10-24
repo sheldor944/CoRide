@@ -74,7 +74,7 @@ public class LocationDB {
         }
     }
 
-    public void insetIntoPassengerRider(String PID , String RID){
+    public void insertIntoPassengerRider(String PID , String RID){
 
         try{
             Log.d(TAG, "insetIntoPassengerRider: "+ PID+" "+ RID);
@@ -377,7 +377,8 @@ public class LocationDB {
             // Wait for the database query to finish (or for an error to occur)
             latch.await();
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore the interrupted status
+            Log.d(TAG, "isRiderAvailable: latch await error: " + e.getMessage());
+//            Thread.currentThread().interrupt(); // Restore the interrupted status
         }
 
         return isAvailable.get();

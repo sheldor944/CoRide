@@ -137,6 +137,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
 
     private FirebaseDatabase database ;
     private FirebaseAuth currentUser;
+    private String mUserId;
 
 
     @Override
@@ -152,6 +153,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         mFindARideLinearLayout = findViewById(R.id.findARideLayout);
         mSearchingARideLayout = (LinearLayout) findViewById(R.id.searchingARideLinearLayout);
         numberOfTimesSearchedForRiders = 0;
+        mUserId = FirebaseAuth.getInstance().getUid();
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -249,10 +251,10 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             getRiderInformation();
         });
     }
-    private void insertIntoBookedPassengerRider(String PID , String RID)
+    private void insertIntoBookedPassengerRider(String RID)
     {
         LocationDB locationDB = new LocationDB() ;
-        locationDB.insetIntoPassengerRider(PID, RID);
+        locationDB.insertIntoPassengerRider(mUserId, RID);
     }
 
     private void switchToChat(String riderUID)
@@ -348,6 +350,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             return;
         }
         Log.d(TAG, "onRiderTripsFound: sorted. best match user id: " + bestRiderTrip.getLocationData().getUserID());
+        insertIntoBookedPassengerRider(bestRiderTrip.getLocationData().getUserID());
         switchToChat(bestRiderTrip.getLocationData().getUserID());
     }
 
