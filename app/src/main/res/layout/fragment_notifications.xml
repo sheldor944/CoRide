@@ -92,13 +92,14 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.533"
-        android:scaleType="centerCrop"
+
         tools:src="@tools:sample/avatars" />
 
 <!--    <com.google.android.material.imageview.ShapeableImageView-->
@@ -109,21 +110,26 @@
 <!--        tools:layout_editor_absoluteX="159dp"-->
 <!--        tools:layout_editor_absoluteY="342dp" />-->
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="upload"
+        android:background="@color/black"
+        android:textColor="@color/white"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/logout"
         android:layout_width="69dp"
         android:layout_height="51dp"
         android:text="logout"
+        android:background="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.994"
         app:layout_constraintStart_toStartOf="parent"

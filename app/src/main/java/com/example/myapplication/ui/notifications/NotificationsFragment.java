@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.notifications;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,9 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import android.Manifest;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -48,6 +51,9 @@ public class NotificationsFragment extends Fragment {
     String name ;
     String phone;
     ImageView imageView;
+    private int GALLERY_REQUEST_CODE = 1123;
+    private int CAMERA_REQUEST_CODE = 1124;
+    private  int RESULT_OK = 1;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -153,52 +159,65 @@ public class NotificationsFragment extends Fragment {
         // Rest of your code
 
         imageView = root.findViewById(R.id.imageView);
+//        selectOrCaptureImage();
+
 
         return root;
+    }
+
+    private void selectOrCaptureImage() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Choose Image Source")
+                .setItems(new String[]{"Gallery", "Camera"}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0: // Gallery
+                                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                startActivityForResult(intent, GALLERY_REQUEST_CODE);
+                                break;
+                            case 1: // Camera
+                                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                                    Intent intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    startActivityForResult(intent2, CAMERA_REQUEST_CODE);
+                                } else {
+                                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+                                }
+                                break;
+                        }
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, CAMERA_REQUEST_CODE);
+            } else {
+                Toast.makeText(getContext(), "Camera permission is required to capture images.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == 1234) { // This is the PICK_PHOTO_REQUEST
-                Uri selectedImage = data.getData();
 
-                try {
-                    // Convert the Uri to a Bitmap
-                    Bitmap originalBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
-
-                    // Define the desired width and height. For this example, I'm using the width and height of the ImageView.
-                    int imageViewWidth = imageView.getWidth();
-                    int imageViewHeight = imageView.getHeight();
-
-                    float originalBitmapAspectRatio = (float) originalBitmap.getWidth() / originalBitmap.getHeight();
-                    float imageViewAspectRatio = (float) imageViewWidth / imageViewHeight;
-
-                    int scaledWidth, scaledHeight;
-
-                    if (originalBitmapAspectRatio > imageViewAspectRatio) {
-                        // Original image is wider relative to the ImageView
-                        scaledWidth = imageViewWidth;
-                        scaledHeight = (int) (imageViewWidth / originalBitmapAspectRatio);
-                    } else {
-                        // Original image is taller relative to the ImageView
-                        scaledHeight = imageViewHeight;
-                        scaledWidth = (int) (imageViewHeight * originalBitmapAspectRatio);
-                    }
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, scaledWidth, scaledHeight, true);
-
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    imageView.setImageBitmap(scaledBitmap);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    // Handle the exception
-                }
+        if (resultCode == RESULT_OK) {
+            if (requestCode == GALLERY_REQUEST_CODE) {
+                Uri selectedImageUri = data.getData();
+                imageView.setImageURI(selectedImageUri);
+            } else if (requestCode == CAMERA_REQUEST_CODE) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                imageView.setImageBitmap(photo);
             }
-
         }
     }
+
+
 
 
 
