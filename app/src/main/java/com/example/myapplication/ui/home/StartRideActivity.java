@@ -106,16 +106,18 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
 
     private static final String TAG = "StartRideActivity";
     private static final String API_KEY = "AIzaSyDICnj_kc22dTrmOIUJg46B5fOgu6QhxFM";
-
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private static float DEFAULT_ZOOM = 15f;
-    private static LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40, -168),
             new LatLng(71, 136)
     );
+
+    private static final int MAX_SEARCH_COUNT = 5;
+    private static int numberOfTimesSearchedForRiders;
 
     //vars
     private Boolean mLocationPermissionsGranted = false;
@@ -148,6 +150,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         mConfirmDestinationCardView = (CardView) findViewById(R.id.confirmDestinationCardView);
         mFindARideLinearLayout = findViewById(R.id.findARideLayout);
         mSearchingARideLayout = (LinearLayout) findViewById(R.id.searchingARideLinearLayout);
+        numberOfTimesSearchedForRiders = 0;
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -242,47 +245,36 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             mFindARideLinearLayout.setVisibility(View.GONE);
             mSearchingARideLayout.setVisibility(View.VISIBLE);
 
-            String UID = FirebaseAuth.getInstance().getUid();
-            String RID ="5eEHiNS0mIW9CAC6xqbFVdvplnH3";
-
-            insertIntoBookedPassengerRider(UID , RID);
-
-            switchToChat();
+            getRiderInformation();
         });
     }
     private void insertIntoBookedPassengerRider(String PID , String RID)
     {
         LocationDB locationDB = new LocationDB() ;
-        locationDB.insetIntoPassengerRider(PID,RID);
+        locationDB.insetIntoPassengerRider(PID, RID);
     }
 
-    private void switchToChat()
+    private void switchToChat(String riderUID)
     {
-        database = FirebaseDatabase.getInstance();
-        String UID = FirebaseAuth.getInstance().getUid();
-
-//            getRiderInformation();
-        //get a rider
-        String riderUID = "5eEHiNS0mIW9CAC6xqbFVdvplnH3";
-//        database.getReference().child("Passenger-Rider").push().setValue(UID+riderUID);
-
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra("UID" , riderUID);
-
+        intent.putExtra("UID", riderUID);
         startActivity(intent);
     }
 
     private void getRiderInformation() {
         LocationDB locationDB = new LocationDB();
         locationDB.getLocation("Rider", locationDataList -> {
-            Log.d(TAG, "getRiderInformation: location of the first rider: " + locationDataList.get(0).getStartLocation());
+            Log.d(TAG, "getRiderInformation: Number of pending riders: " + locationDataList.size());
+
+            if(locationDataList.size() == 0) {
+                searchAgainAfterSomeTime();
+                return;
+            }
+
             ArrayList <RiderTrip> riderTrips = new ArrayList<>();
             for(LocationData locationData : locationDataList) {
-                Log.d(TAG, "getRiderInformation: " + locationData.getEndLocation());
-                if(locationData.getStartLocation() == null) continue;
-//                String[] info = locationData.getLocation().split(",");
-//                if(info.length != 2) continue;
-                String[] info = {"24.899497010394843", "91.86879692014429"};
+                Log.d(TAG, "getRiderInformation: " + locationData.getUserID());
+                String info[] = locationData.getStartLocation().split(",");
                 GoogleMapAPIHandler.getDistanceBetweenTwoLatLng(
                         new LatLng(Double.parseDouble(info[0]), Double.parseDouble(info[1])),
                         new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
@@ -292,9 +284,9 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                                 riderTrips.add(new RiderTrip(
                                         locationData, distance
                                 ));
-                                // TODO: ২০/১০/২৩  
 //                                fix the condition, check if all riders have been added
-                                if(riderTrips.size() == 1) {
+                                if(riderTrips.size() == locationDataList.size()) {
+                                    Log.d(TAG, "onDistanceCalculated: all rider distance cost calculated.");
                                     onRiderTripsFound(riderTrips);
                                 }
                             }
@@ -304,14 +296,40 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
+    private void searchAgainAfterSomeTime() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    numberOfTimesSearchedForRiders++;
+                    if(numberOfTimesSearchedForRiders > MAX_SEARCH_COUNT) {
+                        Toast.makeText(
+                                StartRideActivity.this,
+                                "Sorry. Unfortunately, no available riders.",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                    Thread.sleep(5000);
+                    getRiderInformation();
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "run: getRiderInformation: could not make system sleep.");
+                    Log.d(TAG, "run: error: " + e.getMessage());
+                }
+            }
+        }).start();
+    }
+
     private void onRiderTripsFound(ArrayList<RiderTrip> riderTrips) {
+        Log.d(TAG, "onRiderTripsFound: going to sort rider trips");
         Collections.sort(riderTrips, new Comparator<RiderTrip>() {
             @Override
             public int compare(RiderTrip riderTrip, RiderTrip t1) {
                 return riderTrip.getTotalDistance() - t1.getTotalDistance();
             }
         });
-        Log.d(TAG, "onRiderTripsFound: best choice: " + riderTrips.get(0).getTotalDistance());
+        RiderTrip bestRiderTrip = riderTrips.get(0);
+        Log.d(TAG, "onRiderTripsFound: sorted. best match user id: " + bestRiderTrip.getLocationData().getUserID());
+        switchToChat(bestRiderTrip.getLocationData().getUserID());
     }
 
     private void getLocationPermission(){

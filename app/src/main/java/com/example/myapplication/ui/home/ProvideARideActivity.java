@@ -171,7 +171,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         Log.d(TAG, "addRiderToDB: adding rider to DB ");
         LocationDB locationDB = new LocationDB();
 //        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
-        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746, 91.89290421460741");
+        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746,91.89290421460741");
     }
 
 
@@ -199,9 +199,9 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         Log.d(TAG, "init: initializing");
         GoogleMapAPIHandler.setApiKey(API_KEY);
         // call after confirm
-        addRiderToDB();
-
-        searchPassenger();
+//        addRiderToDB();
+//
+//        searchPassenger();
 
 
         Log.d(TAG, "init: initializing Places");
