@@ -15,6 +15,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
@@ -34,6 +35,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GoogleMapAPIHandler {
+    private static final LatLngBounds BANGLADESH_LAT_LNG_BOUDNS = new LatLngBounds(
+            new LatLng(20.743550, 88.043370), // Southwest corner
+            new LatLng(26.631450, 92.672720)  // Northeast corner
+    );
     private static PlacesClient mPlacesClient;
     private static final String TAG = "GoogleMapAPIHandler";
     private static String API_KEY;
@@ -48,6 +53,7 @@ public class GoogleMapAPIHandler {
 
     public static void setAdapter(AutoCompleteTextView mAutoCompleteTextView, PlacesAutoCompleteAdapter mPlacesAutoCompleteAdapter, String s, PlacesClient mPlacesClient) {
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                .setCountries("BD")
                 .setQuery(s.toString())
                 .build();
 

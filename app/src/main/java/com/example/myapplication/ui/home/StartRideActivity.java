@@ -117,6 +117,10 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             new LatLng(-40, -168),
             new LatLng(71, 136)
     );
+    private static final LatLngBounds BANGLADESH_LAT_LNG_BOUNDS = new LatLngBounds(
+            new LatLng(20.743550, 88.043370),
+            new LatLng(26.631450, 92.672720)
+    );
 
     private static final int MAX_SEARCH_COUNT = 5;
     private static final int SEARCH_INTERVAL = 10000;
