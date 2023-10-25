@@ -325,7 +325,7 @@ public class LocationDB {
         database.getReference("bookedPassengerRider").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String passengerId = null;
+                LocationData passengerData = null;
                 
                 Log.d(TAG, "onDataChange: loop er age ");
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
@@ -336,10 +336,27 @@ public class LocationDB {
                     String id[] = key.split("@");
                     Log.d(TAG, "onDataChange: " + id[0] + id[1] );
 
+                    String passengerId, passengerStart, passengerDestination;
                     // Check your condition
                     if (UID.equals(id[1])) {
+                        Log.d(TAG, "onDataChange: match found");
                         // Condition satisfied, traverse its children
                         passengerId=id[0];
+                        DataSnapshot passengerRouteSnapshot = childSnapshot.child("passengerRoute");
+                        if (passengerRouteSnapshot.exists()) {
+                            Log.d(TAG, "onDataChange: data exists in passengerRoute");
+                            passengerStart = passengerRouteSnapshot.child("Start").getValue(String.class);
+                            passengerDestination = passengerRouteSnapshot.child("Destination").getValue(String.class);
+
+                            Log.d(TAG, "onDataChange: " + passengerStart + " -> " + passengerDestination);
+
+                            passengerData = new LocationData(
+                                    "Passenger",
+                                    passengerStart,
+                                    passengerId,
+                                    passengerDestination
+                            );
+                        }
                         break;
 //                        for (DataSnapshot grandChildSnapshot : childSnapshot.getChildren()) {
 //                            // Access the child's child data here using grandChildSnapshot
@@ -349,7 +366,7 @@ public class LocationDB {
                     }
                 }
 
-                callback.onPassengerFound(passengerId);
+                callback.onPassengerFound(passengerData);
             }
 
             @Override

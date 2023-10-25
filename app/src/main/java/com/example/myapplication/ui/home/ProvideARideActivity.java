@@ -64,6 +64,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.maps.android.PolyUtil;
 
 import org.json.JSONArray;
@@ -136,7 +137,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private TextView mSearchingTextView;
     private LatLng destLatLng;
     private int numberOfTimesSearched;
-    private String matchedPassengerId;
+    private LocationData matchedPassengerData;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -148,7 +149,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         mConfirmButton = findViewById(R.id.confirm_button);
         mSearchingTextView = findViewById(R.id.searching_text_view);
         numberOfTimesSearched = 0;
-        matchedPassengerId = null;
+        matchedPassengerData = null;
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -205,22 +206,35 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private void searchPassenger() {
         Log.d(TAG, "searchPassenger: starting the search for passenger");
         LocationDB locationDB = new LocationDB();
-        locationDB.getBookedPassenger(passengerId -> {
-            if(passengerId == null) {
+        locationDB.getBookedPassenger(passengerData -> {
+            if(passengerData == null) {
+                Log.d(TAG, "searchPassenger: passengerData is null.");
                 return;
             }
 
-            Log.d(TAG, "searchPassenger: matched passenger id: " + passengerId);
-            matchedPassengerId = passengerId;
+            Log.d(TAG, "searchPassenger: matched passenger id: " + passengerData.getUserID());
+            matchedPassengerData = passengerData;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                    intent.putExtra("UID" , passengerId);
-                    startActivity(intent);
+                    switchToChat();
                 }
             });
         });
+    }
+
+    private void switchToChat() {
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+
+        intent.putExtra("passenger_id", matchedPassengerData.getUserID());
+        intent.putExtra("passenger_start_location", currentLocation.getLatitude() + "," + currentLocation.getLongitude());
+        intent.putExtra("passenger_end_location", destLatLng.latitude + "," + destLatLng.longitude);
+
+        intent.putExtra("rider_id", FirebaseAuth.getInstance().getUid());
+        intent.putExtra("rider_start_location", currentLocation.getLatitude() + "," + currentLocation.getLongitude());
+        intent.putExtra("rider_end_location", destLatLng.latitude + "," + destLatLng.longitude);
+
+        startActivity(intent);
     }
 
     private void init() {
@@ -305,7 +319,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                     Log.d(TAG, "run: polling passenger info: current thread: " + Thread.currentThread().getName());
                     while(numberOfTimesSearched <= MAX_SEARCH_COUNT) {
                         numberOfTimesSearched++;
-                        if(matchedPassengerId != null) return;
+                        if(matchedPassengerData != null) return;
                         Log.d(TAG, "run: searching for rider, and going to sleep for some time.");
                         searchPassenger();
                         Thread.sleep(SEARCH_INTERVAL);
