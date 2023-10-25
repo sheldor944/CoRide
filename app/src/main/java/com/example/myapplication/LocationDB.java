@@ -71,6 +71,12 @@ public class LocationDB {
             System.out.println(e);
         }
     }
+    public void updatePendingDriverLocation(String currentLocation )
+    {
+
+        database.getReference().child("PendingRider").child(userId).child("start").setValue(currentLocation);
+
+    }
 
     public void insetIntoPassengerRider(String PID , String RID){
 
@@ -87,25 +93,26 @@ public class LocationDB {
 
     }
 
-    public void updateLocation(String location , String type )
-    {
-        Log.d("updateLocation", "updateLocation: " + location);
 
-        try {
-            Log.d("updateLocation", "updateLocation: 2  " + location);
-
-//            databaseReference.child(userId).child("location").setValue(location);
-            databaseReference.child(userId).child("location").child(type).setValue(location);
-
-            System.out.println(userId);
-            Log.d("updateLocation", "updateLocation: " + userId + location);
-
-        }
-        catch (Exception e)
-        {
-            System.out.println(e);
-        }
-    }
+//    public void updateLocation(String location , String type )
+//    {
+//        Log.d("updateLocation", "updateLocation: " + location);
+//
+//        try {
+//            Log.d("updateLocation", "updateLocation: 2  " + location);
+//
+////            databaseReference.child(userId).child("location").setValue(location);
+//            databaseReference.child(userId).child("location").child(type).setValue(location);
+//
+//            System.out.println(userId);
+//            Log.d("updateLocation", "updateLocation: " + userId + location);
+//
+//        }
+//        catch (Exception e)
+//        {
+//            System.out.println(e);
+//        }
+//    }
 
     public void getLocation(String type, LocationCallback callback)
     {
@@ -120,6 +127,7 @@ public class LocationDB {
                     String endLocation = userSnapshot.child("Destination").getValue(String.class);
                     // Do something with the user's location
                     locationDataArrayList.add(new LocationData("Rider" , startLocation , userId , endLocation));
+                    Log.d(TAG, "onDataChange:  gg"+ startLocation);
                 }
                 callback.onLocationDataReceived(locationDataArrayList);
             }

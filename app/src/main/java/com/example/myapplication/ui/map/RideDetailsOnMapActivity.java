@@ -178,7 +178,7 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         Log.d(TAG, "addRiderToDB: adding rider to DB ");
         LocationDB locationDB = new LocationDB();
 //        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
-        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746, 91.89290421460741");
+        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746,91.89290421460741");
     }
     private void init() {
         Log.d(TAG, "init: initializing");
