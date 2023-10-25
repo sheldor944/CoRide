@@ -11,7 +11,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -157,5 +159,29 @@ public class LoginActivity extends AppCompatActivity {
 
         // Dismiss the progressbar when the new intent has loaded
 //        progressDialog.dismiss();
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Handle the "Yes" button click
+                        // Add your logic here to perform the action
+                        LoginActivity.this.finishAffinity();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Handle the "No" button click or simply dismiss the dialog
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
