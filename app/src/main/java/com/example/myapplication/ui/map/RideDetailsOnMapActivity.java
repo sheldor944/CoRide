@@ -219,44 +219,6 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
             Places.initialize(getApplicationContext(), API_KEY);
         }
         mPlacesClient = Places.createClient(this);
-        mPlacesAutoCompleteAdapter = new PlacesAutoCompleteAdapter(this, mPlacesClient);
-
-        Log.d(TAG, "init: Setting adapter");
-        mSearchText.setAdapter(mPlacesAutoCompleteAdapter);
-
-        mSearchText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GoogleMapAPIHandler.setAdapter(mSearchText, mPlacesAutoCompleteAdapter, s.toString(), mPlacesClient);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-
-        mSearchText.setOnItemClickListener((parent, view, position, id) -> {
-            AutocompletePrediction autocompletePrediction = mPlacesAutoCompleteAdapter.getItem(position);
-            if(autocompletePrediction == null) {
-                Log.d(TAG, "init: Selected item is null");
-                return;
-            }
-            mSearchText.setText(autocompletePrediction.getFullText(null));
-            mSearchText.dismissDropDown();
-//            GoogleMapAPIHandler.fetchPlaceAndMoveCamera(
-//                    autocompletePrediction,
-//                    mPlacesClient,
-//                    currentLocation,
-//                    DEFAULT_ZOOM,
-//                    mMap,
-//                    latLng -> {
-//
-//                    }
-//            );
-            hideSoftKeyboard(view);
-        });
 
         mGPS.setOnClickListener(view -> {
             GoogleMapAPIHandler.moveCamera(
@@ -273,20 +235,24 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
                 mMap
         );
 
+        initMenuItems();
+    }
+
+    private void initMenuItems() {
         MenuItem cancelItem = mNavigationView.getMenu().findItem(R.id.cancel_ride);
         cancelItem.setOnMenuItemClickListener(item -> {
-            // TODO: ২৬/১০/২৩ : user clicked on cancel ride, handle it 
+            // TODO: ২৬/১০/২৩ : user clicked on cancel ride, handle it
             Log.d(TAG, "init: user clicked on cancel ride");
             return true;
         });
-        
+
         MenuItem pickedUpItem = mNavigationView.getMenu().findItem(R.id.picked_up_passenger);
         pickedUpItem.setOnMenuItemClickListener(item -> {
-            // TODO: ২৬/১০/২৩ : picked up passenger, now? 
+            // TODO: ২৬/১০/২৩ : picked up passenger, now?
             Log.d(TAG, "init: user clicked on picked up passenger");
-            return true; 
+            return true;
         });
-        
+
         MenuItem chatItem = mNavigationView.getMenu().findItem(R.id.move_to_chat);
         chatItem.setOnMenuItemClickListener(item -> {
             Log.d(TAG, "init: clicked on chat button");
@@ -301,10 +267,10 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
             startActivity(intent);
             return true;
         });
-        
+
         MenuItem completedRideItem = mNavigationView.getMenu().findItem(R.id.complete_ride);
         completedRideItem.setOnMenuItemClickListener(item -> {
-            // TODO: ২৬/১০/২৩ : completed ride, now?  
+            // TODO: ২৬/১০/২৩ : completed ride, now?
             Log.d(TAG, "init: user clicked on completed ride");
             return true;
         });
