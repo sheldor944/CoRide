@@ -1,19 +1,23 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.data.Message;
+import com.example.myapplication.ui.map.RideDetailsOnMapActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -58,11 +63,19 @@ public class ChatActivity extends AppCompatActivity {
     ArrayList<Message> messagesArrayList;
     MessageAdapter msgAdapter;
 
+    private CircleImageView mMapIcon;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        mMapIcon = findViewById(R.id.map_image);
+        mMapIcon.setOnClickListener(view -> {
+            Intent intent = new Intent(this, RideDetailsOnMapActivity.class);
+            startActivity(intent);
+        });
 
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -162,10 +175,7 @@ public class ChatActivity extends AppCompatActivity {
 
                                             }
                                         });
-
-
                             }
-
                         });
             }
         });
