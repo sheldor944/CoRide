@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -63,6 +64,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.material.navigation.NavigationView;
 import com.google.maps.android.PolyUtil;
 
 import com.example.myapplication.ui.home.GoogleMapAPIHandler;
@@ -141,7 +143,8 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
     private String mRiderStartLocation;
     private String mRiderEndLocation;
     private AppCompatButton mMoveToChatButton;
-
+    
+    private NavigationView mNavigationView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -151,6 +154,7 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mMoveToChatButton = findViewById(R.id.chat_button);
+        mNavigationView = findViewById(R.id.ride_nav_view);
 
         getInformationFromIntent();
 
@@ -272,6 +276,34 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         );
 
         mMoveToChatButton.setOnClickListener(view -> {
+//            Log.d(TAG, "init: clicked on chat button");
+//            Intent intent = new Intent(this, ChatActivity.class);
+//            intent.putExtra("passenger_id", mPassengerId);
+//            intent.putExtra("passenger_start_location", mPassengerStartLocation);
+//            intent.putExtra("passenger_end_location", mPassengerEndLocation);
+//
+//            intent.putExtra("rider_id", mRiderId);
+//            intent.putExtra("rider_start_location", mRiderStartLocation);
+//            intent.putExtra("rider_end_location", mRiderEndLocation);
+//            startActivity(intent);
+        });
+
+        MenuItem cancelItem = mNavigationView.getMenu().findItem(R.id.cancel_ride);
+        cancelItem.setOnMenuItemClickListener(item -> {
+            // TODO: ২৬/১০/২৩ : user clicked on cancel ride, handle it 
+            Log.d(TAG, "init: user clicked on cancel ride");
+            return true;
+        });
+        
+        MenuItem pickedUpItem = mNavigationView.getMenu().findItem(R.id.picked_up_passenger);
+        pickedUpItem.setOnMenuItemClickListener(item -> {
+            // TODO: ২৬/১০/২৩ : picked up passenger, now? 
+            Log.d(TAG, "init: user clicked on picked up passenger");
+            return true; 
+        });
+        
+        MenuItem chatItem = mNavigationView.getMenu().findItem(R.id.move_to_chat);
+        chatItem.setOnMenuItemClickListener(item -> {
             Log.d(TAG, "init: clicked on chat button");
             Intent intent = new Intent(this, ChatActivity.class);
             intent.putExtra("passenger_id", mPassengerId);
@@ -282,6 +314,14 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
             intent.putExtra("rider_start_location", mRiderStartLocation);
             intent.putExtra("rider_end_location", mRiderEndLocation);
             startActivity(intent);
+            return true;
+        });
+        
+        MenuItem completedRideItem = mNavigationView.getMenu().findItem(R.id.complete_ride);
+        completedRideItem.setOnMenuItemClickListener(item -> {
+            // TODO: ২৬/১০/২৩ : completed ride, now?  
+            Log.d(TAG, "init: user clicked on completed ride");
+            return true;
         });
     }
 
