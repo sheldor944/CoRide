@@ -20,24 +20,10 @@
         android:text="Name"
         android:fontFamily="@font/josefin_sans_regular"/>
 
-    <EditText
-        android:id="@+id/name_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=" "
-        android:textSize="20sp"
-        android:fontFamily="@font/josefin_sans_regular"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Email"
-        android:textSize="14sp"
-        android:fontFamily="@font/josefin_sans_regular"/>
 
     <EditText
-        android:id="@+id/email_edit_text"
+        android:id="@+id/nameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=" "
@@ -53,7 +39,7 @@
         android:fontFamily="@font/josefin_sans_regular"/>
 
     <EditText
-        android:id="@+id/phone_edit_text"
+        android:id="@+id/phoneEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=" "

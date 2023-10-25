@@ -33,11 +33,23 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
         <activity
+            android:name=".ui.dashboard.RiderHistory.RiderHistoryDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.PassengerHistoryDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.PassengerHisotryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.dashboard.RiderHistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.map.RideDetailsOnMapActivity"
             android:exported="false" />
         <activity
             android:name=".ui.notifications.UpdateProfileActivity"
-            android:label="Update Profile"></activity>
+            android:label="Update Profile" />
         <activity
             android:name=".ui.introduction.IntroductionActivity"
             android:exported="false" />

@@ -182,10 +182,15 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         Log.d(TAG, "addRiderToDB: src: " + currentLocation.getLatitude() + " " + currentLocation.getLongitude());
         Log.d(TAG, "addRiderToDB: dest: " + destLatLng.latitude + " " + destLatLng.longitude);
         LocationDB locationDB = new LocationDB();
+
+//        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
+        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746,91.89290421460741");
+
         locationDB.addToPendingRider(
                 currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
                 destLatLng.latitude + "," + destLatLng.longitude
         );
+
     }
 
 
