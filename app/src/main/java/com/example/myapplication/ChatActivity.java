@@ -51,6 +51,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ChatActivity extends AppCompatActivity {
+    private static final String TAG = "ChatActivity";
     String receiverUID, receiverName, SenderUID;
     TextView receiver;
     FirebaseDatabase database;
@@ -65,27 +66,36 @@ public class ChatActivity extends AppCompatActivity {
 
     private CircleImageView mMapIcon;
 
+    private String mUserId;
+    private String mPassengerId;
+    private String mPassengerStartLocation;
+    private String mPassengerEndLocation;
+
+    private String mRiderId;
+    private String mRiderStartLocation;
+    private String mRiderEndLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        mMapIcon = findViewById(R.id.map_image);
-        mMapIcon.setOnClickListener(view -> {
-            Intent intent = new Intent(this, RideDetailsOnMapActivity.class);
-            startActivity(intent);
-        });
+        getInformationFromIntent();
 
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
+        mUserId = auth.getUid();
+
         // data fetching system should be implemented
         // TODO: 10/22/2023
         //receiver id should come from database or something
-        receiverUID = getIntent().getStringExtra("UID");
+//        receiverUID = getIntent().getStringExtra("UID");
 
         receiverName = "messi";
-//        receiverUID = "ItIDT7jlUDOMRheIs4fif8DTc0A2";
+        receiverUID = null;
+        if(mPassengerId != mUserId) receiverUID = mPassengerId;
+        else receiverUID = mRiderId;
 
         messagesArrayList = new ArrayList<>();
 
@@ -180,8 +190,26 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        mMapIcon = findViewById(R.id.map_image);
+        mMapIcon.setOnClickListener(view -> {
+            Intent intent = new Intent(this, RideDetailsOnMapActivity.class);
+            startActivity(intent);
+        });
     }
 
+    private void getInformationFromIntent() {
+        Intent intent = getIntent();
+        mPassengerId = intent.getStringExtra("passenger_id");
+        mPassengerStartLocation = intent.getStringExtra("passenger_start_location");
+        mPassengerEndLocation = intent.getStringExtra("passenger_end_location");
 
+        mRiderId = intent.getStringExtra("rider_id");
+        mRiderStartLocation = intent.getStringExtra("rider_start_location");
+        mRiderEndLocation = intent.getStringExtra("rider_end_location");
 
+        Log.d(TAG, "getInformationFromIntent: passenger: " + mPassengerId + " "
+                + mPassengerStartLocation + " " + mPassengerEndLocation);
+        Log.d(TAG, "getInformationFromIntent: rider: " + mRiderId + " "
+                + mRiderStartLocation + " " + mRiderEndLocation);
+    }
 }

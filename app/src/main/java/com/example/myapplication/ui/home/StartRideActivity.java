@@ -321,7 +321,15 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void run() {
                 Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                intent.putExtra("UID", riderUID);
+
+                intent.putExtra("passenger_id", mUserId);
+                intent.putExtra("passenger_start_location", currentLocation.getLatitude() + "," + currentLocation.getLongitude());
+                intent.putExtra("passenger_end_location", destLatLng.latitude + "," + destLatLng.longitude);
+
+                intent.putExtra("rider_id", riderUID);
+                intent.putExtra("rider_start_location", bestRiderTrip.getLocationData().getStartLocation());
+                intent.putExtra("rider_end_location", bestRiderTrip.getLocationData().getEndLocation());
+
                 startActivity(intent);
             }
         });
