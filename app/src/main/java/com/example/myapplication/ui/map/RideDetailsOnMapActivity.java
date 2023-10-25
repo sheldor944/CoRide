@@ -231,7 +231,7 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
 
         GoogleMapAPIHandler.displayRoute(
                 GoogleMapAPIHandler.getLatLngFromString(mPassengerStartLocation, ","),
-                GoogleMapAPIHandler.getLatLngFromString(mRiderEndLocation, ","),
+                GoogleMapAPIHandler.getLatLngFromString(mRiderStartLocation, ","),
                 mMap
         );
 
