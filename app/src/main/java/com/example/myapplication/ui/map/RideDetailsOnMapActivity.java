@@ -140,6 +140,7 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
     private String mRiderId;
     private String mRiderStartLocation;
     private String mRiderEndLocation;
+    private AppCompatButton mMoveToChatButton;
 
 
     @Override
@@ -149,6 +150,7 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         setContentView(R.layout.activity_ride_details_on_map);
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
+        mMoveToChatButton = findViewById(R.id.chat_button);
 
         getInformationFromIntent();
 
@@ -261,6 +263,25 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
                     "My Location",
                     mMap
             );
+        });
+
+        GoogleMapAPIHandler.displayRoute(
+                GoogleMapAPIHandler.getLatLngFromString(mPassengerStartLocation, ","),
+                GoogleMapAPIHandler.getLatLngFromString(mRiderEndLocation, ","),
+                mMap
+        );
+
+        mMoveToChatButton.setOnClickListener(view -> {
+            Log.d(TAG, "init: clicked on chat button");
+            Intent intent = new Intent(this, ChatActivity.class);
+            intent.putExtra("passenger_id", mPassengerId);
+            intent.putExtra("passenger_start_location", mPassengerStartLocation);
+            intent.putExtra("passenger_end_location", mPassengerEndLocation);
+
+            intent.putExtra("rider_id", mRiderId);
+            intent.putExtra("rider_start_location", mRiderStartLocation);
+            intent.putExtra("rider_end_location", mRiderEndLocation);
+            startActivity(intent);
         });
     }
 

@@ -104,7 +104,7 @@ public class GoogleMapAPIHandler {
                 });
     }
 
-    private static void displayRoute(LatLng srcLatLng, LatLng destLatLng, GoogleMap googleMap) {
+    public static void displayRoute(LatLng srcLatLng, LatLng destLatLng, GoogleMap googleMap) {
         googleMap.clear();
         RouteFetcherThread routeFetcherThread = new RouteFetcherThread(
                 API_KEY,
@@ -230,6 +230,14 @@ public class GoogleMapAPIHandler {
                 new MarkerOptions()
                         .position(latLng)
                         .title(title)
+        );
+    }
+
+    public static LatLng getLatLngFromString(String locationString, String separator) {
+        String[] location = locationString.split(separator);
+        return new LatLng(
+                Double.parseDouble(location[0]),
+                Double.parseDouble(location[1])
         );
     }
 }
