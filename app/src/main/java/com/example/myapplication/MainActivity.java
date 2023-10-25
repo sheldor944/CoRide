@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView = findViewById(R.id.left_nav_view);
         mLogoutItem = mNavigationView.getMenu().findItem(R.id.logout);
         mLogoutItem.setOnMenuItemClickListener(item -> {
-            askForConfirmation(new PermissionCallback() {
+            askForConfirmation("Are you sure you want to logout?", new PermissionCallback() {
                 @Override
                 public void onPermit() {
                     FirebaseAuth.getInstance().signOut();
@@ -129,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void askForConfirmation(PermissionCallback callback) {
+    private void askForConfirmation(String query, PermissionCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Are you sure?")
+        builder.setMessage(query)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked "Yes," handle the action here
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: ");
-        askForConfirmation(new PermissionCallback() {
+        askForConfirmation("Are you sure you want to exit?", new PermissionCallback() {
             @Override
             public void onPermit() {
                 MainActivity.this.finishAffinity();
