@@ -80,14 +80,24 @@ public class LocationDB {
 
     }
 
-    public void insertIntoPassengerRider(String PID , String RID){
+    public void insertIntoPassengerRider(LocationData passengerData, LocationData riderData){
 
         try{
+            String PID = passengerData.getUserID();
+            String RID = riderData.getUserID();
             Log.d(TAG, "insetIntoPassengerRider: "+ PID+" "+ RID);
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Start").setValue("24,23");
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Destination").setValue("24,23.5");
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Start").setValue("24,23");
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Destination").setValue("24,23.5");
+            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Start").setValue(
+                    passengerData.getStartLocation()
+            );
+            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Destination").setValue(
+                    passengerData.getEndLocation()
+            );
+            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Start").setValue(
+                    riderData.getStartLocation()
+            );
+            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Destination").setValue(
+                    riderData.getEndLocation()
+            );
         }
         catch (Exception e){
             Log.d(TAG, "insetIntoPassengerRider: " + e) ;

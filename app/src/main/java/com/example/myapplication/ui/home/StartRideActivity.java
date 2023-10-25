@@ -141,6 +141,8 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private FirebaseAuth currentUser;
     private String mUserId;
     private LatLng destLatLng;
+    private Thread RiderSearchThread;
+    private RiderTrip bestRiderTrip = null;
 
 
     @Override
@@ -260,13 +262,53 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             mFindARideLinearLayout.setVisibility(View.GONE);
             mSearchingARideLayout.setVisibility(View.VISIBLE);
 
-            getRiderInformation();
+//            getRiderInformation();
+            pollRiderInfo();
         });
     }
-    private void insertIntoBookedPassengerRider(String RID)
+
+    private void pollRiderInfo() {
+        RiderSearchThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "pollRiderInfo: current thread: " + Thread.currentThread().getName());
+                try {
+                    while(numberOfTimesSearchedForRiders <= MAX_SEARCH_COUNT) {
+                        numberOfTimesSearchedForRiders++;
+                        if(bestRiderTrip != null) break;
+                        getRiderInformation();
+                        Log.d(TAG, "pollRiderInfo: going to search again after some time.");
+                        Thread.sleep(SEARCH_INTERVAL);
+                    }
+                    if(numberOfTimesSearchedForRiders > MAX_SEARCH_COUNT) {
+                        Log.d(TAG, "pollRiderInfo: no passenger at all. aborting search.");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(StartRideActivity.this, "Unfortunately, no passenger found!", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(StartRideActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "pollRiderInfo: InterruptedException: " + e.getMessage());
+                }
+            }
+        });
+        RiderSearchThread.start();
+    }
+
+    private void insertIntoBookedPassengerRider(LocationData riderData)
     {
         LocationDB locationDB = new LocationDB() ;
-        locationDB.insertIntoPassengerRider(mUserId, RID);
+        LocationData passengerData = new LocationData(
+                "Passenger",
+                currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
+                mUserId,
+                destLatLng.latitude + "," + destLatLng.longitude
+        );
+        locationDB.insertIntoPassengerRider(passengerData, riderData);
     }
 
     private void switchToChat(String riderUID)
@@ -282,15 +324,12 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void getRiderInformation() {
+        if(bestRiderTrip != null) return;
         LocationDB locationDB = new LocationDB();
         locationDB.getLocation("Rider", locationDataList -> {
             Log.d(TAG, "getRiderInformation: Number of pending riders: " + locationDataList.size());
 
-            if(locationDataList.size() == 0) {
-                searchAgainAfterSomeTime();
-                return;
-            }
-
+            if(locationDataList.size() == 0) return;
             ArrayList <RiderTrip> riderTrips = new ArrayList<>();
             for(LocationData locationData : locationDataList) {
                 Log.d(TAG, "getRiderInformation: " + locationData.getUserID());
@@ -316,30 +355,6 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    private void searchAgainAfterSomeTime() {
-        Log.d(TAG, "searchAgainAfterSomeTime: current thread: " + Thread.currentThread().getName());
-        Log.d(TAG, "searchAgainAfterSomeTime: no passenger found. going to search again after some time.");
-        try {
-            numberOfTimesSearchedForRiders++;
-            if(numberOfTimesSearchedForRiders > MAX_SEARCH_COUNT) {
-                Log.d(TAG, "searchAgainAfterSomeTime: no passenger at all. aborting search.");
-                Toast.makeText(this, "Unfortunately, no passenger found!", Toast.LENGTH_LONG).show();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(StartRideActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                });
-                return;
-            }
-            Thread.sleep(SEARCH_INTERVAL);
-            getRiderInformation();
-        } catch (InterruptedException e) {
-            Log.d(TAG, "searchAgainAfterSomeTime: InterruptedException: " + e.getMessage());
-        }
-    }
-
     private void onRiderTripsFound(ArrayList<RiderTrip> riderTrips) {
 //        Working on this from another thread, I think
         Log.d(TAG, "onRiderTripsFound: going to sort rider trips");
@@ -349,7 +364,6 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                 return riderTrip.getTotalDistance() - t1.getTotalDistance();
             }
         });
-        RiderTrip bestRiderTrip = null;
         for(RiderTrip riderTrip : riderTrips) {
             LocationDB locationDB = new LocationDB();
             Log.d(TAG, "onRiderTripsFound: checking: " + riderTrip.getLocationData().getUserID());
@@ -359,11 +373,10 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             }
         }
         if(bestRiderTrip == null) {
-            searchAgainAfterSomeTime();
             return;
         }
         Log.d(TAG, "onRiderTripsFound: sorted. best match user id: " + bestRiderTrip.getLocationData().getUserID());
-        insertIntoBookedPassengerRider(bestRiderTrip.getLocationData().getUserID());
+        insertIntoBookedPassengerRider(bestRiderTrip.getLocationData());
         switchToChat(bestRiderTrip.getLocationData().getUserID());
     }
 

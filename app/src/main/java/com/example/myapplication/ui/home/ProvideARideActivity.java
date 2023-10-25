@@ -136,6 +136,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private TextView mSearchingTextView;
     private LatLng destLatLng;
     private int numberOfTimesSearched;
+    private String matchedPassengerId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,6 +148,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         mConfirmButton = findViewById(R.id.confirm_button);
         mSearchingTextView = findViewById(R.id.searching_text_view);
         numberOfTimesSearched = 0;
+        matchedPassengerId = null;
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -205,11 +207,11 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         LocationDB locationDB = new LocationDB();
         locationDB.getBookedPassenger(passengerId -> {
             if(passengerId == null) {
-                searchAgainAfterSomeTime();
                 return;
             }
 
-            Log.d(TAG, "searchPassenger: " + passengerId);
+            Log.d(TAG, "searchPassenger: matched passenger id: " + passengerId);
+            matchedPassengerId = passengerId;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -219,30 +221,6 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                 }
             });
         });
-    }
-
-    private void searchAgainAfterSomeTime() {
-        Log.d(TAG, "searchAgainAfterSomeTime: current thread: " + Thread.currentThread().getName());
-        Log.d(TAG, "searchAgainAfterSomeTime: no passenger found. going to search again after some time.");
-        try {
-            numberOfTimesSearched++;
-            if(numberOfTimesSearched > MAX_SEARCH_COUNT) {
-                Log.d(TAG, "searchAgainAfterSomeTime: no passenger at all. aborting search.");
-                Toast.makeText(this, "Unfortunately, no passenger found!", Toast.LENGTH_LONG).show();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(ProvideARideActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                });
-                return;
-            }
-            Thread.sleep(SEARCH_INTERVAL);
-            searchPassenger();
-        } catch (InterruptedException e) {
-            Log.d(TAG, "searchAgainAfterSomeTime: InterruptedException: " + e.getMessage());
-        }
     }
 
     private void init() {
@@ -313,8 +291,44 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             mSearchingTextView.setVisibility(View.VISIBLE);
 
             addRiderToDB();
-            searchPassenger();
+//            searchPassenger();
+            pollPassengerInfo();
         });
+    }
+
+    private void pollPassengerInfo() {
+        Log.d(TAG, "pollPassengerInfo: ");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG, "run: polling passenger info: current thread: " + Thread.currentThread().getName());
+                    while(numberOfTimesSearched <= MAX_SEARCH_COUNT) {
+                        numberOfTimesSearched++;
+                        if(matchedPassengerId != null) return;
+                        Log.d(TAG, "run: searching for rider, and going to sleep for some time.");
+                        searchPassenger();
+                        Thread.sleep(SEARCH_INTERVAL);
+                    }
+                    if(numberOfTimesSearched > MAX_SEARCH_COUNT) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(
+                                        ProvideARideActivity.this,
+                                        "Unfortunately, no passenger found",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                                Intent intent = new Intent(ProvideARideActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "run: Thread.sleep exception: " + e.getMessage());
+                }
+            }
+        }).start();
     }
 
     private void getLocationPermission(){
