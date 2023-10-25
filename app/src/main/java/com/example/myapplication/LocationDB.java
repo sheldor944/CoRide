@@ -259,7 +259,7 @@ public class LocationDB {
                             RiderStart = riderRouteSnapshot.child("Start").getValue(String.class);
                             RiderDestination = riderRouteSnapshot.child("Destination").getValue(String.class);
                         }
-                        result.add(new Pair<>("type" , "Passenger"));
+                        result.add(new Pair<>("type" , "Rider"));
 
                         result.add(new Pair<>("passengerName" , "Passenger"));
                         result.add(new Pair<>("riderName" , "Rider"));
