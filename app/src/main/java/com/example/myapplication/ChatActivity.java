@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
@@ -94,7 +95,7 @@ public class ChatActivity extends AppCompatActivity {
 
         receiverName = "messi";
         receiverUID = null;
-        if(mPassengerId != mUserId) receiverUID = mPassengerId;
+        if(!mPassengerId.equals(mUserId)) receiverUID = mPassengerId;
         else receiverUID = mRiderId;
 
         messagesArrayList = new ArrayList<>();
@@ -193,6 +194,14 @@ public class ChatActivity extends AppCompatActivity {
         mMapIcon = findViewById(R.id.map_image);
         mMapIcon.setOnClickListener(view -> {
             Intent intent = new Intent(this, RideDetailsOnMapActivity.class);
+
+            intent.putExtra("passenger_id", mPassengerId);
+            intent.putExtra("passenger_start_location", mPassengerStartLocation);
+            intent.putExtra("passenger_end_location", mPassengerEndLocation);
+
+            intent.putExtra("rider_id", mRiderId);
+            intent.putExtra("rider_start_location", mRiderStartLocation);
+            intent.putExtra("rider_end_location", mRiderEndLocation);
             startActivity(intent);
         });
     }

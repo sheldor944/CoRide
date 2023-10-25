@@ -105,7 +105,7 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         }
     }
 
-    private static final String TAG = "ProvideARideActivity";
+    private static final String TAG = "RideDetailsOnMapActivity";
     private static final String API_KEY = "AIzaSyDICnj_kc22dTrmOIUJg46B5fOgu6QhxFM";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -133,6 +133,14 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
     private LinearLayout mFindARideLinearLayout;
     private LinearLayout mSearchingARideLayout;
 
+    private String mPassengerId;
+    private String mPassengerStartLocation;
+    private String mPassengerEndLocation;
+
+    private String mRiderId;
+    private String mRiderStartLocation;
+    private String mRiderEndLocation;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,9 +150,27 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
 
+        getInformationFromIntent();
+
         if(isServicesOK()) {
             getLocationPermission();
         }
+    }
+
+    private void getInformationFromIntent() {
+        Intent intent = getIntent();
+        mPassengerId = intent.getStringExtra("passenger_id");
+        mPassengerStartLocation = intent.getStringExtra("passenger_start_location");
+        mPassengerEndLocation = intent.getStringExtra("passenger_end_location");
+
+        mRiderId = intent.getStringExtra("rider_id");
+        mRiderStartLocation = intent.getStringExtra("rider_start_location");
+        mRiderEndLocation = intent.getStringExtra("rider_end_location");
+
+        Log.d(TAG, "getInformationFromIntent: passenger: " + mPassengerId + " "
+                + mPassengerStartLocation + " " + mPassengerEndLocation);
+        Log.d(TAG, "getInformationFromIntent: rider: " + mRiderId + " "
+                + mRiderStartLocation + " " + mRiderEndLocation);
     }
 
     public boolean isServicesOK() {
