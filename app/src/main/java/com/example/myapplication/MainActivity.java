@@ -4,9 +4,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.myapplication.helper.PermissionCallback;
 import com.example.myapplication.ui.introduction.IntroductionActivity;
 import com.example.myapplication.ui.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -27,6 +29,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     private ActivityMainBinding binding;
     private DrawerLayout mDrawerLayout;
@@ -76,7 +79,14 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView = findViewById(R.id.left_nav_view);
         mLogoutItem = mNavigationView.getMenu().findItem(R.id.logout);
         mLogoutItem.setOnMenuItemClickListener(item -> {
-            askForConfirmation();
+            askForConfirmation(new PermissionCallback() {
+                @Override
+                public void onPermit() {
+                    FirebaseAuth.getInstance().signOut();
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
             return true;
         });
 
@@ -119,16 +129,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void askForConfirmation() {
+    private void askForConfirmation(PermissionCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setMessage("Are you sure?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked "Yes," handle the action here
                         // For example, delete something or proceed with an action
-                        FirebaseAuth.getInstance().signOut();
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent);
+                        Log.d(TAG, "onClick: clicked on yes");
+                        callback.onPermit();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -148,5 +157,16 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        askForConfirmation(new PermissionCallback() {
+            @Override
+            public void onPermit() {
+                MainActivity.this.finishAffinity();
+            }
+        });
     }
 }
