@@ -163,6 +163,9 @@ public class LocationDB {
                             for (DataSnapshot pairSnapshot : recordIdSnapshot.getChildren()) {
                                 String first = pairSnapshot.child("first").getValue(String.class);
                                 String second = pairSnapshot.child("second").getValue(String.class);
+                                if(first.equals("type")){
+                                    second = "Passenger";
+                                }
                                 System.out.println(first + "  ono " + second);
 
                                 if (first != null && second != null) {
@@ -180,6 +183,9 @@ public class LocationDB {
                             for (DataSnapshot pairSnapshot : recordIdSnapshot.getChildren()) {
                                 String first = pairSnapshot.child("first").getValue(String.class);
                                 String second = pairSnapshot.child("second").getValue(String.class);
+                                if(first.equals("type")){
+                                    second = "Rider";
+                                }
                                 System.out.println(first + "  ono " + second);
 
                                 if (first != null && second != null) {

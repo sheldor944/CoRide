@@ -66,7 +66,7 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                             fare = p.second;
                         }
                     }
-                    if(type.equals("Ridere")){
+                    if(type.equals("Rider")){
                         continue;
                     }
                     System.out.println(riderName + passengerName + from + to + fare );
