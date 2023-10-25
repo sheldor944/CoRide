@@ -65,35 +65,6 @@
             android:scaleType="centerInside"
             android:src="@drawable/ic_gps"></ImageView>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/picked_up_passenger_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/chat_button"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_button"
-            android:padding="10dp"
-            android:text="PICKED UP PASSENGER"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/chat_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_button"
-            android:padding="10dp"
-            android:text="MOVE TO CHAT"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-
     </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView
