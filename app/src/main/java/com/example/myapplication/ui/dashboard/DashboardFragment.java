@@ -25,18 +25,6 @@ import java.util.List;
 public class DashboardFragment extends Fragment {
     View root;
 
-//    public void goToEmail(View view)
-//    {
-//        String emailAddress = "recipient@example.com";
-//
-//
-//
-//        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-//        emailIntent.setType("*/*");
-//        emailIntent.putExtra(Intent.EXTRA_EMAIL , "asdf");
-//        startActivity(emailIntent);
-//
-//    }
     private FragmentDashboardBinding binding;
     private Button riderHisotory;
     private Button passengerHisotry;
@@ -55,16 +43,19 @@ public class DashboardFragment extends Fragment {
         riderHisotory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getContext() , RiderHistoryActivity.class);
+                startActivity(intent);
             }
         });
 
         passengerHisotry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getContext() , PassengerHisotryActivity.class);
+                startActivity(intent);
             }
         });
+
 
 //        final TextView textView = binding.textDashboard;
 //        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);

@@ -119,8 +119,11 @@ public class HomeFragment extends Fragment {
                     public void onLocationDataReceived(ArrayList<LocationData> locationDataArrayList) {
                         System.out.println("printing riders ");
                         for(LocationData locationData : locationDataArrayList){
+
 //                            System.out.println( " " + locationData.getStartLocation() + " " + locationData.getEndLocation());
                             System.out.println(locationData.getEndLocation());
+
+//                            System.out.println(locationData.getUserID() + " " + locationData.getStartLocation() + " " + locationData.getEndLocation());
                         }
                     }
                 });

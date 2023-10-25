@@ -37,10 +37,12 @@ import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
+import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -113,6 +115,8 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             new LatLng(-40, -168),
             new LatLng(71, 136)
     );
+    private static final int SEARCH_INTERVAL = 10000;
+    private static final int MAX_SEARCH_COUNT = 5;
 
     //vars
     private Boolean mLocationPermissionsGranted = false;
@@ -128,7 +132,10 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private CardView mConfirmDestinationCardView;
     private LinearLayout mFindARideLinearLayout;
     private LinearLayout mSearchingARideLayout;
-
+    private AppCompatButton mConfirmButton;
+    private TextView mSearchingTextView;
+    private LatLng destLatLng;
+    private int numberOfTimesSearched;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,6 +144,9 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         setContentView(R.layout.activity_provide_a_ride);
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
+        mConfirmButton = findViewById(R.id.confirm_button);
+        mSearchingTextView = findViewById(R.id.searching_text_view);
+        numberOfTimesSearched = 0;
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -168,10 +178,19 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
 
     private void addRiderToDB()
     {
-        Log.d(TAG, "addRiderToDB: adding rider to DB ");
+        Log.d(TAG, "addRiderToDB: adding rider to DB. ");
+        Log.d(TAG, "addRiderToDB: src: " + currentLocation.getLatitude() + " " + currentLocation.getLongitude());
+        Log.d(TAG, "addRiderToDB: dest: " + destLatLng.latitude + " " + destLatLng.longitude);
         LocationDB locationDB = new LocationDB();
+
 //        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
         locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746,91.89290421460741");
+
+        locationDB.addToPendingRider(
+                currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
+                destLatLng.latitude + "," + destLatLng.longitude
+        );
+
     }
 
 
@@ -182,27 +201,53 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     }
 
     private void searchPassenger() {
+        Log.d(TAG, "searchPassenger: starting the search for passenger");
         LocationDB locationDB = new LocationDB();
         locationDB.getBookedPassenger(passengerId -> {
+            if(passengerId == null) {
+                searchAgainAfterSomeTime();
+                return;
+            }
+
             Log.d(TAG, "searchPassenger: " + passengerId);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
                     intent.putExtra("UID" , passengerId);
                     startActivity(intent);
                 }
             });
         });
     }
+
+    private void searchAgainAfterSomeTime() {
+        Log.d(TAG, "searchAgainAfterSomeTime: current thread: " + Thread.currentThread().getName());
+        Log.d(TAG, "searchAgainAfterSomeTime: no passenger found. going to search again after some time.");
+        try {
+            numberOfTimesSearched++;
+            if(numberOfTimesSearched > MAX_SEARCH_COUNT) {
+                Log.d(TAG, "searchAgainAfterSomeTime: no passenger at all. aborting search.");
+                Toast.makeText(this, "Unfortunately, no passenger found!", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(ProvideARideActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                return;
+            }
+            Thread.sleep(SEARCH_INTERVAL);
+            searchPassenger();
+        } catch (InterruptedException e) {
+            Log.d(TAG, "searchAgainAfterSomeTime: InterruptedException: " + e.getMessage());
+        }
+    }
+
     private void init() {
         Log.d(TAG, "init: initializing");
         GoogleMapAPIHandler.setApiKey(API_KEY);
-        // call after confirm
-        addRiderToDB();
-
-        searchPassenger();
-
 
         Log.d(TAG, "init: initializing Places");
         if(!Places.isInitialized()) {
@@ -221,6 +266,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 GoogleMapAPIHandler.setAdapter(mSearchText, mPlacesAutoCompleteAdapter, s.toString(), mPlacesClient);
+                mConfirmButton.setEnabled(false);
             }
 
             @Override
@@ -240,8 +286,15 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                     mPlacesClient,
                     currentLocation,
                     DEFAULT_ZOOM,
-                    mMap
+                    mMap,
+                    new PlaceFetcherCallback() {
+                        @Override
+                        public void onPlaceFetched(LatLng latLng) {
+                            destLatLng = latLng;
+                        }
+                    }
             );
+            mConfirmButton.setEnabled(true);
             hideSoftKeyboard(view);
         });
 
@@ -252,6 +305,15 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                     "My Location",
                     mMap
             );
+        });
+
+        mConfirmButton.setOnClickListener(view -> {
+            Log.d(TAG, "init: confirm button pressed");
+            mConfirmButton.setVisibility(View.GONE);
+            mSearchingTextView.setVisibility(View.VISIBLE);
+
+            addRiderToDB();
+            searchPassenger();
         });
     }
 

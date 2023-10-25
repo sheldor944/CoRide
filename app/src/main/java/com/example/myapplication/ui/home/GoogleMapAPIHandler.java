@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.AutoCompleteTextView;
 
 import com.example.myapplication.helper.DistanceCalculatorCallback;
+import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -72,7 +73,8 @@ public class GoogleMapAPIHandler {
     }
 
     public static void fetchPlaceAndMoveCamera(AutocompletePrediction autocompletePrediction, PlacesClient placesClient,
-                                               Location currentLocation, float zoom, GoogleMap googleMap) {
+                                               Location currentLocation, float zoom, GoogleMap googleMap,
+                                               PlaceFetcherCallback callback) {
         String placeId = autocompletePrediction.getPlaceId();
         Log.d(TAG, "fetchPlace: fetching place from search bar, ID: " + placeId);
         List<Place.Field> placeFields = Arrays.asList(Place.Field.LAT_LNG, Place.Field.NAME);
@@ -89,6 +91,7 @@ public class GoogleMapAPIHandler {
                         );
                         Log.d(TAG, "fetchPlace: fetched successfully. lat " + latLng.latitude + " lng " + latLng.longitude);
                         GoogleMapAPIHandler.moveCamera(latLng, zoom, "Some Title", googleMap);
+                        callback.onPlaceFetched(latLng);
                     }
                 }).addOnFailureListener(exception -> {
                     Log.d(TAG, "fetchPlaceAndMoveCamera: failed to fetch place. error: " + exception.getMessage());

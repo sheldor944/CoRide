@@ -58,4 +58,38 @@
         android:scaleType="centerInside"
         android:src="@drawable/ic_gps"></ImageView>
 
+    <FrameLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/confirm_button"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:padding="20dp"
+            android:background="@drawable/rounded_button"
+            android:text="CONFIRM DESTINATION"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:enabled="false"/>
+
+        <TextView
+            android:id="@+id/searching_text_view"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Searching..."
+            android:background="@color/black"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:padding="20dp"/>
+
+
+    </FrameLayout>
+
 </RelativeLayout>
