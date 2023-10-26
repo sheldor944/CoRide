@@ -3,21 +3,14 @@ package com.example.myapplication;
 import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.myapplication.ui.login.LoginActivity;
@@ -34,8 +27,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
-import android.Manifest;
-
 //import com.google.firebase.firestore.DocumentData;
 
 public class Register extends AppCompatActivity {
@@ -43,24 +34,6 @@ public class Register extends AppCompatActivity {
     String email, name , phone ,password ;
     Button button ;
     private FirebaseAuth mAuth;
-    ImageView imageView ;
-    private static final int REQUEST_STORAGE_PERMISSION = 1001;
-
-    private void requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
-            Log.d(TAG, "requestStoragePermission: granted ");
-        }
-    }
-    private   int REQUEST_PICK_IMAGE = 1002;
-
-    private void openGallery() {
-        Log.d(TAG, "openGallery: start  ");
-
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_PICK_IMAGE);
-        Log.d(TAG, "openGallery: ");
-    }
 
     public interface TokenCallback {
         void onTokenReceived(String token);
@@ -83,16 +56,6 @@ public class Register extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
-            Uri selectedImageUri = data.getData();
-            imageView.setImageURI(selectedImageUri);
-        }
-    }
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
@@ -106,8 +69,8 @@ public class Register extends AppCompatActivity {
         EditText emailText = (EditText) findViewById(R.id.emailRegistrationEditText);
 //         email = emailText.getText().toString();
 //
-        EditText nameText = (EditText) findViewById(R.id.nameEditText);
-//        EditText lastNameText = (EditText) findViewById(R.id.lastNameEditText);
+        EditText nameText = (EditText) findViewById(R.id.firstNameEditText);
+        EditText lastNameText = (EditText) findViewById(R.id.lastNameEditText);
 //        name = nameText.getText().toString();
 //
         EditText numberText = (EditText) findViewById(R.id.phoneEditText);
@@ -115,30 +78,6 @@ public class Register extends AppCompatActivity {
 //
         EditText pass = (EditText) findViewById(R.id.editTextPassword);
 //        password = pass.getText().toString();
-
-//        ImageView imageButton = findViewById(R.id.imageButton);
-        imageView = findViewById(R.id.imageButton);
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: o duke ");
-                // Check for storage permission
-                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "onClick: Permission ase ");
-                    openGallery();
-                    
-                } else {
-                    Log.d(TAG, "onClick: permission nai asking for it ");
-                    requestStoragePermission();
-                    openGallery();
-                }
-            }
-
-
-        });
-
-
 
         button = findViewById(R.id.registerButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -148,7 +87,7 @@ public class Register extends AppCompatActivity {
                 password = String.valueOf(pass.getText());
                 name = String.valueOf(nameText.getText());
                 phone = String.valueOf(numberText.getText());
-                String lastName = "";
+                String lastName = String.valueOf(lastNameText.getText());
                 Log.d(TAG, "onClick: o dukse ");
 
 

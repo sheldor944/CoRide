@@ -30,7 +30,6 @@ import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
 import com.example.myapplication.helper.SaveToCompletedTableCallback;
 import com.example.myapplication.testerActivity;
-import com.example.myapplication.ui.dashboard.RiderHistoryActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -107,35 +106,27 @@ public class HomeFragment extends Fragment {
                         });
             }
         });
-        Button notification = root.findViewById(R.id.notificationTester);
-
-        notification.setOnClickListener(new View.OnClickListener() {
+        Button button = root.findViewById(R.id.notificationTester);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext() , testerActivity.class);
-                startActivity(intent);
-            }
-        });
-//        notification.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
 //                Intent intent = new Intent(getContext() , testerActivity.class);
 //                startActivity(intent);
-//                LocationDB locationDB = new LocationDB();
-//                checkForOnGoingRide();
-//                locationDB.getLocation("Rider", new LocationCallback() {
-//                    @Override
-//                    public void onLocationDataReceived(ArrayList<LocationData> locationDataArrayList) {
-//                        System.out.println("printing riders ");
-//                        for(LocationData locationData : locationDataArrayList){
-//
-////                            System.out.println( " " + locationData.getStartLocation() + " " + locationData.getEndLocation());
-//                            System.out.println(locationData.getEndLocation());
-//
-////                            System.out.println(locationData.getUserID() + " " + locationData.getStartLocation() + " " + locationData.getEndLocation());
-//                        }
-//                    }
-//                });
+                LocationDB locationDB = new LocationDB();
+                checkForOnGoingRide();
+                locationDB.getLocation("Rider", new LocationCallback() {
+                    @Override
+                    public void onLocationDataReceived(ArrayList<LocationData> locationDataArrayList) {
+                        System.out.println("printing riders ");
+                        for(LocationData locationData : locationDataArrayList){
+
+//                            System.out.println( " " + locationData.getStartLocation() + " " + locationData.getEndLocation());
+                            System.out.println(locationData.getEndLocation());
+
+//                            System.out.println(locationData.getUserID() + " " + locationData.getStartLocation() + " " + locationData.getEndLocation());
+                        }
+                    }
+                });
 
 //                locationDB.saveToCompletedTable("IvaNhWsFchZJZcYbr6XGNmHiXGR2", "5eEHiNS0mIW9CAC6xqbFVdvplnH3", 500, new SaveToCompletedTableCallback() {
 //                    @Override
@@ -146,8 +137,8 @@ public class HomeFragment extends Fragment {
 //                        }
 //                    }
 //                }) ;
-//            }
-//        });
+            }
+        });
 
         mProvideARideCardView = root.findViewById(R.id.provide_a_ride_cardview);
         mProvideARideCardView.setOnClickListener(view -> {
