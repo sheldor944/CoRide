@@ -145,6 +145,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private FirebaseAuth currentUser;
     private String mUserId;
     private LatLng destLatLng;
+    private int distance;
     private Thread RiderSearchThread;
     private RiderTrip bestRiderTrip = null;
 
@@ -237,8 +238,10 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                     mMap,
                     new PlaceFetcherCallback() {
                         @Override
-                        public void onPlaceFetched(LatLng latLng) {
+                        public void onPlaceFetched(LatLng latLng, int distanceCallback) {
                             destLatLng = latLng;
+                            distance = distanceCallback;
+                            Log.d(TAG, "onPlaceFetched: distance is: " + distance);
                         }
                     }
             );
@@ -310,13 +313,15 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                 "Passenger",
                 currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
                 mUserId,
-                destLatLng.latitude + "," + destLatLng.longitude
+                destLatLng.latitude + "," + destLatLng.longitude,
+                distance
         );
         locationDB.insertIntoPassengerRider(passengerData, riderData);
     }
 
-    private void switchToChat(String riderUID)
+    private void onBestRiderFound(String riderUID)
     {
+        Log.d(TAG, "onBestRiderFound: going to chat activity.");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -338,6 +343,10 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private void getRiderInformation() {
         if(bestRiderTrip != null) return;
         LocationDB locationDB = new LocationDB();
+        String[] waypoints = {
+            currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
+            destLatLng.latitude + "," + destLatLng.longitude
+        };
         locationDB.getLocation("Rider", locationDataList -> {
             Log.d(TAG, "getRiderInformation: Number of pending riders: " + locationDataList.size());
 
@@ -345,10 +354,10 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             ArrayList <RiderTrip> riderTrips = new ArrayList<>();
             for(LocationData locationData : locationDataList) {
                 Log.d(TAG, "getRiderInformation: " + locationData.getUserID());
-                String info[] = locationData.getStartLocation().split(",");
-                GoogleMapAPIHandler.getDistanceBetweenTwoLatLng(
-                        new LatLng(Double.parseDouble(info[0]), Double.parseDouble(info[1])),
-                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                GoogleMapAPIHandler.getDistanceThroughWaypoints(
+                        locationData.getStartLocation(),
+                        locationData.getEndLocation(),
+                        waypoints,
                         new DistanceCalculatorCallback() {
                             @Override
                             public void onDistanceCalculated(int distance) {
@@ -378,7 +387,9 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         });
         for(RiderTrip riderTrip : riderTrips) {
             LocationDB locationDB = new LocationDB();
-            Log.d(TAG, "onRiderTripsFound: checking: " + riderTrip.getLocationData().getUserID());
+            Log.d(TAG, "onRiderTripsFound: checking: " + riderTrip.getLocationData().getUserID()
+                + " distance: " + riderTrip.getTotalDistance()
+            );
             if(locationDB.isRiderAvailable(riderTrip.getLocationData().getUserID())) {
                 bestRiderTrip = riderTrip;
                 break;
@@ -389,7 +400,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         }
         Log.d(TAG, "onRiderTripsFound: sorted. best match user id: " + bestRiderTrip.getLocationData().getUserID());
         insertIntoBookedPassengerRider(bestRiderTrip.getLocationData());
-        switchToChat(bestRiderTrip.getLocationData().getUserID());
+        onBestRiderFound(bestRiderTrip.getLocationData().getUserID());
     }
 
     private void getLocationPermission(){

@@ -19,33 +19,30 @@ public class RouteFetcherThread extends Thread {
     private static String API_KEY;
     private JSONObject jsonObject;
     private RouteFetcherListener routeFetcherListener;
-    private LatLng srcLatLng;
-    private LatLng destLatLng;
+    private String urlString = null;
 
-    public RouteFetcherThread(String API_KEY, LatLng srcLatLng, LatLng destLatLng, RouteFetcherListener routeFetcherListener) {
+    public RouteFetcherThread(String API_KEY, RouteFetcherListener routeFetcherListener) {
         super();
         this.API_KEY = API_KEY;
-        this.srcLatLng = srcLatLng;
-        this.destLatLng = destLatLng;
         this.routeFetcherListener = routeFetcherListener;
     }
 
     public void run() {
         Log.d(TAG, "run: current thread: " + Thread.currentThread().getName());
-        String urlString = "https://maps.googleapis.com/" +
-                "maps/" +
-                "api/" +
-                "directions/" +
-                "json?" +
-                "destination=" +
-                destLatLng.latitude +
-                "," +
-                destLatLng.longitude +
-                "&origin=" +
-                srcLatLng.latitude +
-                "," +
-                srcLatLng.longitude +
-                "&key=" + API_KEY;
+//        String urlString = "https://maps.googleapis.com/" +
+//                "maps/" +
+//                "api/" +
+//                "directions/" +
+//                "json?" +
+//                "destination=" +
+//                destLatLng.latitude +
+//                "," +
+//                destLatLng.longitude +
+//                "&origin=" +
+//                srcLatLng.latitude +
+//                "," +
+//                srcLatLng.longitude +
+//                "&key=" + API_KEY;
         Log.d(TAG, "run: URL is: " + urlString);
         try {
             URL url = new URL(urlString);
@@ -85,5 +82,9 @@ public class RouteFetcherThread extends Thread {
         } catch (JSONException e) {
             Log.d(TAG, "run: JSON Error: " + e.getMessage());
         }
+    }
+
+    public void setUrlString(String urlString) {
+        this.urlString = urlString;
     }
 }

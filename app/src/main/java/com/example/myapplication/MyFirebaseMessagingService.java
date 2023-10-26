@@ -37,14 +37,18 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    private static final String TAG = "MyFirebaseMessagingService";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
+        Log.d(TAG, "onMessageReceived: Recieved ");
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
+            Log.d(TAG, "onMessageReceived: first if o gese ");
             if ("SOME_VALUE".equals(remoteMessage.getData().get("key_name"))) {
+                Log.d(TAG, "onMessageReceived: Secong method ");
                 triggerMethod();
             }
         }

@@ -93,24 +93,27 @@ public class GoogleMapAPIHandler {
                         displayRoute(
                                 new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                 latLng,
-                                googleMap
+                                googleMap,
+                                callback
                         );
                         Log.d(TAG, "fetchPlace: fetched successfully. lat " + latLng.latitude + " lng " + latLng.longitude);
                         GoogleMapAPIHandler.moveCamera(latLng, zoom, "Some Title", googleMap);
-                        callback.onPlaceFetched(latLng);
                     }
                 }).addOnFailureListener(exception -> {
                     Log.d(TAG, "fetchPlaceAndMoveCamera: failed to fetch place. error: " + exception.getMessage());
                 });
     }
 
-    public static void displayRoute(LatLng srcLatLng, LatLng destLatLng, GoogleMap googleMap) {
+    public static void displayRoute(LatLng srcLatLng, LatLng destLatLng, GoogleMap googleMap, PlaceFetcherCallback callback) {
         googleMap.clear();
         RouteFetcherThread routeFetcherThread = new RouteFetcherThread(
                 API_KEY,
-                srcLatLng,
-                destLatLng,
                 jsonObject -> {
+                    try {
+                        callback.onPlaceFetched(destLatLng, parseDistanceFromJSON(jsonObject));
+                    } catch (JSONException e) {
+                        Log.d(TAG, "displayRoute: json error: " + e.getMessage());
+                    }
                     Log.d(TAG, "displayRoute: current thread: " + Thread.currentThread().getName());
                     PolylineOptions polylineOptions = new PolylineOptions();
                     Log.d(TAG, "displayRoute: extracting route from json.");
@@ -153,15 +156,28 @@ public class GoogleMapAPIHandler {
                     });
                 }
         );
+        routeFetcherThread.setUrlString(
+                "https://maps.googleapis.com/" +
+                        "maps/" +
+                        "api/" +
+                        "directions/" +
+                        "json?" +
+                        "destination=" +
+                        destLatLng.latitude +
+                        "," +
+                        destLatLng.longitude +
+                        "&origin=" +
+                        srcLatLng.latitude +
+                        "," +
+                        srcLatLng.longitude +
+                        "&key=" + API_KEY
+        );
         routeFetcherThread.start();
     }
 
-    public static void getDistanceBetweenTwoLatLng(LatLng srcLatLng, LatLng destLatLng, DistanceCalculatorCallback callback) {
-        Log.d(TAG, "getDistanceBetweenTwoLatLng: getting distance from " + srcLatLng.toString());
+    public static void getDistanceThroughWaypoints(String src, String dest, String[] waypoints, DistanceCalculatorCallback callback) {
         RouteFetcherThread routeFetcherThread = new RouteFetcherThread(
                 API_KEY,
-                srcLatLng,
-                destLatLng,
                 new RouteFetcherListener() {
                     @Override
                     public void onRouteFetchComplete(JSONObject jsonObject) {
@@ -175,6 +191,22 @@ public class GoogleMapAPIHandler {
                     }
                 }
         );
+        routeFetcherThread.setUrlString(
+                "https://maps.googleapis.com/" +
+                        "maps/" +
+                        "api/" +
+                        "directions/" +
+                        "json?" +
+                        "destination=" +
+                        dest +
+                        "&origin=" +
+                        src +
+                        "&waypoints=" +
+                        waypoints[0] +
+                        "|" +
+                        waypoints[1] +
+                        "&key=" + API_KEY
+        );
         routeFetcherThread.start();
     }
 
@@ -183,21 +215,36 @@ public class GoogleMapAPIHandler {
         int distanceValue = -1;
         if ("OK".equals(status)) {
             // Extract the distance from the first route
-            JSONArray routes = jsonResponseObj.getJSONArray("routes");
-            if (routes.length() > 0) {
-                JSONObject route = routes.getJSONObject(0);
-                JSONObject legs = route.getJSONArray("legs").getJSONObject(0);
-                JSONObject distance = legs.getJSONObject("distance");
+            JSONArray routesArray = jsonResponseObj.getJSONArray("routes");
 
-                // Get the distance text and value
-                String distanceText = distance.getString("text");
-                distanceValue = distance.getInt("value");
+            if (routesArray.length() > 0) {
+                // Get the first route (assumption: there's at least one route)
+                JSONObject route = routesArray.getJSONObject(0);
+
+                // Navigate to the "legs" array
+                JSONArray legsArray = route.getJSONArray("legs");
+
+                int totalDistance = 0;
+
+                // Sum up the distances of all legs
+                for (int i = 0; i < legsArray.length(); i++) {
+                    JSONObject leg = legsArray.getJSONObject(i);
+                    JSONObject distance = leg.getJSONObject("distance");
+                    int legDistance = distance.getInt("value");
+                    totalDistance += legDistance;
+                }
+
+                // Print the total distance in meters
+                Log.d(TAG, "parseDistanceFromJSON: total distance: " + totalDistance);
+
+                distanceValue = totalDistance;
             } else {
-                Log.d(TAG, "parseDistanceFromJSON: No route found in JSON");
+                Log.d(TAG, "parseDistanceFromJSON: error: no routes array found.");
             }
         } else {
             Log.d(TAG, "parseDistanceFromJSON: Status is not OK");
         }
+        Log.d(TAG, "parseDistanceFromJSON: distance value: " + distanceValue);
         return distanceValue;
     }
 

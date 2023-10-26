@@ -200,16 +200,6 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         return false;
     }
 
-    private void addRiderToDB()
-    {
-
-        // TODO: 10/24/2023
-        // read oito
-        Log.d(TAG, "addRiderToDB: adding rider to DB ");
-        LocationDB locationDB = new LocationDB();
-//        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
-        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746,91.89290421460741");
-    }
     private void init() {
         Log.d(TAG, "init: initializing");
         GoogleMapAPIHandler.setApiKey(API_KEY);
@@ -232,7 +222,8 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         GoogleMapAPIHandler.displayRoute(
                 GoogleMapAPIHandler.getLatLngFromString(mPassengerStartLocation, ","),
                 GoogleMapAPIHandler.getLatLngFromString(mRiderStartLocation, ","),
-                mMap
+                mMap,
+                ((latLng, distance) -> {})
         );
 
         initMenuItems();

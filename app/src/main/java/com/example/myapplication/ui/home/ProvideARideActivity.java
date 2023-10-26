@@ -136,6 +136,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private AppCompatButton mConfirmButton;
     private TextView mSearchingTextView;
     private LatLng destLatLng;
+    private int distance;
     private int numberOfTimesSearched;
     private LocationData matchedPassengerData;
 
@@ -187,11 +188,12 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         LocationDB locationDB = new LocationDB();
 
 //        locationDB.updateLocation(currentLocation.getLatitude()+"," + currentLocation.getLongitude() , "Rider");
-        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746,91.89290421460741");
+//        locationDB.addToPendingRider("24.9059,91.8721" , "24.904029068716746,91.89290421460741");
 
         locationDB.addToPendingRider(
                 currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
-                destLatLng.latitude + "," + destLatLng.longitude
+                destLatLng.latitude + "," + destLatLng.longitude,
+                distance
         );
 
     }
@@ -281,12 +283,22 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                     mMap,
                     new PlaceFetcherCallback() {
                         @Override
-                        public void onPlaceFetched(LatLng latLng) {
+                        public void onPlaceFetched(LatLng latLng, int distanceCallback) {
                             destLatLng = latLng;
+                            distance = distanceCallback;
+                            Log.d(TAG, "onPlaceFetched: "
+                                    + "dest: " + destLatLng
+                                    + " distance: " + distance);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mConfirmButton.setEnabled(true);
+                                }
+                            });
                         }
                     }
             );
-            mConfirmButton.setEnabled(true);
             hideSoftKeyboard(view);
         });
 
