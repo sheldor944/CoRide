@@ -3,12 +3,14 @@ package com.example.myapplication;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.helper.BookedPassengerListCallback;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
+import com.example.myapplication.helper.GetUserNameCallback;
 import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
 import com.example.myapplication.helper.SaveToCompletedTableCallback;
@@ -417,6 +419,47 @@ public class LocationDB {
         }
 
         return isAvailable.get();
+    }
+
+    public void getUserName(String UID , GetUserNameCallback callback)
+    {
+        DocumentReference userRef = db.collection("users").document(UID);
+
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                String  name = "";
+
+                if (task.isSuccessful()) {
+                    Log.d("entered succesfull 4" , "successful o dukse 4 ");
+
+
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()) {
+                        // Get the user's data from the DocumentSnapshot
+                        Log.d("entered5" , "document exists ");
+
+                        String firstName = documentSnapshot.getString("firstName");
+//                        System.out.println(name);
+                        String lastName = documentSnapshot.getString("lastName");
+                        String email = documentSnapshot.getString("email");
+                        String phone = documentSnapshot.getString("phone");
+                        name = firstName + lastName ;
+                        Log.d(TAG, "onComplete: " + firstName + lastName);
+                        Log.d(TAG, "onComplete: "+ name);
+
+                    } else {
+                        // The user's document does not exist
+                        Log.w("document " , " document not found ");
+                    }
+                } else {
+                    // An error occurred while getting the user's data
+                }
+                callback.onUserNameRecieved(name);
+            }
+
+        });
+
     }
 
 }

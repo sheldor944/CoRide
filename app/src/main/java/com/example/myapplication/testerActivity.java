@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.myapplication.data.model.MessageEvent;
+import com.example.myapplication.helper.GetUserNameCallback;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -95,8 +96,16 @@ public class testerActivity extends AppCompatActivity {
                     public void run() {
                         // Your network operation here
 //                        sendNotification();
-                        pushNotification.pickedUpFlag("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
-                        pushNotification.cancelRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
+                        LocationDB locationDB = new LocationDB() ;
+                       locationDB.getUserName("1uwuzEe8qShjD1EN6dJrmEZsR8y1", new GetUserNameCallback() {
+                          @Override
+                          public void onUserNameRecieved(String name) {
+                              Log.d(TAG, "run: "+ name );
+
+                          }
+                      });
+//                         pushNotification.pickedUpFlag("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
+//                        pushNotification.cancelRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
                     }
                 }).start();
 
