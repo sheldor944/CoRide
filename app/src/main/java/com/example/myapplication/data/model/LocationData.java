@@ -5,12 +5,14 @@ public class LocationData {
     private String startLocation ;
     private String userID ;
     private String endLocation;
+    private int distance;
 
-    public LocationData(String type, String startLocation, String userID, String endLocation) {
+    public LocationData(String type, String startLocation, String userID, String endLocation, int distance) {
         this.type = type;
         this.startLocation = startLocation;
         this.userID = userID;
         this.endLocation = endLocation;
+        this.distance = distance;
     }
 
     public String getType() {
@@ -27,5 +29,13 @@ public class LocationData {
 
     public String getUserID() {
         return userID;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }

@@ -43,6 +43,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.greenrobot.eventbus.EventBus;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    private static final String TAG = "MyFirebaseMessagingService";
 
     String TAG = "FCM";
     private static final String CHANNEL_ID = "11223344";
@@ -77,6 +78,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     isRideCompleted();
                 }
                 // You can add more conditions here for other IDs
+              
+        Log.d(TAG, "onMessageReceived: Recieved ");
+        // Check if message contains a data payload.
+        if (remoteMessage.getData().size() > 0) {
+            Log.d(TAG, "onMessageReceived: first if o gese ");
+            if ("SOME_VALUE".equals(remoteMessage.getData().get("key_name"))) {
+                Log.d(TAG, "onMessageReceived: Secong method ");
+                triggerMethod();
             }
         }
         // Create a notification channel for API 26+

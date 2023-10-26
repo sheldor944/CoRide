@@ -58,13 +58,14 @@ public class LocationDB {
 
     }
 
-    public void addToPendingRider(String startLocation ,String  destinationLocation)
+    public void addToPendingRider(String startLocation ,String  destinationLocation, int distance)
     {
         Log.d(TAG, "addToPendingRider: "+ startLocation + " "+ destinationLocation) ;
         try {
 
             database.getReference().child("PendingRider").child(userId).child("start").setValue(startLocation);
             database.getReference().child("PendingRider").child(userId).child("Destination").setValue(destinationLocation);
+            database.getReference().child("PendingRider").child(userId).child("distance").setValue(distance);
 
             System.out.println(userId);
             Log.d("updateLocation", "updateLocation: " + userId + " "+ startLocation + " "+ destinationLocation);
@@ -94,11 +95,18 @@ public class LocationDB {
             database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Destination").setValue(
                     passengerData.getEndLocation()
             );
+            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Distance").setValue(
+                    passengerData.getDistance()
+            );
+
             database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Start").setValue(
                     riderData.getStartLocation()
             );
             database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Destination").setValue(
                     riderData.getEndLocation()
+            );
+            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Distance").setValue(
+                    riderData.getDistance()
             );
         }
         catch (Exception e){
@@ -139,8 +147,9 @@ public class LocationDB {
 //
                     String startLocation = userSnapshot.child("start").getValue(String.class);
                     String endLocation = userSnapshot.child("Destination").getValue(String.class);
+                    int distance = userSnapshot.child("distance").getValue(Integer.class);
                     // Do something with the user's location
-                    locationDataArrayList.add(new LocationData("Rider" , startLocation , userId , endLocation));
+                    locationDataArrayList.add(new LocationData("Rider" , startLocation , userId , endLocation, distance));
                     Log.d(TAG, "onDataChange:  gg"+ startLocation);
                 }
                 callback.onLocationDataReceived(locationDataArrayList);
@@ -339,6 +348,7 @@ public class LocationDB {
                     Log.d(TAG, "onDataChange: " + id[0] + id[1] );
 
                     String passengerId, passengerStart, passengerDestination;
+                    int distance = -1;
                     // Check your condition
                     if (UID.equals(id[1])) {
                         Log.d(TAG, "onDataChange: match found");
@@ -349,6 +359,7 @@ public class LocationDB {
                             Log.d(TAG, "onDataChange: data exists in passengerRoute");
                             passengerStart = passengerRouteSnapshot.child("Start").getValue(String.class);
                             passengerDestination = passengerRouteSnapshot.child("Destination").getValue(String.class);
+                            distance = passengerRouteSnapshot.child("Distance").getValue(Integer.class);
 
                             Log.d(TAG, "onDataChange: " + passengerStart + " -> " + passengerDestination);
 
@@ -356,7 +367,8 @@ public class LocationDB {
                                     "Passenger",
                                     passengerStart,
                                     passengerId,
-                                    passengerDestination
+                                    passengerDestination,
+                                    distance
                             );
                         }
                         break;
