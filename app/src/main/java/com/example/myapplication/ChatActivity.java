@@ -191,7 +191,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        mMapIcon = findViewById(R.id.map_image);
+//        mMapIcon = findViewById(R.id.);
         mMapIcon.setOnClickListener(view -> {
             Intent intent = new Intent(this, RideDetailsOnMapActivity.class);
 
