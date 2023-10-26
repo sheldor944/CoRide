@@ -292,7 +292,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(StartRideActivity.this, "Unfortunately, no passenger found!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(StartRideActivity.this, "Unfortunately, no rider found!", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(StartRideActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }
@@ -386,6 +386,8 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
         for(RiderTrip riderTrip : riderTrips) {
+            if(!isFeasibleForRider(riderTrip)) continue;
+
             LocationDB locationDB = new LocationDB();
             Log.d(TAG, "onRiderTripsFound: checking: " + riderTrip.getLocationData().getUserID()
                 + " distance: " + riderTrip.getTotalDistance()
@@ -401,6 +403,11 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         Log.d(TAG, "onRiderTripsFound: sorted. best match user id: " + bestRiderTrip.getLocationData().getUserID());
         insertIntoBookedPassengerRider(bestRiderTrip.getLocationData());
         onBestRiderFound(bestRiderTrip.getLocationData().getUserID());
+    }
+
+    private boolean isFeasibleForRider(RiderTrip riderTrip) {
+        if(riderTrip.getTotalDistance() > 2 * riderTrip.getLocationData().getDistance()) return false;
+        return true;
     }
 
     private void getLocationPermission(){
