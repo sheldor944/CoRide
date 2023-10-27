@@ -25,6 +25,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.Register;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
 import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
@@ -97,13 +98,19 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 LocationDB locationDB = new LocationDB() ;
                 checkForOnGoingRide();
-
-                locationDB.saveToCompletedTable("5eEHiNS0mIW9CAC6xqbFVdvplnH3", "ItIDT7jlUDOMRheIs4fif8DTc0A2", 500, new SaveToCompletedTableCallback() {
+                locationDB.getTOKEN("BZgNkwSJNzWLfZOdkxM1pryCGC92", new Callback<String>() {
                     @Override
-                    public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
-                        Log.d(TAG, "onSaveToCompletedTableComplete:  saved ");
+                    public void onComplete(String response) {
+                        Log.d(TAG, "onComplete: got the id "+ response);
                     }
                 });
+//
+//                locationDB.saveToCompletedTable("5eEHiNS0mIW9CAC6xqbFVdvplnH3", "ItIDT7jlUDOMRheIs4fif8DTc0A2", 500, new SaveToCompletedTableCallback() {
+//                    @Override
+//                    public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+//                        Log.d(TAG, "onSaveToCompletedTableComplete:  saved ");
+//                    }
+//                });
 //
 //                locationDB.insertIntoPassengerRider();
 //              locationDB.saveToCompletedTable("5eEHiNS0mIW9CAC6xqbFVdvplnH3" , "ItIDT7jlUDOMRheIs4fif8DTc0A2" , new SaveToCompletedTableCallback());
@@ -267,7 +274,7 @@ public class HomeFragment extends Fragment {
     private void checkForOnGoingRide() {
         LocationDB locationDB = new LocationDB();
 
-        locationDB.checkForOngoingRide(new RideCheckCallback() {
+        locationDB.checkForOngoingRide(  new RideCheckCallback() {
             @Override
             public void onRideCheckCompleted(ArrayList<Pair<String , String >> result ) {
                 Log.d(TAG, "onRideCheckCompleted: starting the check ");

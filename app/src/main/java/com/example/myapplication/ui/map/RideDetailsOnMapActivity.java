@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.map;
 
+
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -17,6 +19,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,8 +50,11 @@ import com.example.myapplication.PushNotification;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
+import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
 import com.example.myapplication.helper.PlaceFetcherCallback;
+import com.example.myapplication.helper.SaveToCompletedTableCallback;
+import com.example.myapplication.testerActivity;
 import com.example.myapplication.ui.home.PlacesAutoCompleteAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -96,7 +102,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class RideDetailsOnMapActivity extends testerActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
@@ -196,9 +202,9 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
                             }
                         });
                         pickupStatusFetcherThread.start();
-
                         Log.d(TAG, "run: will display updated route after some time");
                         Thread.sleep(SEARCH_INTERVAL);
+                        break;
                     }
                 } catch (InterruptedException e) {
                     Log.d(TAG, "run: Thread error: " + e.getMessage());
@@ -317,6 +323,8 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
 
     private void initMenuItems() {
         MenuItem cancelItem = mNavigationView.getMenu().findItem(R.id.cancel_ride);
+
+        LocationDB locationDB = new LocationDB();
         cancelItem.setOnMenuItemClickListener(item -> {
             // TODO: ২৬/১০/২৩ : user clicked on cancel ride, handle it
             Log.d(TAG, "init: user clicked on cancel ride");
@@ -338,13 +346,39 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
                         @Override
                         public void run() {
                             Log.d(TAG, "run: push call hobe");
-                            pushNotification.cancelRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
-                            Log.d(TAG, "run: calll oise push ");
+                            String notificationReceiverID =null;
+                            if(mUserId.equals(mRiderId))
+                            {
+                                notificationReceiverID=mPassengerId;
+                            }
+                            else{
+                                notificationReceiverID=mRiderId;
+                            }
+                            Log.d(TAG, "run: in cancel  " + mUserId + "  " + mPassengerId + " " + mRiderId);
+                            locationDB.getTOKEN(notificationReceiverID, new Callback<String>() {
+                                @Override
+                                public void onComplete(String response) {
+                                    pushNotification.cancelRide(response);
+                                    Log.d(TAG, "run: calll oise push ");
+
+                                    // TODO: 10/27/2023 delete from booked and add to complete
+                                    locationDB.deleteFromBookedPassenger(mPassengerId , mRiderId);
+                                    // maybe there will be a problem if rider cancels the ride 
+                                    locationDB.saveToCompletedTable(mPassengerId, mRiderId, 400, new SaveToCompletedTableCallback() {
+                                        @Override
+                                        public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+
+                                        }
+                                    });
+                                    Log.d(TAG, "onComplete: deleted and added as well ");
+                                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
+                           
                         }
                     }).start();
-                    // TODO: 10/27/2023 delete from booked and add to complete
-                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
-                    startActivity(intent);
+                   
                 }
             });
 
@@ -367,7 +401,7 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         pickedUpItem.setOnMenuItemClickListener(item -> {
             // TODO: ২৬/১০/২৩ : picked up passenger, now?
             Log.d(TAG, "init: user clicked on picked up passenger, updating database.");
-            LocationDB locationDB = new LocationDB();
+//            LocationDB locationDB = new LocationDB();
             locationDB.updatePickupStatus(mPassengerId, mRiderId);
             return true;
         });
@@ -410,7 +444,27 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
                         @Override
                         public void run() {
                             Log.d(TAG, "run: push call hobe");
-                            pushNotification.completeRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
+                            locationDB.getTOKEN(mPassengerId, new Callback<String>() {
+                                @Override
+                                public void onComplete(String response) {
+                                    pushNotification.completeRide(response);
+                                    Log.d(TAG, "run: calll oise push ");
+
+                                    // TODO: 10/27/2023 delete from booked and add to complete
+                                    locationDB.deleteFromBookedPassenger(mPassengerId , mRiderId);
+                                    // maybe there will be a problem if rider cancels the ride
+                                    locationDB.saveToCompletedTable(mPassengerId, mRiderId, 400, new SaveToCompletedTableCallback() {
+                                        @Override
+                                        public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+
+                                        }
+                                    });
+                                    Log.d(TAG, "onComplete: deleted and added as well ");
+                                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
+//                            pushNotification.completeRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
                             Log.d(TAG, "run: calll oise push ");
                         }
                     }).start();

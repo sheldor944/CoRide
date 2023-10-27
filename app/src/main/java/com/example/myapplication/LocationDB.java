@@ -16,6 +16,8 @@ import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
 import com.example.myapplication.helper.SaveToCompletedTableCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +38,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.transform.dom.DOMLocator;
@@ -57,6 +60,17 @@ public class LocationDB {
         db = FirebaseFirestore.getInstance();
         Log.d(TAG, "LocationDB: " +userId);
 
+    }
+
+    public void deleteFromPendingRider(String riderID )
+    {
+        try{
+            database.getReference().child("PendingRider").child(riderID).removeValue();
+
+        }
+        catch (Exception e ){
+            Log.d(TAG, "deleteFromPendingRider: error " + e );
+        }
     }
 
     public void addToPendingRider(String startLocation ,String  destinationLocation, int distance)
@@ -267,14 +281,26 @@ public class LocationDB {
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d(TAG, "onDataChange: delete Function  ");
+
                 for(DataSnapshot dataSnapshot : snapshot.getChildren())
                 {
                     String key = dataSnapshot.getKey();
                     Log.d(TAG, "onDataChange: Delete table " + key );
-                    if(key.equals(passengerID+"@"+riderID))
-                    {
-                        dataSnapshot.getRef().removeValue();
+                    try{
+                        if(key.equals(passengerID+"@"+riderID))
+                        {
+                            Log.d(TAG, "onDataChange: found and will be deleted now ");
+                            dataSnapshot.getRef().removeValue();
+                            Log.d(TAG, "onDataChange: found and deleted  ");
+
+                            break;
+                        }
                     }
+                    catch (Exception e ){
+                        Log.d(TAG, "onDataChange: " + e);
+                    }
+
                 }
             }
 
@@ -389,6 +415,29 @@ public class LocationDB {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle the error or notify the callback about the failure.
+            }
+        });
+    }
+
+    public void getTOKEN(String ID , Callback<String> callback)
+    {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String res = null;
+                for( DataSnapshot dataSnapshot : snapshot.getChildren() )
+                {
+                    if(dataSnapshot.getKey().equals(ID))
+                    {
+                        res = dataSnapshot.child("fcmToken").getValue(String.class);
+                    }
+                }
+                callback.onComplete(res);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
