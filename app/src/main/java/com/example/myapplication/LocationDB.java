@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.helper.BookedPassengerListCallback;
+import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
 import com.example.myapplication.helper.GetUserNameCallback;
 import com.example.myapplication.helper.LocationCallback;
@@ -89,20 +90,46 @@ public class LocationDB {
             String PID = passengerData.getUserID();
             String RID = riderData.getUserID();
             Log.d(TAG, "insetIntoPassengerRider: "+ PID+" "+ RID);
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Start").setValue(
+            database.getReference("bookedPassengerRider")
+                    .child(PID+"@"+RID)
+                    .child("pickupStatus")
+                    .setValue("false");
+
+
+            database.getReference("bookedPassengerRider")
+                    .child(PID+"@"+RID)
+                    .child("passengerRoute")
+                    .child("Start")
+                    .setValue(
                     passengerData.getStartLocation()
             );
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Destination").setValue(
+            database.getReference("bookedPassengerRider")
+                    .child(PID+"@"+RID)
+                    .child("passengerRoute")
+                    .child("Destination")
+                    .setValue(
                     passengerData.getEndLocation()
             );
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("passengerRoute").child("Distance").setValue(
+            database.getReference("bookedPassengerRider")
+                    .child(PID+"@"+RID)
+                    .child("passengerRoute")
+                    .child("Distance")
+                    .setValue(
                     passengerData.getDistance()
             );
 
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Start").setValue(
+            database.getReference("bookedPassengerRider")
+                    .child(PID+"@"+RID)
+                    .child("RiderRoute")
+                    .child("Start")
+                    .setValue(
                     riderData.getStartLocation()
             );
-            database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Destination").setValue(
+            database.getReference("bookedPassengerRider")
+                    .child(PID+"@"+RID)
+                    .child("RiderRoute")
+                    .child("Destination")
+                    .setValue(
                     riderData.getEndLocation()
             );
             database.getReference("bookedPassengerRider").child(PID+"@"+RID).child("RiderRoute").child("Distance").setValue(
@@ -385,13 +412,18 @@ public class LocationDB {
                     String id[] = key.split("@");
                     Log.d(TAG, "onDataChange: " + id[0] + id[1] );
 
-                    String passengerId, passengerStart, passengerDestination;
+
+                    String passengerId, passengerStart, passengerDestination, pickupStatus;
                     int distance = -1;
                     // Check your condition
                     if (UID.equals(id[1])) {
                         Log.d(TAG, "onDataChange: match found");
                         // Condition satisfied, traverse its children
                         passengerId=id[0];
+                        pickupStatus = childSnapshot
+                                .child("pickupStatus")
+                                .getValue(String.class);
+
                         DataSnapshot passengerRouteSnapshot = childSnapshot.child("passengerRoute");
                         if (passengerRouteSnapshot.exists()) {
                             Log.d(TAG, "onDataChange: data exists in passengerRoute");
@@ -507,9 +539,82 @@ public class LocationDB {
                 }
                 callback.onUserNameRecieved(name);
             }
-
         });
 
     }
 
+    public void getPickupStatus(String riderId, Callback <Boolean> callback) {
+        String UID = riderId;
+        Log.d(TAG, "getBookedPassenger: "+UID);
+
+        database.getReference("bookedPassengerRider").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                LocationData passengerData = null;
+                String pickupStatus = null;
+
+                Log.d(TAG, "onDataChange: loop er age ");
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+
+                    // Here, you can access each child of bookedPassengerRider
+                    String key = childSnapshot.getKey();
+                    Log.d(TAG, "onDataChange: seraching Child " + key);
+                    String id[] = key.split("@");
+                    Log.d(TAG, "onDataChange: " + id[0] + id[1] );
+
+
+                    String passengerId, passengerStart, passengerDestination;
+                    int distance = -1;
+                    // Check your condition
+                    if (UID.equals(id[1])) {
+                        Log.d(TAG, "onDataChange: match found");
+                        // Condition satisfied, traverse its children
+                        passengerId=id[0];
+                        pickupStatus = childSnapshot
+                                .child("pickupStatus")
+                                .getValue(String.class);
+
+                        DataSnapshot passengerRouteSnapshot = childSnapshot.child("passengerRoute");
+                        if (passengerRouteSnapshot.exists()) {
+                            Log.d(TAG, "onDataChange: data exists in passengerRoute");
+                            passengerStart = passengerRouteSnapshot.child("Start").getValue(String.class);
+                            passengerDestination = passengerRouteSnapshot.child("Destination").getValue(String.class);
+                            distance = passengerRouteSnapshot.child("Distance").getValue(Integer.class);
+
+                            Log.d(TAG, "onDataChange: " + passengerStart + " -> " + passengerDestination);
+
+                            passengerData = new LocationData(
+                                    "Passenger",
+                                    passengerStart,
+                                    passengerId,
+                                    passengerDestination,
+                                    distance
+                            );
+                        }
+                        break;
+//                        for (DataSnapshot grandChildSnapshot : childSnapshot.getChildren()) {
+//                            // Access the child's child data here using grandChildSnapshot
+//                            String someData = grandChildSnapshot.child("someChildKey").getValue(String.class);
+//                            // ... process the data as needed
+//                        }
+                    }
+                }
+
+                callback.onComplete(pickupStatus.equals("true"));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onComplete(null);
+            }
+        });
+    }
+
+    public void updatePickupStatus(String passengerId, String riderId) {
+        String rideId = passengerId + "@" + riderId;
+        database.getReference()
+                .child("bookedPassengerRider")
+                .child(rideId)
+                .child("pickupStatus").setValue("true");
+    }
 }
