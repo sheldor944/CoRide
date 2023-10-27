@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.map;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,6 +47,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
+import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.example.myapplication.ui.home.PlacesAutoCompleteAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -69,6 +71,8 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.ktx.Firebase;
 import com.google.maps.android.PolyUtil;
 
 import com.example.myapplication.ui.home.GoogleMapAPIHandler;
@@ -139,6 +143,8 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
     private LinearLayout mFindARideLinearLayout;
     private LinearLayout mSearchingARideLayout;
 
+    private String mUserId;
+
     private String mPassengerId;
     private String mPassengerStartLocation;
     private String mPassengerEndLocation;
@@ -146,7 +152,9 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
     private String mRiderId;
     private String mRiderStartLocation;
     private String mRiderEndLocation;
-    
+
+    private String mRouteEndLocation;
+
     private NavigationView mNavigationView;
 
     @Override
@@ -157,12 +165,76 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mNavigationView = findViewById(R.id.ride_nav_view);
+        mUserId = FirebaseAuth.getInstance().getUid();
 
         getInformationFromIntent();
 
-        if(isServicesOK()) {
+        if (isServicesOK()) {
             getLocationPermission();
         }
+    }
+
+    private void pollCurrentLocationAndUpdateRoute() {
+        Log.d(TAG, "displayRouteFromCurrentLocation: displaying route from current location");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final int SEARCH_INTERVAL = 10000;
+                    while(true) {
+                        getDeviceLocationAndDisplayRoute();
+                        Log.d(TAG, "run: will display updated route after some time");
+                        Thread.sleep(SEARCH_INTERVAL);
+                    }
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "run: Thread error: " + e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+    public void getDeviceLocationAndDisplayRoute() {
+        Log.d(TAG, "getDeviceLocationAndDisplayRoute: ");
+        if (ActivityCompat.checkSelfPermission(RideDetailsOnMapActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(RideDetailsOnMapActivity.this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Log.d(TAG, "run: calling task");
+        Task<Location> task = mFusedLocationProviderClient.getLastLocation();
+        task.addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                Log.d(TAG, "onComplete: Location fetch task completed");
+                if(task.isSuccessful()) {
+                    currentLocation = (Location) task.getResult();
+                    Log.d(TAG, "onComplete: Device location fetched successfully. Location: lat " + currentLocation.getLatitude() + " lng " + currentLocation.getLongitude());
+                    LatLng routeEndLatLng = GoogleMapAPIHandler.getLatLngFromString(
+                            mRouteEndLocation,
+                            ","
+                    );
+                    Log.d(TAG, "onComplete: route end: " + mPassengerEndLocation);
+                    GoogleMapAPIHandler.displayRoute(
+                            new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                            routeEndLatLng,
+                            mMap,
+                            (latLng, distance) -> {}
+                    );
+                }
+                else {
+                    Log.d(TAG, "onComplete: Could not fetch the last location");
+                }
+            }
+        });
     }
 
     private void getInformationFromIntent() {
@@ -174,6 +246,8 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         mRiderId = intent.getStringExtra("rider_id");
         mRiderStartLocation = intent.getStringExtra("rider_start_location");
         mRiderEndLocation = intent.getStringExtra("rider_end_location");
+
+        mRouteEndLocation = mPassengerStartLocation;
 
         Log.d(TAG, "getInformationFromIntent: passenger: " + mPassengerId + " "
                 + mPassengerStartLocation + " " + mPassengerEndLocation);
@@ -223,13 +297,7 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
             );
         });
 
-        GoogleMapAPIHandler.displayRoute(
-                GoogleMapAPIHandler.getLatLngFromString(mPassengerStartLocation, ","),
-                GoogleMapAPIHandler.getLatLngFromString(mRiderStartLocation, ","),
-                mMap,
-                ((latLng, distance) -> {})
-        );
-
+        pollCurrentLocationAndUpdateRoute();
         initMenuItems();
     }
 
@@ -285,6 +353,18 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         pickedUpItem.setOnMenuItemClickListener(item -> {
             // TODO: ২৬/১০/২৩ : picked up passenger, now?
             Log.d(TAG, "init: user clicked on picked up passenger");
+
+            GoogleMapAPIHandler.displayRoute(
+                    GoogleMapAPIHandler.getLatLngFromString(mPassengerStartLocation, ","),
+                    GoogleMapAPIHandler.getLatLngFromString(mPassengerEndLocation, ","),
+                    mMap,
+                    new PlaceFetcherCallback() {
+                        @Override
+                        public void onPlaceFetched(LatLng latLng, int distance) {
+
+                        }
+                    }
+            );
             return true;
         });
 
@@ -348,6 +428,11 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
 
             return true;
         });
+
+        if(mUserId.equals(mPassengerId)) {
+            completedRideItem.setEnabled(false);
+            pickedUpItem.setEnabled(false);
+        }
     }
 
     private void getLocationPermission(){

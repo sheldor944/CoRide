@@ -214,7 +214,9 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                 return;
             }
 
-            Log.d(TAG, "searchPassenger: matched passenger id: " + passengerData.getUserID());
+            Log.d(TAG, "searchPassenger: matched passenger id: " + passengerData.getUserID()
+                + " " + passengerData.getStartLocation() + " " + passengerData.getEndLocation()
+            );
             matchedPassengerData = passengerData;
             runOnUiThread(new Runnable() {
                 @Override
@@ -230,8 +232,8 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
 
         intent.putExtra("passenger_id", matchedPassengerData.getUserID());
-        intent.putExtra("passenger_start_location", currentLocation.getLatitude() + "," + currentLocation.getLongitude());
-        intent.putExtra("passenger_end_location", destLatLng.latitude + "," + destLatLng.longitude);
+        intent.putExtra("passenger_start_location", matchedPassengerData.getStartLocation());
+        intent.putExtra("passenger_end_location", matchedPassengerData.getEndLocation());
 
         intent.putExtra("rider_id", FirebaseAuth.getInstance().getUid());
         intent.putExtra("rider_start_location", currentLocation.getLatitude() + "," + currentLocation.getLongitude());
