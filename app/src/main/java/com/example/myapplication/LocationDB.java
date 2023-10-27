@@ -380,6 +380,8 @@ public class LocationDB {
                         result.add(new Pair<>("RiderDestination" , RiderDestination));
                         result.add(new Pair<>("PassengerStart" , PassengerStart));
                         result.add(new Pair<>("PassengerDestination" , PassengerDestination));
+                        result.add(new Pair<>("PassengerID" , id[0]));
+                        result.add(new Pair<>("RiderID" , id[1]));
                         break;
 
                     }
@@ -404,6 +406,8 @@ public class LocationDB {
                         result.add(new Pair<>("RiderDestination" , RiderDestination));
                         result.add(new Pair<>("PassengerStart" , PassengerStart));
                         result.add(new Pair<>("PassengerDestination" , PassengerDestination));
+                        result.add(new Pair<>("PassengerID" , id[0]));
+                        result.add(new Pair<>("RiderID" , id[1]));
                         break;
                     }
                 }
@@ -562,7 +566,7 @@ public class LocationDB {
                 String  name = "";
 
                 if (task.isSuccessful()) {
-                    Log.d("entered succesfull 4" , "successful o dukse 4 ");
+                    Log.d("entered successful 4" , "successful o dukse 4 ");
 
 
                     DocumentSnapshot documentSnapshot = task.getResult();

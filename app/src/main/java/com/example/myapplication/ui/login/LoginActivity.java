@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -37,9 +38,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.ChatActivity;
+import com.example.myapplication.LocationDB;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.Register;
+import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
+import com.example.myapplication.helper.RideCheckCallback;
 import com.example.myapplication.ui.login.LoginViewModel;
 import com.example.myapplication.ui.login.LoginViewModelFactory;
 import com.example.myapplication.databinding.ActivityLoginBinding;
@@ -49,6 +54,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -90,8 +97,81 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+    private static final String TAG = "LoginActivity";
+    private void checkForOnGoingRide() {
+        LocationDB locationDB = new LocationDB();
+
+        locationDB.checkForOngoingRide(  new RideCheckCallback() {
+            @Override
+            public void onRideCheckCompleted(ArrayList<Pair<String , String >> result ) {
+                Log.d(TAG, "onRideCheckCompleted: starting the check ");
+                if (result.size() >0) {
+                    // Do something if there's an ongoing ride
+                    Log.d(TAG, "onRideCheckCompleted: this person has a ride ");
+                    Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
+
+                    String mPassengerId="" , mPassengerStartLocation="" , mPassengerEndLocation="",
+                            mRiderId="" , mRiderStartLocation="" , mRiderEndLocation="";
+                    for(Pair<String , String> u : result)
+                    {
+                        if(u.first.equals("PassengerID")){
+                            mPassengerId=u.second;
+                        }
+                        if(u.first.equals("RiderID")){
+                            mRiderId = u.second;
+                        }
+                        if(u.first.equals("RiderStart")){
+                            mRiderStartLocation=u.second;
+                        }
+                        if(u.first.equals("RiderDestination")){
+                            mRiderEndLocation = u.second;
+                        }
+                        if(u.first.equals("PassengerStart")){
+                            mPassengerStartLocation=u.second;
+                        }
+                        if(u.first.equals("PassengerDestination")){
+                            mPassengerEndLocation = u.second;
+                        }
+
+                    }
+
+                    intent.putExtra("passenger_id", mPassengerId);
+                    intent.putExtra("passenger_start_location", mPassengerStartLocation);
+                    intent.putExtra("passenger_end_location", mPassengerEndLocation);
+
+                    intent.putExtra("rider_id", mRiderId);
+                    intent.putExtra("rider_start_location", mRiderStartLocation);
+                    intent.putExtra("rider_end_location", mRiderEndLocation);
+                    startActivity(intent);
+
+                    for( Pair<String, String > u : result)
+                    {
+                        System.out.println(u.first+ " "+ u.second);
+                    }
+                } else {
+                    // Do something else if there's no ongoing ride
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String user = mAuth.getUid();
+        locationDB.getDataFromCompletedTable(user, new GetDataFromCompletedTableCallback() {
+            @Override
+            public void onGetDataFromCompletedTableComplete(ArrayList<ArrayList<Pair<String, String>>> result) {
+                for(ArrayList<Pair<String , String >> u : result)
+                {
+                    for(Pair<String , String> p : u )
+                    {
+                        System.out.println(" home " + p.first + " -->" +p.second );
+                    }
+                }
+            }
+        });
 
 
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,8 +196,9 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if(mAuth.getCurrentUser() != null){
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
+            checkForOnGoingRide();
+//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            startActivity(intent);
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -139,9 +220,9 @@ public class LoginActivity extends AppCompatActivity {
                                         // Login success
                                         FirebaseUser user = mAuth.getCurrentUser();
                                         Toast.makeText(LoginActivity.this , "Success " , Toast.LENGTH_SHORT);
-
-                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                        startActivity(intent);
+                                        checkForOnGoingRide();
+//                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                                        startActivity(intent);
                                         // Update your UI with the user's information
                                     } else {
                                         Toast.makeText(LoginActivity.this , "Error " , Toast.LENGTH_SHORT);
