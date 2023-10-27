@@ -27,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -183,6 +184,19 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
                     final int SEARCH_INTERVAL = 10000;
                     while(true) {
                         getDeviceLocationAndDisplayRoute();
+
+                        Thread pickupStatusFetcherThread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                   LocationDB locationDB = new LocationDB();
+                                   locationDB.getPickupStatus(mRiderId, pickupStatus -> {
+                                       if(pickupStatus == true) mRouteEndLocation = mPassengerEndLocation;
+                                       else mRouteEndLocation = mPassengerStartLocation;
+                                   });
+                            }
+                        });
+                        pickupStatusFetcherThread.start();
+
                         Log.d(TAG, "run: will display updated route after some time");
                         Thread.sleep(SEARCH_INTERVAL);
                     }
@@ -352,19 +366,9 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         MenuItem pickedUpItem = mNavigationView.getMenu().findItem(R.id.picked_up_passenger);
         pickedUpItem.setOnMenuItemClickListener(item -> {
             // TODO: ২৬/১০/২৩ : picked up passenger, now?
-            Log.d(TAG, "init: user clicked on picked up passenger");
-
-            GoogleMapAPIHandler.displayRoute(
-                    GoogleMapAPIHandler.getLatLngFromString(mPassengerStartLocation, ","),
-                    GoogleMapAPIHandler.getLatLngFromString(mPassengerEndLocation, ","),
-                    mMap,
-                    new PlaceFetcherCallback() {
-                        @Override
-                        public void onPlaceFetched(LatLng latLng, int distance) {
-
-                        }
-                    }
-            );
+            Log.d(TAG, "init: user clicked on picked up passenger, updating database.");
+            LocationDB locationDB = new LocationDB();
+            locationDB.updatePickupStatus(mPassengerId, mRiderId);
             return true;
         });
 
