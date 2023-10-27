@@ -42,7 +42,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Duration:"
+        android:text="From:"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:layout_marginStart="10dp"
@@ -50,17 +50,18 @@
         android:textSize="18sp"/>
 
     <TextView
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="time"
+        android:text="Sylhet"
         android:layout_marginStart="10dp"
         android:textSize="16sp"
-        android:id="@+id/detailTime"/>
+        android:id="@+id/FromTextView"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ingredients:"
+        android:text="To:"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:layout_marginStart="10dp"
@@ -70,15 +71,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="kitaba"
+        android:text="Dhaka"
         android:layout_marginStart="10dp"
         android:textSize="16sp"
-        android:id="@+id/detailIngredients"/>
+        android:id="@+id/ToTextView"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Steps:"
+        android:text="Fare:"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:layout_marginStart="10dp"
@@ -88,9 +89,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="GG"
+        android:text="00"
         android:layout_marginStart="10dp"
         android:textSize="16sp"
-        android:id="@+id/detailDesc"/>
+        android:id="@+id/FareTextView"/>
 
 </LinearLayout>

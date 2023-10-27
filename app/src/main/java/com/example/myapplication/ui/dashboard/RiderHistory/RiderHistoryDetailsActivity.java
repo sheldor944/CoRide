@@ -25,9 +25,9 @@ public class RiderHistoryDetailsActivity extends AppCompatActivity {
             String desc = intent.getStringExtra("To");
             String image = intent.getStringExtra("Fare");
             binding.detailName.setText(name);
-            binding.detailTime.setText(time);
-            binding.detailDesc.setText(desc);
-            binding.detailIngredients.setText(ingredients);
+            binding.FromTextView.setText(ingredients);
+            binding.ToTextView.setText(desc);
+            binding.FareTextView.setText(image);
 //            binding.detailImage.setImageResource(image);
         }
     }

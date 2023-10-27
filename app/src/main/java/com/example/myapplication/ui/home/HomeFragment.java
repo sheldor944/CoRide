@@ -92,6 +92,24 @@ public class HomeFragment extends Fragment {
 
         mOnGoigRide = root.findViewById(R.id.OnGoingRide);
 
+        mOnGoigRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LocationDB locationDB = new LocationDB() ;
+                checkForOnGoingRide();
+
+                locationDB.saveToCompletedTable("5eEHiNS0mIW9CAC6xqbFVdvplnH3", "ItIDT7jlUDOMRheIs4fif8DTc0A2", 500, new SaveToCompletedTableCallback() {
+                    @Override
+                    public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+                        Log.d(TAG, "onSaveToCompletedTableComplete:  saved ");
+                    }
+                });
+//
+//                locationDB.insertIntoPassengerRider();
+//              locationDB.saveToCompletedTable("5eEHiNS0mIW9CAC6xqbFVdvplnH3" , "ItIDT7jlUDOMRheIs4fif8DTc0A2" , new SaveToCompletedTableCallback());
+            }
+        });
+
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
         getFCMtoken(new Register.TokenCallback() {
             @Override
@@ -112,6 +130,10 @@ public class HomeFragment extends Fragment {
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                locationDB.saveToCompletedTable("IvaNhWsFchZJZcYbr6XGNmHiXGR2", "5eEHiNS0mIW9CAC6xqbFVdvplnH3", 500, new SaveToCompletedTableCallback() {
+              
+
+              
                 Intent intent = new Intent(getContext() , testerActivity.class);
                 startActivity(intent);
             }
@@ -248,6 +270,7 @@ public class HomeFragment extends Fragment {
         locationDB.checkForOngoingRide(new RideCheckCallback() {
             @Override
             public void onRideCheckCompleted(ArrayList<Pair<String , String >> result ) {
+                Log.d(TAG, "onRideCheckCompleted: starting the check ");
                 if (result.size() >0) {
                     // Do something if there's an ongoing ride
                     Log.d(TAG, "onRideCheckCompleted: this person has a ride ");

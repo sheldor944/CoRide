@@ -121,6 +121,8 @@ public class testerActivity extends AppCompatActivity {
 //
 //                          }
 //                      });
+                        LocationDB locationDB = new LocationDB();
+                        locationDB.deleteFromBookedPassenger("5eEHiNS0mIW9CAC6xqbFVdvplnH3" , "ItIDT7jlUDOMRheIs4fif8DTc0A2");
 //                         pushNotification.pickedUpFlag("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
                         pushNotification.cancelRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
                     }

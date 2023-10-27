@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.databinding.ActivityPassengerHisotryBinding;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
+import com.example.myapplication.helper.GetUserNameCallback;
 import com.example.myapplication.ui.dashboard.RiderHistory.RiderListAdapter;
 import com.example.myapplication.ui.dashboard.RiderHistory.RiderListData;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,10 +25,11 @@ public class PassengerHisotryActivity extends AppCompatActivity {
 
     private FirebaseDatabase database ;
     ActivityPassengerHisotryBinding binding;
+    String TAG = "PaasengerHistoryActivity";
     PassengerListAdapter passengerListAdapter;
     ArrayList<PassengerListData> passengerListDataArrayList = new ArrayList<>();
     PassengerListData passengerListData;
-    String type="",riderName="" , passengerName="" , from="" , to="" , fare="" ;
+    String type="",riderName="" , passengerName="" , from="" , to="" , fare="" , riderID="" ;
     String UID ;
 
     @Override
@@ -65,17 +68,31 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                         if(p.first.equals("Fair")){
                             fare = p.second;
                         }
+                        if(p.first.equals("RiderID")){
+                            riderID=p.second;
+                        }
                     }
-                    if(type.equals("Ridere")){
+                    if(type.equals("Rider")){
                         continue;
                     }
-                    System.out.println(riderName + passengerName + from + to + fare );
-                    passengerListData = new PassengerListData(riderName , passengerName, from , to , fare);
-                    passengerListDataArrayList.add(passengerListData);
+                    locationDB.getUserName(riderID, new GetUserNameCallback() {
+                        @Override
+                        public void onUserNameRecieved(String name) {
+                            riderName = name ;
+                            System.out.println(riderName + passengerName + from + to + fare );
+                            passengerListData = new PassengerListData(riderName , passengerName, from , to , fare);
+                            passengerListDataArrayList.add(passengerListData);
+
+                            if(passengerListDataArrayList.size() == resultList.size()) {
+                                passengerListAdapter = new PassengerListAdapter(PassengerHisotryActivity.this, passengerListDataArrayList);
+                                binding.listview.setAdapter(passengerListAdapter);
+                                binding.listview.setClickable(true);
+                            }
+                        }
+                    });
+
                 }
-                passengerListAdapter = new PassengerListAdapter(PassengerHisotryActivity.this, passengerListDataArrayList);
-                binding.listview.setAdapter(passengerListAdapter);
-                binding.listview.setClickable(true);
+
             }
         });
 
@@ -90,12 +107,22 @@ public class PassengerHisotryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(PassengerHisotryActivity.this, PassengerHistoryDetailsActivity.class);
-                intent.putExtra("name", passengerName);
-                intent.putExtra("RiderName", riderName);
-                intent.putExtra("From", from);
-                intent.putExtra("To", to);
-                intent.putExtra("Fare", fare);
-                startActivity(intent);
+
+                locationDB.getUserName(riderID, new GetUserNameCallback() {
+                    @Override
+                    public void onUserNameRecieved(String name) {
+                        riderName=name ;
+                        Log.d(TAG, "onUserNameRecieved: " + name );
+                        intent.putExtra("name", passengerName);
+                        intent.putExtra("RiderName", riderName);
+                        intent.putExtra("From", from);
+                        intent.putExtra("To", to);
+                        intent.putExtra("Fare", fare);
+                        startActivity(intent);
+                    }
+                });
+
+
             }
         });
 

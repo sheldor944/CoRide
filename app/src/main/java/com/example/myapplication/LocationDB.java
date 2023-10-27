@@ -165,11 +165,11 @@ public class LocationDB {
     public void getDataFromCompletedTable(String UID , GetDataFromCompletedTableCallback callback)
     {
 //        DatabaseReference ref = database.getReference("CompletedRide").child("IvaNhWsFchZJZcYbr6XGNmHiXGR2@5eEHiNS0mIW9CAC6xqbFVdvplnH3");
-            DatabaseReference ref = database.getReference("CompletedRide");
+        DatabaseReference ref = database.getReference("CompletedRide");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-             ArrayList  < ArrayList<Pair<String, String>> > resultList = new ArrayList<>();
+                ArrayList  < ArrayList<Pair<String, String>> > resultList = new ArrayList<>();
                 Log.d(TAG, "onDataChange: dukse to re ba ");
 
                 for(DataSnapshot childIdSnapshot : dataSnapshot.getChildren()){
@@ -184,6 +184,9 @@ public class LocationDB {
                             for (DataSnapshot pairSnapshot : recordIdSnapshot.getChildren()) {
                                 String first = pairSnapshot.child("first").getValue(String.class);
                                 String second = pairSnapshot.child("second").getValue(String.class);
+                                if(first.equals("type")){
+                                    second = "Passenger";
+                                }
                                 System.out.println(first + "  ono " + second);
 
                                 if (first != null && second != null) {
@@ -201,6 +204,9 @@ public class LocationDB {
                             for (DataSnapshot pairSnapshot : recordIdSnapshot.getChildren()) {
                                 String first = pairSnapshot.child("first").getValue(String.class);
                                 String second = pairSnapshot.child("second").getValue(String.class);
+                                if(first.equals("type")){
+                                    second = "Rider";
+                                }
                                 System.out.println(first + "  ono " + second);
 
                                 if (first != null && second != null) {
@@ -227,16 +233,48 @@ public class LocationDB {
             }
         });
     }
+    public void deleteFromBookedPassenger(String passengerID , String riderID )
+    {
+        DatabaseReference dbRef = database.getReference("bookedPassengerRider");
+
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                {
+                    String key = dataSnapshot.getKey();
+                    Log.d(TAG, "onDataChange: Delete table " + key );
+                    if(key.equals(passengerID+"@"+riderID))
+                    {
+                        dataSnapshot.getRef().removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
     public void saveToCompletedTable(String passengerID , String riderID , double fare , SaveToCompletedTableCallback callback)
     {
         checkForOngoingRide(new RideCheckCallback() {
             @Override
             public void onRideCheckCompleted(ArrayList<Pair<String, String>> result) {
+
                 ArrayList<Pair<String , String>> finalResult = result;
                 Log.d(TAG, "onRideCheckCompleted: save to tabel o dukse ");
                 finalResult.add(new Pair<>("Fair", "" + fare));
+                finalResult.add(new Pair<>("RiderID" , riderID));
+                finalResult.add(new Pair<>("PassengerID" , passengerID));
+                for(Pair<String, String > u : finalResult){
+                    System.out.println(u.first + " " + u.second);
+                }
 
+//
                 database.getReference("CompletedRide").child(passengerID+"@"+riderID)
                         .push().setValue(finalResult);
 
