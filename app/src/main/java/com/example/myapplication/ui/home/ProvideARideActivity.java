@@ -226,6 +226,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     }
 
     private void switchToChat() {
+        Log.d(TAG, "switchToChat: passenger found. switching to chat.");
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
 
         intent.putExtra("passenger_id", matchedPassengerData.getUserID());
