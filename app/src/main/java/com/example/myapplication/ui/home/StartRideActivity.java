@@ -412,7 +412,14 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         }
         Log.d(TAG, "onRiderTripsFound: sorted. best match user id: " + bestRiderTrip.getLocationData().getUserID());
         insertIntoBookedPassengerRider(bestRiderTrip.getLocationData());
+        deleteFromPendingRider(bestRiderTrip.getLocationData().getUserID());
         onBestRiderFound(bestRiderTrip.getLocationData().getUserID());
+    }
+
+    private void deleteFromPendingRider(String riderID) {
+        LocationDB locationDB = new LocationDB() ;
+        locationDB.deleteFromPendingRider(riderID);
+        Log.d(TAG, "deleteFromPendingRider:  successfully deleted ");
     }
 
     private boolean isFeasibleForRider(RiderTrip riderTrip) {

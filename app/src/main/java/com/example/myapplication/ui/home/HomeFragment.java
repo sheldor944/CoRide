@@ -25,6 +25,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.Register;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
 import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
@@ -92,6 +93,30 @@ public class HomeFragment extends Fragment {
 
         mOnGoigRide = root.findViewById(R.id.OnGoingRide);
 
+        mOnGoigRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LocationDB locationDB = new LocationDB() ;
+                checkForOnGoingRide();
+                locationDB.getTOKEN("BZgNkwSJNzWLfZOdkxM1pryCGC92", new Callback<String>() {
+                    @Override
+                    public void onComplete(String response) {
+                        Log.d(TAG, "onComplete: got the id "+ response);
+                    }
+                });
+//
+//                locationDB.saveToCompletedTable("5eEHiNS0mIW9CAC6xqbFVdvplnH3", "ItIDT7jlUDOMRheIs4fif8DTc0A2", 500, new SaveToCompletedTableCallback() {
+//                    @Override
+//                    public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+//                        Log.d(TAG, "onSaveToCompletedTableComplete:  saved ");
+//                    }
+//                });
+//
+//                locationDB.insertIntoPassengerRider();
+//              locationDB.saveToCompletedTable("5eEHiNS0mIW9CAC6xqbFVdvplnH3" , "ItIDT7jlUDOMRheIs4fif8DTc0A2" , new SaveToCompletedTableCallback());
+            }
+        });
+
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
         getFCMtoken(new Register.TokenCallback() {
             @Override
@@ -112,6 +137,10 @@ public class HomeFragment extends Fragment {
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                locationDB.saveToCompletedTable("IvaNhWsFchZJZcYbr6XGNmHiXGR2", "5eEHiNS0mIW9CAC6xqbFVdvplnH3", 500, new SaveToCompletedTableCallback() {
+              
+
+              
                 Intent intent = new Intent(getContext() , testerActivity.class);
                 startActivity(intent);
             }
@@ -245,9 +274,10 @@ public class HomeFragment extends Fragment {
     private void checkForOnGoingRide() {
         LocationDB locationDB = new LocationDB();
 
-        locationDB.checkForOngoingRide(new RideCheckCallback() {
+        locationDB.checkForOngoingRide(  new RideCheckCallback() {
             @Override
             public void onRideCheckCompleted(ArrayList<Pair<String , String >> result ) {
+                Log.d(TAG, "onRideCheckCompleted: starting the check ");
                 if (result.size() >0) {
                     // Do something if there's an ongoing ride
                     Log.d(TAG, "onRideCheckCompleted: this person has a ride ");

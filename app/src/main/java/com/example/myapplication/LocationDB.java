@@ -16,6 +16,8 @@ import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
 import com.example.myapplication.helper.SaveToCompletedTableCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +38,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.transform.dom.DOMLocator;
@@ -57,6 +60,17 @@ public class LocationDB {
         db = FirebaseFirestore.getInstance();
         Log.d(TAG, "LocationDB: " +userId);
 
+    }
+
+    public void deleteFromPendingRider(String riderID )
+    {
+        try{
+            database.getReference().child("PendingRider").child(riderID).removeValue();
+
+        }
+        catch (Exception e ){
+            Log.d(TAG, "deleteFromPendingRider: error " + e );
+        }
     }
 
     public void addToPendingRider(String startLocation ,String  destinationLocation, int distance)
@@ -192,11 +206,11 @@ public class LocationDB {
     public void getDataFromCompletedTable(String UID , GetDataFromCompletedTableCallback callback)
     {
 //        DatabaseReference ref = database.getReference("CompletedRide").child("IvaNhWsFchZJZcYbr6XGNmHiXGR2@5eEHiNS0mIW9CAC6xqbFVdvplnH3");
-            DatabaseReference ref = database.getReference("CompletedRide");
+        DatabaseReference ref = database.getReference("CompletedRide");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-             ArrayList  < ArrayList<Pair<String, String>> > resultList = new ArrayList<>();
+                ArrayList  < ArrayList<Pair<String, String>> > resultList = new ArrayList<>();
                 Log.d(TAG, "onDataChange: dukse to re ba ");
 
                 for(DataSnapshot childIdSnapshot : dataSnapshot.getChildren()){
@@ -211,6 +225,9 @@ public class LocationDB {
                             for (DataSnapshot pairSnapshot : recordIdSnapshot.getChildren()) {
                                 String first = pairSnapshot.child("first").getValue(String.class);
                                 String second = pairSnapshot.child("second").getValue(String.class);
+                                if(first.equals("type")){
+                                    second = "Passenger";
+                                }
                                 System.out.println(first + "  ono " + second);
 
                                 if (first != null && second != null) {
@@ -228,6 +245,9 @@ public class LocationDB {
                             for (DataSnapshot pairSnapshot : recordIdSnapshot.getChildren()) {
                                 String first = pairSnapshot.child("first").getValue(String.class);
                                 String second = pairSnapshot.child("second").getValue(String.class);
+                                if(first.equals("type")){
+                                    second = "Rider";
+                                }
                                 System.out.println(first + "  ono " + second);
 
                                 if (first != null && second != null) {
@@ -254,16 +274,60 @@ public class LocationDB {
             }
         });
     }
+    public void deleteFromBookedPassenger(String passengerID , String riderID )
+    {
+        DatabaseReference dbRef = database.getReference("bookedPassengerRider");
+
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d(TAG, "onDataChange: delete Function  ");
+
+                for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                {
+                    String key = dataSnapshot.getKey();
+                    Log.d(TAG, "onDataChange: Delete table " + key );
+                    try{
+                        if(key.equals(passengerID+"@"+riderID))
+                        {
+                            Log.d(TAG, "onDataChange: found and will be deleted now ");
+                            dataSnapshot.getRef().removeValue();
+                            Log.d(TAG, "onDataChange: found and deleted  ");
+
+                            break;
+                        }
+                    }
+                    catch (Exception e ){
+                        Log.d(TAG, "onDataChange: " + e);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
     public void saveToCompletedTable(String passengerID , String riderID , double fare , SaveToCompletedTableCallback callback)
     {
         checkForOngoingRide(new RideCheckCallback() {
             @Override
             public void onRideCheckCompleted(ArrayList<Pair<String, String>> result) {
+
                 ArrayList<Pair<String , String>> finalResult = result;
                 Log.d(TAG, "onRideCheckCompleted: save to tabel o dukse ");
                 finalResult.add(new Pair<>("Fair", "" + fare));
+                finalResult.add(new Pair<>("RiderID" , riderID));
+                finalResult.add(new Pair<>("PassengerID" , passengerID));
+                for(Pair<String, String > u : finalResult){
+                    System.out.println(u.first + " " + u.second);
+                }
 
+//
                 database.getReference("CompletedRide").child(passengerID+"@"+riderID)
                         .push().setValue(finalResult);
 
@@ -351,6 +415,29 @@ public class LocationDB {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle the error or notify the callback about the failure.
+            }
+        });
+    }
+
+    public void getTOKEN(String ID , Callback<String> callback)
+    {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String res = null;
+                for( DataSnapshot dataSnapshot : snapshot.getChildren() )
+                {
+                    if(dataSnapshot.getKey().equals(ID))
+                    {
+                        res = dataSnapshot.child("fcmToken").getValue(String.class);
+                    }
+                }
+                callback.onComplete(res);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }

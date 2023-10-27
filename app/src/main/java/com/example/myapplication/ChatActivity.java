@@ -51,7 +51,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends testerActivity {
     private static final String TAG = "ChatActivity";
     String receiverUID, receiverName, SenderUID;
     TextView receiver;
