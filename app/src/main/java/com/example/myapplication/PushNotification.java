@@ -26,6 +26,7 @@ public class PushNotification {
     }
     public  void cancelRide(String token)
     {
+        Log.d(TAG, "cancelRide: cancelRide o gese ");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -44,6 +45,7 @@ public class PushNotification {
     }
     public void completeRideUtility(String token)
     {
+        
         OkHttpClient okHttpClient = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
         JSONObject notificationJsonObject = new JSONObject();
@@ -85,6 +87,7 @@ public class PushNotification {
     }
     public void cancelRideUtility(String token)
     {
+        Log.d(TAG, "cancelRideUtility: aise ");
         OkHttpClient okHttpClient = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
         JSONObject notificationJsonObject = new JSONObject();

@@ -64,15 +64,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if ("cancelRide".equals(notificationId)) {
                     // Perform action based on this ID
                     Log.d(TAG, "onMessageReceived:  rideCanceled ");
-                    EventBus.getDefault().post(new MessageEvent("This is the message"));
+                    EventBus.getDefault().post(new MessageEvent("cancelRide"));
 
                 }
                 if ("pickedUp".equals(notificationId)) {
                     Log.d(TAG, "onMessageReceived: PickedUp");
+                    EventBus.getDefault().post(new MessageEvent("pickedUp"));
+
                     isPickedUP();
                 }
                 if ("completeRide".equals(notificationId)) {
                     Log.d(TAG, "onMessageReceived: ride has been Completed bro ");
+                    EventBus.getDefault().post(new MessageEvent("completeRide"));
+
                     isRideCompleted();
                 }
                 // You can add more conditions here for other IDs
@@ -82,7 +86,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (remoteMessage.getData().size() > 0) {
                     Log.d(TAG, "onMessageReceived: first if o gese ");
                     if ("SOME_VALUE".equals(remoteMessage.getData().get("key_name"))) {
-                        Log.d(TAG, "onMessageReceived: Secong method ");
+                        Log.d(TAG, "onMessageReceived: second method ");
 
                     }
                 }

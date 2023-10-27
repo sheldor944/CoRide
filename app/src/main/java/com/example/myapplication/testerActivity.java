@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.myapplication.data.model.MessageEvent;
 import com.example.myapplication.helper.GetUserNameCallback;
+import com.example.myapplication.ui.home.HomeFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,40 +48,55 @@ public class testerActivity extends AppCompatActivity {
     public void onMessageEvent(MessageEvent event) {
         // Handle the event
         Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);  // 'this' is the current Activity context
-        builder.setTitle("Dialog Title");  // Set the title of the dialog
-        builder.setMessage("This is a sample message for the dialog.");  // Set the message
+        if(event.message.equals("cancelRide") ){
 
-// Add positive button (usually "OK" or "Yes" button)
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Code to execute when the button is clicked
-                // For example:
-                // Toast.makeText(getApplicationContext(), "OK clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
 
-// Optionally, add a negative button (usually "Cancel" or "No" button)
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Code to execute when the button is clicked
-                // For example:
-                // Toast.makeText(getApplicationContext(), "Cancel clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);  // 'this' is the current Activity context
+            builder.setTitle("Ride Cancelled");  // Set the title of the dialog
+            builder.setMessage("This ride has been cancelled, try again.");  // Set the message
 
-// Optionally, add a neutral button (usually used for options like "Remind me later")
-        builder.setNeutralButton("Remind Me Later", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Code to execute when the button is clicked
-            }
-        });
+            // Add positive button (usually "OK" or "Yes" button)
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Code to execute when the button is clicked
+                    // For example:
+                    // Toast.makeText(getApplicationContext(), "OK clicked", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                    startActivity(intent);
+                }
+            });
 
-// Finally, show the dialog
-        builder.create().show();
+        // Finally, show the dialog
+            builder.create().show();
+        }
+        else if(event.message.equals("completeRide"))
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);  // 'this' is the current Activity context
+            builder.setTitle("Ride Completed!!");  // Set the title of the dialog
+            builder.setMessage("Congratulations, Ride completed!!");  // Set the message
+
+            // Add positive button (usually "OK" or "Yes" button)
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Code to execute when the button is clicked
+                    // For example:
+                    // Toast.makeText(getApplicationContext(), "OK clicked", Toast.LENGTH_SHORT).show();
+                    // TODO: 10/27/2023 take me to RideDetails where cost and stuff will be handled
+                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            // Finally, show the dialog
+            builder.create().show();
+        }
+        else if(event.message.equals("pickedUp"))
+        {
+            // TODO: 10/27/2023 implement a method that will be run in passengers app
+        }
+
     }
 
     @Override
@@ -96,16 +113,16 @@ public class testerActivity extends AppCompatActivity {
                     public void run() {
                         // Your network operation here
 //                        sendNotification();
-                        LocationDB locationDB = new LocationDB() ;
-                       locationDB.getUserName("1uwuzEe8qShjD1EN6dJrmEZsR8y1", new GetUserNameCallback() {
-                          @Override
-                          public void onUserNameRecieved(String name) {
-                              Log.d(TAG, "run: "+ name );
-
-                          }
-                      });
+//                        LocationDB locationDB = new LocationDB() ;
+//                       locationDB.getUserName("1uwuzEe8qShjD1EN6dJrmEZsR8y1", new GetUserNameCallback() {
+//                          @Override
+//                          public void onUserNameRecieved(String name) {
+//                              Log.d(TAG, "run: "+ name );
+//
+//                          }
+//                      });
 //                         pushNotification.pickedUpFlag("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
-//                        pushNotification.cancelRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
+                        pushNotification.cancelRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
                     }
                 }).start();
 

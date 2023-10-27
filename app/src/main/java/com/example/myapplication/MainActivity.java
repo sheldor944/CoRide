@@ -28,7 +28,7 @@ import com.example.myapplication.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends testerActivity {
     private static final String TAG = "MainActivity";
 
     private ActivityMainBinding binding;

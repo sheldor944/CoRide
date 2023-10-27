@@ -3,6 +3,7 @@ package com.example.myapplication.ui.map;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
@@ -38,6 +40,8 @@ import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
+import com.example.myapplication.MainActivity;
+import com.example.myapplication.PushNotification;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
@@ -234,6 +238,46 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         cancelItem.setOnMenuItemClickListener(item -> {
             // TODO: ২৬/১০/২৩ : user clicked on cancel ride, handle it
             Log.d(TAG, "init: user clicked on cancel ride");
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);  // 'this' is the current Activity context
+            builder.setTitle("Are You Sure ? ");  // Set the title of the dialog
+            builder.setMessage("You want to cancel the ride ? ");  // Set the message
+
+            // Add positive button (usually "OK" or "Yes" button)
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Code to execute when the button is clicked
+                    // For example:
+                    // Toast.makeText(getApplicationContext(), "OK clicked", Toast.LENGTH_SHORT).show();
+                    PushNotification pushNotification = new PushNotification() ;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "run: push call hobe");
+                            pushNotification.cancelRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
+                            Log.d(TAG, "run: calll oise push ");
+                        }
+                    }).start();
+                    // TODO: 10/27/2023 delete from booked and add to complete
+                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+
+            // Finally, show the dialog
+            builder.create().show();
+
+
             return true;
         });
 
@@ -262,7 +306,46 @@ public class RideDetailsOnMapActivity extends AppCompatActivity implements OnMap
         MenuItem completedRideItem = mNavigationView.getMenu().findItem(R.id.complete_ride);
         completedRideItem.setOnMenuItemClickListener(item -> {
             // TODO: ২৬/১০/২৩ : completed ride, now?
+
+
             Log.d(TAG, "init: user clicked on completed ride");
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);  // 'this' is the current Activity context
+            builder.setTitle("Are You Sure?");  // Set the title of the dialog
+
+            // Add positive button (usually "OK" or "Yes" button)
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Code to execute when the button is clicked
+                    // For example:
+                    // Toast.makeText(getApplicationContext(), "OK clicked", Toast.LENGTH_SHORT).show();
+                    PushNotification pushNotification = new PushNotification() ;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "run: push call hobe");
+                            pushNotification.completeRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
+                            Log.d(TAG, "run: calll oise push ");
+                        }
+                    }).start();
+                    // TODO: 10/27/2023 delete from booked and add to complete
+                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+            builder.create().show();
+
+
             return true;
         });
     }
