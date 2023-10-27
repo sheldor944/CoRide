@@ -32,15 +32,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.myapplication.ChatActivity;
@@ -175,6 +179,20 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mNavigationView = findViewById(R.id.ride_nav_view);
         mUserId = FirebaseAuth.getInstance().getUid();
+
+        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                R.string.nav_open,
+                R.string.nav_close
+        );
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         getInformationFromIntent();
 

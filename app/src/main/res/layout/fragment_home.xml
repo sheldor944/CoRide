@@ -105,6 +105,8 @@
 
     <Button
         android:id="@+id/OnGoingRide"
+        android:visibility="gone"
+        android:clickable="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="OnGoingRide" />
@@ -163,6 +165,8 @@
         android:id="@+id/notificationTester"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:clickable="false"
         android:text="notification" />
 
 </LinearLayout>
