@@ -207,7 +207,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                         Log.d(TAG, "run: will display updated route after some time");
                         Thread.sleep(SEARCH_INTERVAL);
                     }
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     Log.d(TAG, "run: Thread error: " + e.getMessage());
                 }
             }
