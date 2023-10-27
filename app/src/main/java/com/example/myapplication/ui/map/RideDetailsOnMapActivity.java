@@ -163,6 +163,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
     private String mRouteEndLocation;
 
     private NavigationView mNavigationView;
+    private boolean stopThread = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -188,7 +189,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
             public void run() {
                 try {
                     final int SEARCH_INTERVAL = 10000;
-                    while(true) {
+                    while(!stopThread) {
                         getDeviceLocationAndDisplayRoute();
 
                         Thread pickupStatusFetcherThread = new Thread(new Runnable() {
@@ -204,7 +205,6 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                         pickupStatusFetcherThread.start();
                         Log.d(TAG, "run: will display updated route after some time");
                         Thread.sleep(SEARCH_INTERVAL);
-                        break;
                     }
                 } catch (InterruptedException e) {
                     Log.d(TAG, "run: Thread error: " + e.getMessage());
@@ -371,6 +371,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                                         }
                                     });
                                     Log.d(TAG, "onComplete: deleted and added as well ");
+                                    stopThread = true;
                                     Intent intent = new Intent(getApplicationContext() , MainActivity.class);
                                     startActivity(intent);
                                 }
@@ -403,6 +404,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
             Log.d(TAG, "init: user clicked on picked up passenger, updating database.");
 //            LocationDB locationDB = new LocationDB();
             locationDB.updatePickupStatus(mPassengerId, mRiderId);
+            pickedUpItem.setEnabled(false);
             return true;
         });
 
@@ -417,6 +419,8 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
             intent.putExtra("rider_id", mRiderId);
             intent.putExtra("rider_start_location", mRiderStartLocation);
             intent.putExtra("rider_end_location", mRiderEndLocation);
+
+            stopThread = true;
             startActivity(intent);
             return true;
         });
@@ -460,6 +464,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                                         }
                                     });
                                     Log.d(TAG, "onComplete: deleted and added as well ");
+                                    stopThread = true;
                                     Intent intent = new Intent(getApplicationContext() , MainActivity.class);
                                     startActivity(intent);
                                 }
@@ -469,6 +474,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                         }
                     }).start();
                     // TODO: 10/27/2023 delete from booked and add to complete
+                    stopThread = true;
                     Intent intent = new Intent(getApplicationContext() , MainActivity.class);
                     startActivity(intent);
                 }
