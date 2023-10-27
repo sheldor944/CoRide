@@ -49,6 +49,7 @@ import com.example.myapplication.MainActivity;
 import com.example.myapplication.PushNotification;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
+import com.example.myapplication.data.model.MessageEvent;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
@@ -393,8 +394,6 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
             // Finally, show the dialog
             builder.create().show();
-
-
             return true;
         });
 
@@ -606,5 +605,11 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    @Override
+    public void onMessageEvent(MessageEvent event) {
+        stopThread = true;
+        super.onMessageEvent(event);
     }
 }
