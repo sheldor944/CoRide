@@ -36,4 +36,6 @@
     <!--    left navigation view related strings -->
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
+
+    <string name="taka">৳</string>
 </resources>

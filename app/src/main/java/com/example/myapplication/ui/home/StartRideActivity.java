@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.home;
 
+import static java.lang.Math.round;
+
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
@@ -148,6 +150,9 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private int distance;
     private Thread RiderSearchThread;
     private RiderTrip bestRiderTrip = null;
+    private TextView mCostTextView;
+
+    private boolean stopThreads = false;
 
 
     @Override
@@ -162,6 +167,8 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         mConfirmDestinationCardView = (CardView) findViewById(R.id.confirmDestinationCardView);
         mFindARideLinearLayout = findViewById(R.id.findARideLayout);
         mSearchingARideLayout = (LinearLayout) findViewById(R.id.searchingARideLinearLayout);
+        mCostTextView = findViewById(R.id.cost_text);
+
         numberOfTimesSearchedForRiders = 0;
         mUserId = FirebaseAuth.getInstance().getUid();
         mConfirmDestinationButton.setEnabled(false);
@@ -262,6 +269,9 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             Log.d(TAG, "init: destination confirmed");
             mConfirmDestinationCardView.setVisibility(View.GONE);
             mFindARideLinearLayout.setVisibility(View.VISIBLE);
+
+            int cost = GoogleMapAPIHandler.getCostFromDistance(distance);
+            mCostTextView.setText("~ " + cost + "৳");
         });
 
         mFindARideButton.setOnClickListener(view -> {
@@ -513,6 +523,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
 
     private void hideSoftKeyboard(View view) {
         Log.d(TAG, "hideSoftKeyboard: hiding soft keyboard");
+        view = this.getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

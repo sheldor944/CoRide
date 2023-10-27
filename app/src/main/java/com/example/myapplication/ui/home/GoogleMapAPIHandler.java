@@ -35,6 +35,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GoogleMapAPIHandler {
+    public static final double PER_METER_COST = 15.0 / 1000.0;
+    private static final double SERVICE_COST = 20.0;
     private static final LatLngBounds BANGLADESH_LAT_LNG_BOUDNS = new LatLngBounds(
             new LatLng(20.743550, 88.043370), // Southwest corner
             new LatLng(26.631450, 92.672720)  // Northeast corner
@@ -286,5 +288,13 @@ public class GoogleMapAPIHandler {
                 Double.parseDouble(location[0]),
                 Double.parseDouble(location[1])
         );
+    }
+
+    public static int getCostFromDistance(int distanceInMeter) {
+        double distance = (double) distanceInMeter;
+        double cost = SERVICE_COST + (distance * PER_METER_COST);
+        int costInt = (int) cost;
+        Log.d(TAG, "getCostFromDistance: double: " + cost + " int: " + costInt);
+        return costInt;
     }
 }

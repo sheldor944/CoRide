@@ -76,6 +76,8 @@ public class ChatActivity extends AppCompatActivity {
     private String mRiderStartLocation;
     private String mRiderEndLocation;
 
+    private boolean stopThreads = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
