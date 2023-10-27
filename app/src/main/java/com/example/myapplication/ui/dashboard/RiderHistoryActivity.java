@@ -41,6 +41,7 @@ public class RiderHistoryActivity extends AppCompatActivity {
         UID = FirebaseAuth.getInstance().getUid();
 
         LocationDB locationDB = new LocationDB();
+        final int[] passengerCountInCompleteTable = {0};
         locationDB.getDataFromCompletedTable(UID, new GetDataFromCompletedTableCallback() {
             @Override
             public void onGetDataFromCompletedTableComplete(ArrayList<ArrayList<Pair<String, String>>> resultList) {
@@ -75,6 +76,8 @@ public class RiderHistoryActivity extends AppCompatActivity {
                         }
                     }
                     if(type.equals("Passenger")){
+                        passengerCountInCompleteTable[0]++;
+
                         continue;
                     }
                     locationDB.getUserName(passengerName, new GetUserNameCallback() {
@@ -85,7 +88,7 @@ public class RiderHistoryActivity extends AppCompatActivity {
                             riderListData = new RiderListData(riderName , passengerName, from , to , fare);
                             riderListDataArrayList.add(riderListData);
 
-                            if(riderListDataArrayList.size() == resultList.size()){
+                            if(riderListDataArrayList.size() + passengerCountInCompleteTable[0] == resultList.size()){
                                 riderListAdapter = new RiderListAdapter(RiderHistoryActivity.this, riderListDataArrayList);
 
                                 binding.listview.setAdapter(riderListAdapter);

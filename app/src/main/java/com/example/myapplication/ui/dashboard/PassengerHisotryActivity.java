@@ -41,6 +41,8 @@ public class PassengerHisotryActivity extends AppCompatActivity {
         UID = FirebaseAuth.getInstance().getUid();
 
         LocationDB locationDB = new LocationDB();
+        final int[] RiderCountInCompleteTable = {0};
+
         locationDB.getDataFromCompletedTable(UID, new GetDataFromCompletedTableCallback() {
             @Override
             public void onGetDataFromCompletedTableComplete(ArrayList<ArrayList<Pair<String, String>>> resultList) {
@@ -73,8 +75,10 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                         }
                     }
                     if(type.equals("Rider")){
+                        RiderCountInCompleteTable[0]++;
                         continue;
                     }
+
                     locationDB.getUserName(riderID, new GetUserNameCallback() {
                         @Override
                         public void onUserNameRecieved(String name) {
@@ -82,8 +86,9 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                             System.out.println(riderName + passengerName + from + to + fare );
                             passengerListData = new PassengerListData(riderName , passengerName, from , to , fare);
                             passengerListDataArrayList.add(passengerListData);
+                            Log.d(TAG, "onUserNameRecieved:  size " + resultList.size() + " " + passengerListDataArrayList.size());
 
-                            if(passengerListDataArrayList.size() == resultList.size()) {
+                            if(passengerListDataArrayList.size()+ RiderCountInCompleteTable[0] == resultList.size()) {
                                 passengerListAdapter = new PassengerListAdapter(PassengerHisotryActivity.this, passengerListDataArrayList);
                                 binding.listview.setAdapter(passengerListAdapter);
                                 binding.listview.setClickable(true);
@@ -92,6 +97,7 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                     });
 
                 }
+
 
             }
         });
