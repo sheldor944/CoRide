@@ -36,8 +36,8 @@ public class ViewProfileFragment extends Fragment {
     private static final String TAG = "NotificationsFragment";
 
     String email ;
-    String name ;
-    String phone;
+    String name="" ;
+    String phone="" , lastName="";
     ImageView imageView;
 
     private AppCompatButton mUpdateButton;
@@ -92,11 +92,11 @@ public class ViewProfileFragment extends Fragment {
                         // Get the user's data from the DocumentSnapshot
                         Log.d("entered5" , "document exists ");
 
-                        String name = documentSnapshot.getString("firstName");
+                        name = documentSnapshot.getString("firstName");
                         System.out.println(name);
-                        String lastName = documentSnapshot.getString("lastName");
+                        lastName = documentSnapshot.getString("lastName");
                         String email = documentSnapshot.getString("email");
-                        String phone = documentSnapshot.getString("phone");
+                        phone = documentSnapshot.getString("phone");
 //                        String password = documentSnapshot.getString("password");
 
                         TextView nameText = (root.findViewById(R.id.nameText));
@@ -145,6 +145,8 @@ public class ViewProfileFragment extends Fragment {
         mUpdateButton = (AppCompatButton) root.findViewById(R.id.update_button);
         mUpdateButton.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), UpdateProfileActivity.class);
+            intent.putExtra("name" , name);
+            intent.putExtra("phone" , phone);
             startActivity(intent);
         });
 
