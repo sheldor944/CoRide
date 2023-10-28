@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -68,6 +70,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -178,6 +182,8 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
     private boolean mPickupStatus = false;
 
+    private BitmapDescriptor mBikeImageBitmapDescriptor;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
@@ -187,6 +193,11 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mNavigationView = findViewById(R.id.ride_nav_view);
         mUserId = FirebaseAuth.getInstance().getUid();
+
+        mBikeImageBitmapDescriptor = BitmapDescriptorFactory
+                .fromBitmap(
+                        resizeBitmap("ic_rider_bike",72,64)
+                );
 
         mDrawerLayout = findViewById(R.id.drawerLayout);
         mToggle = new ActionBarDrawerToggle(
@@ -277,11 +288,19 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                             ","
                     );
                     Log.d(TAG, "onComplete: route end: " + mPassengerEndLocation);
+
                     GoogleMapAPIHandler.displayRoute(
                             new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                             routeEndLatLng,
                             mMap,
                             (latLng, distance) -> {}
+                    );
+
+                    GoogleMapAPIHandler.addMarkerWithBikeIcon(
+                            mMap,
+                            new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                            "Driver",
+                            mBikeImageBitmapDescriptor
                     );
                 }
                 else {
@@ -661,5 +680,10 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public Bitmap resizeBitmap(String drawableName, int width, int height){
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(drawableName, "drawable", getPackageName()));
+        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
 }

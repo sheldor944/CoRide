@@ -1,6 +1,8 @@
 package com.example.myapplication.ui.home;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -11,9 +13,11 @@ import android.widget.AutoCompleteTextView;
 
 import com.example.myapplication.helper.DistanceCalculatorCallback;
 import com.example.myapplication.helper.PlaceFetcherCallback;
+import com.example.myapplication.ui.map.RideDetailsOnMapActivity;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -282,6 +286,18 @@ public class GoogleMapAPIHandler {
         );
     }
 
+
+
+    public static void addMarkerWithBikeIcon(GoogleMap googleMap, LatLng latLng,
+                                             String title, BitmapDescriptor markerImageBitmapDescriptor) {
+        Log.d(TAG, "addMarkerWithBikeIcon: adding marker with bike icon to: " + latLng);
+        googleMap.addMarker(
+                new MarkerOptions()
+                        .position(latLng)
+                        .title(title)
+                        .icon(markerImageBitmapDescriptor)
+        );
+    }
     public static LatLng getLatLngFromString(String locationString, String separator) {
         String[] location = locationString.split(separator);
         return new LatLng(
