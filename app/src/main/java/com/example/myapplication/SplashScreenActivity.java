@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.example.myapplication.ui.login.LoginActivity;
+
 import pl.droidsonroids.gif.GifImageView;
 
 public class SplashScreenActivity extends AppCompatActivity {
@@ -18,7 +20,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         gifImageView = findViewById(R.id.gifImageView);
 
         new Handler().postDelayed(() -> {
-            Intent mainIntent = new Intent(SplashScreenActivity.this, MainActivity.class);
+            Intent mainIntent = new Intent(SplashScreenActivity.this, LoginActivity.class);
             startActivity(mainIntent);
             finish();
         }, 3490);
