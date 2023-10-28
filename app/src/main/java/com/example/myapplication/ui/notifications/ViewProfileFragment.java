@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.notifications;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,9 +16,12 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.example.myapplication.LocationDB;
 import com.example.myapplication.MyFirebaseMessagingService;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentNotificationsBinding;
+import com.example.myapplication.helper.Callback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,8 +36,8 @@ public class ViewProfileFragment extends Fragment {
     private static final String TAG = "NotificationsFragment";
 
     String email ;
-    String name ;
-    String phone;
+    String name="" ;
+    String phone="" , lastName="";
     ImageView imageView;
 
     private AppCompatButton mUpdateButton;
@@ -61,6 +65,17 @@ public class ViewProfileFragment extends Fragment {
         System.out.println(user.getUid());
         Log.d("entered2" , "notificationFragment o dukse 2 ");
 
+        imageView = root.findViewById(R.id.profile_picture);
+        LocationDB locationDB = new LocationDB();
+        locationDB.getImageURL(new Callback<Uri>() {
+            @Override
+            public void onComplete(Uri response) {
+            Glide.with(ViewProfileFragment.this).load(response).into(imageView); // Using Glide library to load the image
+
+//                imageView.setImageURI(response);
+            }
+        });
+
 
 
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -77,11 +92,11 @@ public class ViewProfileFragment extends Fragment {
                         // Get the user's data from the DocumentSnapshot
                         Log.d("entered5" , "document exists ");
 
-                        String name = documentSnapshot.getString("firstName");
+                        name = documentSnapshot.getString("firstName");
                         System.out.println(name);
-                        String lastName = documentSnapshot.getString("lastName");
+                        lastName = documentSnapshot.getString("lastName");
                         String email = documentSnapshot.getString("email");
-                        String phone = documentSnapshot.getString("phone");
+                        phone = documentSnapshot.getString("phone");
 //                        String password = documentSnapshot.getString("password");
 
                         TextView nameText = (root.findViewById(R.id.nameText));
@@ -130,6 +145,8 @@ public class ViewProfileFragment extends Fragment {
         mUpdateButton = (AppCompatButton) root.findViewById(R.id.update_button);
         mUpdateButton.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), UpdateProfileActivity.class);
+            intent.putExtra("name" , name);
+            intent.putExtra("phone" , phone);
             startActivity(intent);
         });
 
