@@ -45,6 +45,7 @@ import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
 import com.example.myapplication.helper.PlaceFetcherCallback;
+import com.example.myapplication.service.RideServiceHandler;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -396,7 +397,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
         for(RiderTrip riderTrip : riderTrips) {
-            if(!isFeasibleForRider(riderTrip)) continue;
+            if(!RideServiceHandler.isFeasibleForRider(riderTrip, distance)) continue;
 
             LocationDB locationDB = new LocationDB();
             Log.d(TAG, "onRiderTripsFound: checking: " + riderTrip.getLocationData().getUserID()
