@@ -57,10 +57,12 @@ import com.example.myapplication.data.model.MessageEvent;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
+import com.example.myapplication.helper.PermissionCallback;
 import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.example.myapplication.helper.SaveToCompletedTableCallback;
 import com.example.myapplication.testerActivity;
 import com.example.myapplication.ui.home.PlacesAutoCompleteAdapter;
+import com.example.myapplication.utils.PermissionUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -169,7 +171,9 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
     private NavigationView mNavigationView;
     private boolean stopThread = false;
-    ActionBarDrawerToggle mToggle;
+
+    private ActionBarDrawerToggle mToggle;
+    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -181,22 +185,19 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         mNavigationView = findViewById(R.id.ride_nav_view);
         mUserId = FirebaseAuth.getInstance().getUid();
 
-        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
+        mDrawerLayout = findViewById(R.id.drawerLayout);
         mToggle = new ActionBarDrawerToggle(
                 this,
-                drawerLayout,
+                mDrawerLayout,
                 R.string.nav_open,
                 R.string.nav_close
         );
 
-        drawerLayout.addDrawerListener(mToggle);
+        mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        Log.d(TAG, "onCreate: " + drawerLayout + "\n" + mToggle + "\n" +
-                actionBar);
 
         getInformationFromIntent();
 
@@ -421,11 +422,17 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
         MenuItem pickedUpItem = mNavigationView.getMenu().findItem(R.id.picked_up_passenger);
         pickedUpItem.setOnMenuItemClickListener(item -> {
-            // TODO: ২৬/১০/২৩ : picked up passenger, now?
             Log.d(TAG, "init: user clicked on picked up passenger, updating database.");
-//            LocationDB locationDB = new LocationDB();
-            locationDB.updatePickupStatus(mPassengerId, mRiderId);
-            pickedUpItem.setEnabled(false);
+            PermissionUtil.askForConfirmation(
+                    this,
+                    "Are you sure you have picked up the passenger?",
+                    () -> {
+                        new LocationDB().updatePickupStatus(mPassengerId, mRiderId);
+                        mDrawerLayout.closeDrawers();
+                        pickedUpItem.setEnabled(false);
+                        cancelItem.setEnabled(false);
+                    }
+            );
             return true;
         });
 
