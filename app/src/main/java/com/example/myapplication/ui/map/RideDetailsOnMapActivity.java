@@ -184,6 +184,9 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
     private BitmapDescriptor mBikeImageBitmapDescriptor;
 
+    private String mPassengerLiveLocation;
+    private String mRiderLiveLocation;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
@@ -247,6 +250,9 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                             }
                         });
                         pickupStatusFetcherThread.start();
+                        new LocationDB().getLiveLocation(mRiderId, liveLocation -> {
+                            mRiderLiveLocation = liveLocation;
+                        });
                         getDeviceLocationAndDisplayRoute();
                         Log.d(TAG, "run: will display updated route after some time");
                         Thread.sleep(SEARCH_INTERVAL);
@@ -289,8 +295,17 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                     );
                     Log.d(TAG, "onComplete: route end: " + mPassengerEndLocation);
 
+                    String currentLocationInString = currentLocation.getLatitude() + "," + currentLocation.getLongitude();
+                    new LocationDB().updateLiveLocation(
+                            mUserId,
+                            currentLocationInString
+                    );
+
+                    if(mUserId.equals(mPassengerId)) mPassengerLiveLocation = currentLocationInString;
+                    else mRiderLiveLocation = currentLocationInString;
+
                     GoogleMapAPIHandler.displayRoute(
-                            new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                            GoogleMapAPIHandler.getLatLngFromString(mRiderLiveLocation, ","),
                             routeEndLatLng,
                             mMap,
                             (latLng, distance) -> {}
@@ -298,7 +313,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
                     GoogleMapAPIHandler.addMarkerWithBikeIcon(
                             mMap,
-                            new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                            GoogleMapAPIHandler.getLatLngFromString(mRiderLiveLocation, ","),
                             "Driver",
                             mBikeImageBitmapDescriptor
                     );
@@ -321,6 +336,8 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         mRiderEndLocation = intent.getStringExtra("rider_end_location");
 
         mRouteEndLocation = mPassengerStartLocation;
+        mPassengerLiveLocation = mPassengerStartLocation;
+        mRiderLiveLocation = mRiderStartLocation;
 
         Log.d(TAG, "getInformationFromIntent: passenger: " + mPassengerId + " "
                 + mPassengerStartLocation + " " + mPassengerEndLocation);

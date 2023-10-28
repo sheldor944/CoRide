@@ -711,4 +711,46 @@ public class LocationDB {
         });
     }
 
+    public void updateLiveLocation(String userId, String location) {
+//        database.getReference("bookedPassengerRider")
+//                .child(PID+"@"+RID)
+//                .child("pickupStatus")
+//                .setValue("false");
+        Log.d(TAG, "updateLiveLocation: updating location for: " + userId);
+        try {
+            database
+                    .getReference("users")
+                    .child(userId)
+                    .child("live_location")
+                    .setValue(location);
+        } catch (Exception e) {
+            Log.d(TAG, "updateLiveLocation: error: " + e.getMessage());
+        }
+    }
+
+    public void getLiveLocation(String userId, Callback <String> callback) {
+        Log.d(TAG, "getLiveLocation: id: " + userId);
+        database
+                .getReference("users")
+                .child(userId)
+                .child("live_location")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String liveLocation = snapshot.getValue(String.class);
+                        Log.d(TAG, "onDataChange: live location: " + liveLocation);
+                        if(liveLocation != null) {
+                            callback.onComplete(liveLocation);
+                        }
+                        else {
+                            Log.d(TAG, "onDataChange: live location is null");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d(TAG, "onCancelled: getLiveLocation failed. error: " + error.getMessage());
+                    }
+                });
+    }
 }
