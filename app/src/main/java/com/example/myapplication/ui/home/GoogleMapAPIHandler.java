@@ -111,7 +111,6 @@ public class GoogleMapAPIHandler {
     }
 
     public static void displayRoute(LatLng srcLatLng, LatLng destLatLng, GoogleMap googleMap, PlaceFetcherCallback callback) {
-        googleMap.clear();
         RouteFetcherThread routeFetcherThread = new RouteFetcherThread(
                 API_KEY,
                 jsonObject -> {
@@ -156,6 +155,7 @@ public class GoogleMapAPIHandler {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
+                            googleMap.clear();
                             Log.d(TAG, "displayRoute: " + polylineOptions.toString());
                             googleMap.addPolyline(polylineOptions);
                         }
