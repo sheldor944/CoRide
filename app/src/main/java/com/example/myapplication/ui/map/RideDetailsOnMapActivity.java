@@ -169,6 +169,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
     private NavigationView mNavigationView;
     private boolean stopThread = false;
+    ActionBarDrawerToggle mToggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -181,18 +182,21 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         mUserId = FirebaseAuth.getInstance().getUid();
 
         DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        mToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
                 R.string.nav_open,
                 R.string.nav_close
         );
 
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        drawerLayout.addDrawerListener(mToggle);
+        mToggle.syncState();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        Log.d(TAG, "onCreate: " + drawerLayout + "\n" + mToggle + "\n" +
+                actionBar);
 
         getInformationFromIntent();
 
@@ -629,5 +633,15 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
     public void onMessageEvent(MessageEvent event) {
         stopThread = true;
         super.onMessageEvent(event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: ");
+        if(mToggle.onOptionsItemSelected(item)) {
+            Log.d(TAG, "onOptionsItemSelected: toggle is clicked");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
