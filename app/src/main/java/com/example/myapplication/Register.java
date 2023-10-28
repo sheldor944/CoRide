@@ -81,12 +81,12 @@ public class Register extends AppCompatActivity {
             }
         });
     }
-
+    Uri selectedImageUri = null;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
-            Uri selectedImageUri = data.getData();
+            selectedImageUri = data.getData();
             imageView.setImageURI(selectedImageUri);
         }
     }
@@ -190,6 +190,8 @@ public class Register extends AppCompatActivity {
 
                                     // Use the set() method on the DocumentReference instance to write the data to Firestore
                                     userRef.set(data);
+                                    LocationDB locationDB = new LocationDB();
+                                    locationDB.uploadImage(selectedImageUri);
                                     Intent intent = new Intent(getApplicationContext() , MainActivity.class);
                                     startActivity(intent);
 //

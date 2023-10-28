@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.notifications;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,9 +16,12 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.example.myapplication.LocationDB;
 import com.example.myapplication.MyFirebaseMessagingService;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentNotificationsBinding;
+import com.example.myapplication.helper.Callback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,6 +64,17 @@ public class ViewProfileFragment extends Fragment {
         DocumentReference userRef = db.collection("users").document(user.getUid());
         System.out.println(user.getUid());
         Log.d("entered2" , "notificationFragment o dukse 2 ");
+
+        imageView = root.findViewById(R.id.profile_picture);
+        LocationDB locationDB = new LocationDB();
+        locationDB.getImageURL(new Callback<Uri>() {
+            @Override
+            public void onComplete(Uri response) {
+            Glide.with(ViewProfileFragment.this).load(response).into(imageView); // Using Glide library to load the image
+
+//                imageView.setImageURI(response);
+            }
+        });
 
 
 

@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.util.Pair;
@@ -29,6 +30,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.ktx.Firebase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.protobuf.DescriptorProtos;
 
 import org.checkerframework.checker.guieffect.qual.UI;
@@ -670,4 +674,41 @@ public class LocationDB {
                 .child(rideId)
                 .child("pickupStatus").setValue("true");
     }
+
+    public void uploadImage(Uri fileUri) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        StorageReference userImageRef = storageRef.child("user_images/" + userId );
+
+        UploadTask uploadTask = userImageRef.putFile(fileUri);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            // Image uploaded successfully
+            Log.d(TAG, "uploadImage: Success");
+        }).addOnFailureListener(e -> {
+            // Handle any errors
+            Log.d(TAG, "uploadImage: error "+ e);
+        });
+    }
+
+    public void getImageURL(Callback<Uri> callback) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        StorageReference userImageRef = storageRef.child("user_images/" + userId );
+
+        userImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            // You can set this URL to an ImageView to display the image
+            Log.d(TAG, "getImageURL: Successful");
+            callback.onComplete(uri);
+//            ImageView imageView = findViewById(R.id.yourImageViewId);
+//            Glide.with(this).load(uri).into(imageView); // Using Glide library to load the image
+        }).addOnFailureListener(exception -> {
+            Log.d(TAG, "getImageURL: error " + exception);
+            // Handle any errors
+        });
+    }
+
 }
