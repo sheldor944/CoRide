@@ -129,6 +129,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         }
     }
 
+    private static final int SEARCH_INTERVAL = 3000;
     private static final String TAG = "RideDetailsOnMapActivity";
     private static final String API_KEY = "AIzaSyDICnj_kc22dTrmOIUJg46B5fOgu6QhxFM";
 
@@ -175,6 +176,8 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
     private ActionBarDrawerToggle mToggle;
     private DrawerLayout mDrawerLayout;
 
+    private boolean mPickupStatus = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
@@ -212,21 +215,28 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
             @Override
             public void run() {
                 try {
-                    final int SEARCH_INTERVAL = 10000;
                     while(!stopThread) {
-                        getDeviceLocationAndDisplayRoute();
-
+                        Log.d(TAG, "run: starting thread to see if the passenger has been picked up");
                         Thread pickupStatusFetcherThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                   LocationDB locationDB = new LocationDB();
-                                   locationDB.getPickupStatus(mRiderId, pickupStatus -> {
-                                       if(pickupStatus == true) mRouteEndLocation = mPassengerEndLocation;
-                                       else mRouteEndLocation = mPassengerStartLocation;
-                                   });
+                                if(mPickupStatus) return;
+                                LocationDB locationDB = new LocationDB();
+                                locationDB.getPickupStatus(mRiderId, pickupStatus -> {
+                                    Log.d(TAG, "run: pickup status: " + pickupStatus);
+                                   mPickupStatus = pickupStatus;
+                                   if(pickupStatus == true) {
+                                       Log.d(TAG, "run: passenger has been picked up");
+                                       mNavigationView.getMenu().findItem(R.id.cancel_ride).setEnabled(false);
+                                       mNavigationView.getMenu().findItem(R.id.picked_up_passenger).setEnabled(false);
+                                       mRouteEndLocation = mPassengerEndLocation;
+                                   }
+                                   else mRouteEndLocation = mPassengerStartLocation;
+                                });
                             }
                         });
                         pickupStatusFetcherThread.start();
+                        getDeviceLocationAndDisplayRoute();
                         Log.d(TAG, "run: will display updated route after some time");
                         Thread.sleep(SEARCH_INTERVAL);
                     }
@@ -428,6 +438,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                     "Are you sure you have picked up the passenger?",
                     () -> {
                         new LocationDB().updatePickupStatus(mPassengerId, mRiderId);
+                        mPickupStatus = true;
                         mDrawerLayout.closeDrawers();
                         pickedUpItem.setEnabled(false);
                         cancelItem.setEnabled(false);
