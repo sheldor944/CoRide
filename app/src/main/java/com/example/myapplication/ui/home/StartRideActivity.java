@@ -314,6 +314,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                                 Toast.makeText(StartRideActivity.this, "Unfortunately, no rider found!", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(StartRideActivity.this, MainActivity.class);
                                 startActivity(intent);
+                                finish();
                             }
                         });
                     }
@@ -355,6 +356,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                 intent.putExtra("rider_end_location", bestRiderTrip.getLocationData().getEndLocation());
 
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -557,10 +559,17 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                         Toast.makeText(StartRideActivity.this, "Cancelled Ride", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(StartRideActivity.this, MainActivity.class);
                         startActivity(intent);
+                        finish();
                     }
             );
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopThreads = true;
+        super.onDestroy();
     }
 }
