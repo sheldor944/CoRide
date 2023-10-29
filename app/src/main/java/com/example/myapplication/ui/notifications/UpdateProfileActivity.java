@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Intent;
@@ -21,6 +23,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.LocationDB;
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.helper.Callback;
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,6 +85,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         locationDB.getImageURL(new Callback<Uri>() {
             @Override
             public void onComplete(Uri response) {
+                Log.d(TAG, "onComplete: loading previous image ");
                 Glide.with(UpdateProfileActivity.this).load(response).into(imageView); // Using Glide library to load the image
 
             }
@@ -107,24 +111,33 @@ public class UpdateProfileActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                firebaseFirestore.collection("users").document(userID)
-                        .update("firstName" , nameEditText.getText().toString() ,"phone" , phoneEditText.getText().toString() )
-                        .addOnSuccessListener(aVoid -> Log.d(TAG, "Document successfully updated!"))
-                        .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                try {
+                    firebaseFirestore.collection("users").document(userID)
+                            .update("firstName" , nameEditText.getText().toString() ,"phone" , phoneEditText.getText().toString() )
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Document successfully updated!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                }
+                catch (Exception e )
+                {
+                    Log.d(TAG, "onClick: exception " + e);
+                }
+
 
                 LocationDB locationDB = new LocationDB() ;
-                locationDB.uploadImage(selectedImageUri);
-
-                Intent intent = new Intent(getApplicationContext() , ViewProfileFragment.class);
+                if(selectedImageUri != null) {
+                    locationDB.uploadImage(selectedImageUri);
+                }
+                Intent intent = new Intent(getApplicationContext() , MainActivity.class);
                 startActivity(intent);
+//                FragmentManager fragmentManager = getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//                ViewProfileFragment viewProfileFragment = new ViewProfileFragment();
+//                fragmentTransaction.replace(R.id.navigation_notifications,  viewProfileFragment);
+//                fragmentTransaction.addToBackStack(null); // if you want to add the transaction to the back stack
+//                fragmentTransaction.commit();
             }
         });
-
-
-
-
-
-        System.out.println(userID);
 
     }
 }

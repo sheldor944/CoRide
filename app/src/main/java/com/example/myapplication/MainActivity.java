@@ -6,11 +6,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.myapplication.helper.Callback;
+import com.example.myapplication.helper.GetUserNameCallback;
 import com.example.myapplication.helper.PermissionCallback;
 import com.example.myapplication.ui.introduction.IntroductionActivity;
 import com.example.myapplication.ui.login.LoginActivity;
+import com.example.myapplication.ui.notifications.UpdateProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -40,6 +46,9 @@ public class MainActivity extends testerActivity {
     private MenuItem mBugReportItem;
     private MenuItem mAboutUsItem;
 
+    private ImageView imageView;
+    private TextView textView ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +67,33 @@ public class MainActivity extends testerActivity {
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+
+
         initNavigationView();
+
+        imageView = findViewById(R.id.leftNavViewImageView);
+        textView = findViewById(R.id.leftNavViewNameText);
+//        textView.setText("kitare");
+//        loadData();
+    }
+    private void loadData()
+    {
+        LocationDB locationDB = new LocationDB() ;
+        locationDB.getImageURL(new Callback<Uri>() {
+            @Override
+            public void onComplete(Uri response) {
+//                imageView.setImageURI(response);
+//                Glide.with(MainActivity.this).load(response).into(imageView); // Using Glide library to load the image
+
+            }
+        });
+//        String user = FirebaseAuth.getInstance().getUid();
+//        locationDB.getUserName(user, new GetUserNameCallback() {
+//            @Override
+//            public void onUserNameRecieved(String name) {
+//                textView.setText(name);
+//            }
+//        });
     }
 
     private void initNavigationView() {
