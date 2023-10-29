@@ -560,6 +560,7 @@ public class LocationDB {
         return isAvailable.get();
     }
 
+
     public void getUserName(String UID , GetUserNameCallback callback)
     {
         DocumentReference userRef = db.collection("users").document(UID);
@@ -567,7 +568,7 @@ public class LocationDB {
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                String  name = "";
+                String  name = "" , phone="";
 
                 if (task.isSuccessful()) {
                     Log.d("entered successful 4" , "successful o dukse 4 ");
@@ -582,7 +583,7 @@ public class LocationDB {
 //                        System.out.println(name);
                         String lastName = documentSnapshot.getString("lastName");
                         String email = documentSnapshot.getString("email");
-                        String phone = documentSnapshot.getString("phone");
+                         phone = documentSnapshot.getString("phone");
                         name = firstName + lastName ;
                         Log.d(TAG, "onComplete: " + firstName + lastName);
                         Log.d(TAG, "onComplete: "+ name);
@@ -594,7 +595,7 @@ public class LocationDB {
                 } else {
                     // An error occurred while getting the user's data
                 }
-                callback.onUserNameRecieved(name);
+                callback.onUserNameRecieved(name , phone);
             }
         });
 

@@ -29,7 +29,7 @@ public class PassengerHisotryActivity extends AppCompatActivity {
     PassengerListAdapter passengerListAdapter;
     ArrayList<PassengerListData> passengerListDataArrayList = new ArrayList<>();
     PassengerListData passengerListData;
-    String type="",riderName="" , passengerName="" , from="" , to="" , fare="" , riderID="" ;
+    String type="",riderName="" , passengerName="" , from="" , to="" , fare="" , riderID=""  , phoneNumber="" , passengerID="";
     String UID ;
 
     @Override
@@ -73,6 +73,10 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                         if(p.first.equals("RiderID")){
                             riderID=p.second;
                         }
+                        if(p.first.equals("PassengerID"))
+                        {
+                            passengerID = p.second;
+                        }
                     }
                     if(type.equals("Rider")){
                         RiderCountInCompleteTable[0]++;
@@ -81,18 +85,26 @@ public class PassengerHisotryActivity extends AppCompatActivity {
 
                     locationDB.getUserName(riderID, new GetUserNameCallback() {
                         @Override
-                        public void onUserNameRecieved(String name) {
+                        public void onUserNameRecieved(String name , String phone ) {
                             riderName = name ;
-                            System.out.println(riderName + passengerName + from + to + fare );
-                            passengerListData = new PassengerListData(riderName , passengerName, from , to , fare);
-                            passengerListDataArrayList.add(passengerListData);
-                            Log.d(TAG, "onUserNameRecieved:  size " + resultList.size() + " " + passengerListDataArrayList.size());
+                            phoneNumber = phone;
+                            locationDB.getUserName(passengerID, new GetUserNameCallback() {
+                                @Override
+                                public void onUserNameRecieved(String name, String phone) {
+                                    passengerName = name ;
+                                    System.out.println(riderName + passengerName + from + to + fare );
+                                    passengerListData = new PassengerListData(riderName , passengerName, from , to , fare , phoneNumber);
+                                    passengerListDataArrayList.add(passengerListData);
+                                    Log.d(TAG, "onUserNameRecieved:  size " + resultList.size() + " " + passengerListDataArrayList.size());
 
-                            if(passengerListDataArrayList.size()+ RiderCountInCompleteTable[0] == resultList.size()) {
-                                passengerListAdapter = new PassengerListAdapter(PassengerHisotryActivity.this, passengerListDataArrayList);
-                                binding.listview.setAdapter(passengerListAdapter);
-                                binding.listview.setClickable(true);
-                            }
+                                    if(passengerListDataArrayList.size()+ RiderCountInCompleteTable[0] == resultList.size()) {
+                                        passengerListAdapter = new PassengerListAdapter(PassengerHisotryActivity.this, passengerListDataArrayList);
+                                        binding.listview.setAdapter(passengerListAdapter);
+                                        binding.listview.setClickable(true);
+                                    }
+                                }
+                            });
+
                         }
                     });
 
@@ -116,7 +128,7 @@ public class PassengerHisotryActivity extends AppCompatActivity {
 
                 locationDB.getUserName(riderID, new GetUserNameCallback() {
                     @Override
-                    public void onUserNameRecieved(String name) {
+                    public void onUserNameRecieved(String name , String phone) {
                         riderName=name ;
                         Log.d(TAG, "onUserNameRecieved: " + name );
                         intent.putExtra("name", passengerName);
@@ -124,6 +136,7 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                         intent.putExtra("From", from);
                         intent.putExtra("To", to);
                         intent.putExtra("Fare", fare);
+                        intent.putExtra("phone" , phoneNumber);
                         startActivity(intent);
                     }
                 });

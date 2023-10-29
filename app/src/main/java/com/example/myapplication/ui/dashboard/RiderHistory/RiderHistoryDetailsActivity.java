@@ -24,9 +24,10 @@ public class RiderHistoryDetailsActivity extends AppCompatActivity {
             String ingredients = intent.getStringExtra("From");
             String desc = intent.getStringExtra("To");
             String image = intent.getStringExtra("Fare");
-            binding.detailName.setText(name);
-            binding.FromTextView.setText(ingredients);
-            binding.ToTextView.setText(desc);
+            String phone = intent.getStringExtra("phone");
+            binding.detailName.setText(time);
+            binding.FromTextView.setText(name);
+            binding.ToTextView.setText(phone);
             binding.FareTextView.setText(image);
 //            binding.detailImage.setImageResource(image);
         }

@@ -19,15 +19,16 @@ public class PassengerHistoryDetailsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         Intent intent = this.getIntent();
         if (intent != null){
-            String name = intent.getStringExtra("name");
-            String time = intent.getStringExtra("RiderName");
-            String ingredients = intent.getStringExtra("From");
-            String desc = intent.getStringExtra("To");
-            String image = intent.getStringExtra("Fare");
-            binding.detailName.setText(time);
-            binding.FromTextView.setText(ingredients);
-            binding.ToTextView.setText(desc);
-            binding.FareTextView.setText(image);
+            String Pname = intent.getStringExtra("name");
+            String RiderName = intent.getStringExtra("RiderName");
+            String From = intent.getStringExtra("From");
+            String To = intent.getStringExtra("To");
+            String Fare = intent.getStringExtra("Fare");
+            String phone = intent.getStringExtra("phone" );
+            binding.detailName.setText(RiderName);
+            binding.FromTextView.setText(Pname);
+            binding.ToTextView.setText(phone);
+            binding.FareTextView.setText(Fare);
 //            binding.detailImage.setImageResource(image);
         }
     }

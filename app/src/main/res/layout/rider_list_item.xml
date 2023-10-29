@@ -28,8 +28,8 @@
 
         <TextView
             android:id="@+id/listName"
-            android:layout_width="120dp"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="6dp"
             android:layout_marginTop="7dp"
@@ -40,8 +40,8 @@
 
         <TextView
             android:id="@+id/listTime"
-            android:layout_width="80dp"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/listName"
             android:layout_marginStart="12dp"
 
@@ -52,15 +52,14 @@
             android:textSize="16sp" />
 
         <TextView
-            android:layout_width="80dp"
-            android:layout_height="30dp"
-            android:id="@+id/Fare"
-            android:text="Fare"
-            android:textSize="16sp"
-            android:layout_toEndOf="@id/listName"
-            android:layout_marginTop="25dp"
-            android:layout_marginStart="100dp"
-            android:textColor="@color/black"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Fare"
+        android:text="Fare"
+        android:textSize="16sp"
+        android:layout_toEndOf="@id/listName"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/black"/>
 
     </RelativeLayout>
 

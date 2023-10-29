@@ -1,5 +1,5 @@
 package com.example.myapplication.helper;
 
 public interface GetUserNameCallback {
-    public void onUserNameRecieved(String name );
+    public void onUserNameRecieved(String name  , String phone);
 }

@@ -31,7 +31,8 @@ public class RiderHistoryActivity extends AppCompatActivity {
     ArrayList<RiderListData> riderListDataArrayList = new ArrayList<>();
     RiderListData riderListData;
     String UID ;
-    String riderName="" , passengerName="" , from="" , to="" , fare=""  , type ="" , passengerID ;
+    String riderName="" , passengerName="" , from="" , to="" , fare=""  , type ="" , passengerID="" , phoneNumber ="" ,
+            RiderName="" , RiderID="" ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,10 @@ public class RiderHistoryActivity extends AppCompatActivity {
                             passengerName = p.second;
                             Log.d("RiderHistoryActivity", "onGetDataFromCompletedTableComplete: "+passengerID  );
                         }
+                        if(p.first.equals("RiderID"))
+                        {
+                         RiderID = p.second;
+                        }
                     }
                     if(type.equals("Passenger")){
                         passengerCountInCompleteTable[0]++;
@@ -82,18 +87,28 @@ public class RiderHistoryActivity extends AppCompatActivity {
                     }
                     locationDB.getUserName(passengerName, new GetUserNameCallback() {
                         @Override
-                        public void onUserNameRecieved(String name) {
+                        public void onUserNameRecieved(String name , String phone ) {
                             passengerName = name ;
-                            System.out.println(riderName + passengerName + from + to + fare );
-                            riderListData = new RiderListData(riderName , passengerName, from , to , fare);
-                            riderListDataArrayList.add(riderListData);
+                            phoneNumber = phone;
 
-                            if(riderListDataArrayList.size() + passengerCountInCompleteTable[0] == resultList.size()){
-                                riderListAdapter = new RiderListAdapter(RiderHistoryActivity.this, riderListDataArrayList);
+                            locationDB.getUserName(RiderID, new GetUserNameCallback() {
+                                @Override
+                                public void onUserNameRecieved(String name, String phone) {
+                                    RiderName = name ;
+                                    System.out.println(riderName + passengerName + from + to + fare );
+                                    riderListData = new RiderListData(RiderName , passengerName, from , to , fare , phoneNumber);
+                                    riderListDataArrayList.add(riderListData);
 
-                                binding.listview.setAdapter(riderListAdapter);
-                                binding.listview.setClickable(true);
-                            }
+                                    if(riderListDataArrayList.size() + passengerCountInCompleteTable[0] == resultList.size()){
+                                        riderListAdapter = new RiderListAdapter(RiderHistoryActivity.this, riderListDataArrayList);
+
+                                        binding.listview.setAdapter(riderListAdapter);
+                                        binding.listview.setClickable(true);
+                                    }
+                                }
+                            });
+
+
                         }
                     });
 
@@ -113,10 +128,11 @@ public class RiderHistoryActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(RiderHistoryActivity.this, RiderHistoryDetailsActivity.class);
                 intent.putExtra("name", passengerName);
-                intent.putExtra("RiderName", riderName);
+                intent.putExtra("RiderName", RiderName);
                 intent.putExtra("From", from);
                 intent.putExtra("To", to);
                 intent.putExtra("Fare", fare);
+                intent.putExtra("phone" , phoneNumber);
                 startActivity(intent);
             }
         });
