@@ -99,7 +99,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
 
-                    }, 2000);
+                    }, 3400);
 
                 } else {
                     Log.d(TAG, "onRideCheckCompleted:  goign to MainActivity from checkForOngoin");
@@ -109,7 +109,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
 
-                    }, 2000);
+                    }, 3400);
                 }
             }
         });
