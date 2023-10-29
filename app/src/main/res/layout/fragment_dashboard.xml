@@ -5,26 +5,6 @@
     android:padding="10dp"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Welcome "
-            android:textAlignment="center"
-            android:textSize="48sp">
-
-        </TextView>
-
-
-
-    </LinearLayout>
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Rider History"
-            android:background="@color/black"
+            android:background="@drawable/rounded_button"
             android:textColor="@color/white">
 
         </androidx.appcompat.widget.AppCompatButton>
@@ -54,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Passenger History"
-            android:background="@color/black"
+            android:background="@drawable/rounded_button"
             android:textColor="@color/white">
 
         </androidx.appcompat.widget.AppCompatButton>
