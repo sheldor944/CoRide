@@ -158,7 +158,7 @@ public class MainActivity extends testerActivity {
             // or display a message to the user.
             Toast.makeText(
                     this,
-                    "Gmail is not installed!",
+                    "No email application found",
                     Toast.LENGTH_SHORT
             ).show();
         }
