@@ -37,8 +37,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         else{
             animation();
         }
-
-
     }
 
     private void animation()
@@ -58,7 +56,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             @Override
             public void onRideCheckCompleted(ArrayList<Pair<String , String >> result ) {
                 Log.d(TAG, "onRideCheckCompleted: starting the check ");
-                if (result.size() >0) {
+                if (result.size() > 0) {
                     // Do something if there's an ongoing ride
                     Log.d(TAG, "onRideCheckCompleted: this person has a ride ");
                     Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
@@ -98,8 +96,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     new Handler().postDelayed(() -> {
                         startActivity(intent);
                         finish();
-
-                    }, 2000);
+                    }, 3490);
 
                 } else {
                     Log.d(TAG, "onRideCheckCompleted:  goign to MainActivity from checkForOngoin");
@@ -109,7 +106,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
 
-                    }, 2000);
+                    }, 3490);
                 }
             }
         });

@@ -44,8 +44,10 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
+import com.example.myapplication.helper.PermissionCallback;
 import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.example.myapplication.service.RideServiceHandler;
+import com.example.myapplication.utils.PermissionUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -125,8 +127,8 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             new LatLng(26.631450, 92.672720)
     );
 
-    private static final int MAX_SEARCH_COUNT = 5;
-    private static final int SEARCH_INTERVAL = 10000;
+    private static final int MAX_SEARCH_COUNT = 10;
+    private static final int SEARCH_INTERVAL = 3000;
     private static int numberOfTimesSearchedForRiders;
 
     //vars
@@ -153,7 +155,8 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private RiderTrip bestRiderTrip = null;
     private TextView mCostTextView;
 
-    private boolean stopThreads = false;
+    private boolean stopThreads;
+    private boolean findARideButtonPressed;
 
 
     @Override
@@ -161,6 +164,10 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_ride);
+
+        findARideButtonPressed = false;
+        stopThreads = false;
+
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mFindARideButton = (AppCompatButton) findViewById(R.id.findARideButton);
@@ -277,6 +284,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
 
         mFindARideButton.setOnClickListener(view -> {
             Log.d(TAG, "init: clicked on Find a Ride");
+            findARideButtonPressed = true;
             mFindARideLinearLayout.setVisibility(View.GONE);
             mSearchingARideLayout.setVisibility(View.VISIBLE);
 
@@ -291,7 +299,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             public void run() {
                 Log.d(TAG, "pollRiderInfo: current thread: " + Thread.currentThread().getName());
                 try {
-                    while(numberOfTimesSearchedForRiders <= MAX_SEARCH_COUNT) {
+                    while(!stopThreads && numberOfTimesSearchedForRiders <= MAX_SEARCH_COUNT) {
                         numberOfTimesSearchedForRiders++;
                         if(bestRiderTrip != null) break;
                         getRiderInformation();
@@ -536,5 +544,23 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(findARideButtonPressed) {
+            PermissionUtil.askForConfirmation(
+                    this,
+                    "Do you want to cancel the ride?",
+                    () -> {
+                        stopThreads = true;
+                        Toast.makeText(StartRideActivity.this, "Cancelled Ride", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(StartRideActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+            );
+            return;
+        }
+        super.onBackPressed();
     }
 }

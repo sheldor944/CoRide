@@ -43,6 +43,7 @@ import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
 import com.example.myapplication.helper.PlaceFetcherCallback;
+import com.example.myapplication.utils.PermissionUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -140,17 +141,27 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private int numberOfTimesSearched;
     private LocationData matchedPassengerData;
 
+    private boolean confirmDestinationPressed;
+    private boolean stopThreads;
+    private String mUserId;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_provide_a_ride);
+
+        confirmDestinationPressed = false;
+        stopThreads = false;
+
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mConfirmButton = findViewById(R.id.confirm_button);
         mSearchingTextView = findViewById(R.id.searching_text_view);
         numberOfTimesSearched = 0;
         matchedPassengerData = null;
+
+        mUserId = FirebaseAuth.getInstance().getUid();
 
         if(isServicesOK()) {
             getLocationPermission();
@@ -316,6 +327,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
 
         mConfirmButton.setOnClickListener(view -> {
             Log.d(TAG, "init: confirm button pressed");
+            confirmDestinationPressed = true;
             mConfirmButton.setVisibility(View.GONE);
             mSearchingTextView.setVisibility(View.VISIBLE);
 
@@ -332,7 +344,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             public void run() {
                 try {
                     Log.d(TAG, "run: polling passenger info: current thread: " + Thread.currentThread().getName());
-                    while(numberOfTimesSearched <= MAX_SEARCH_COUNT) {
+                    while(!stopThreads && numberOfTimesSearched <= MAX_SEARCH_COUNT) {
                         numberOfTimesSearched++;
                         if(matchedPassengerData != null) return;
                         Log.d(TAG, "run: searching for rider, and going to sleep for some time.");
@@ -467,5 +479,28 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(confirmDestinationPressed) {
+            PermissionUtil.askForConfirmation(
+                    this,
+                    "Do you want to cancel the ride?",
+                    () -> {
+                        stopThreads = true;
+                        try {
+                            new LocationDB().deleteFromPendingRider(mUserId);
+                        } catch (Exception e) {
+                            Log.d(TAG, "onBackPressed: LocationDB deleteFromPendingRider error: " + e.getMessage());
+                        }
+                        Toast.makeText(ProvideARideActivity.this, "Cancelled Ride", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(ProvideARideActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+            );
+            return;
+        }
+        super.onBackPressed();
     }
 }
