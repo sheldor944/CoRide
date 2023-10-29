@@ -251,6 +251,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         intent.putExtra("rider_end_location", destLatLng.latitude + "," + destLatLng.longitude);
 
         startActivity(intent);
+        finish();
     }
 
     private void init() {
@@ -497,10 +498,17 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                         Toast.makeText(ProvideARideActivity.this, "Cancelled Ride", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(ProvideARideActivity.this, MainActivity.class);
                         startActivity(intent);
+                        finish();
                     }
             );
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopThreads = true;
+        super.onDestroy();
     }
 }
