@@ -14,6 +14,7 @@ import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.ActivityPassengerHisotryBinding;
 import com.example.myapplication.databinding.ActivityRiderHistoryBinding;
+import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
 import com.example.myapplication.helper.GetUserNameCallback;
 import com.example.myapplication.ui.dashboard.RiderHistory.RiderHistoryDetailsActivity;
@@ -31,6 +32,7 @@ public class RiderHistoryActivity extends AppCompatActivity {
     ArrayList<RiderListData> riderListDataArrayList = new ArrayList<>();
     RiderListData riderListData;
     String UID ;
+    String TAG = "RiderDetailsActivity";
     String riderName="" , passengerName="" , from="" , to="" , fare=""  , type ="" , passengerID="" , phoneNumber ="" ,
             RiderName="" , RiderID="" ;
 
@@ -48,7 +50,6 @@ public class RiderHistoryActivity extends AppCompatActivity {
             public void onGetDataFromCompletedTableComplete(ArrayList<ArrayList<Pair<String, String>>> resultList) {
                 for(ArrayList<Pair<String, String >> u : resultList)
                 {
-//                    String riderName="" , passengerName="" , from="" , to="" , fare="" ;
                     for(Pair<String, String> p : u)
                     {
                         if(p.first.equals("type")){
@@ -72,7 +73,7 @@ public class RiderHistoryActivity extends AppCompatActivity {
                         }
                         if(p.first.equals("PassengerID"))
                         {
-                            passengerName = p.second;
+                            passengerID = p.second;
                             Log.d("RiderHistoryActivity", "onGetDataFromCompletedTableComplete: "+passengerID  );
                         }
                         if(p.first.equals("RiderID"))
@@ -85,54 +86,38 @@ public class RiderHistoryActivity extends AppCompatActivity {
 
                         continue;
                     }
-                    locationDB.getUserName(passengerName, new GetUserNameCallback() {
+                    locationDB.getUserNamePhone(RiderID, passengerID, new Callback<String[]>() {
                         @Override
-                        public void onUserNameRecieved(String name , String phone ) {
-                            passengerName = name ;
-                            phoneNumber = phone;
+                        public void onComplete(String[] response) {
+                            riderName = response[0];
+                            passengerName = response[2];
+                            phoneNumber = response[3];
 
-                            locationDB.getUserName(RiderID, new GetUserNameCallback() {
-                                @Override
-                                public void onUserNameRecieved(String name, String phone) {
-                                    RiderName = name ;
-                                    System.out.println(riderName + passengerName + from + to + fare );
-                                    riderListData = new RiderListData(RiderName , passengerName, from , to , fare , phoneNumber);
-                                    riderListDataArrayList.add(riderListData);
+                            riderListData = new RiderListData(riderName , passengerName, from , to , fare , phoneNumber);
+                            riderListDataArrayList.add(riderListData);
 
-                                    if(riderListDataArrayList.size() + passengerCountInCompleteTable[0] == resultList.size()){
-                                        riderListAdapter = new RiderListAdapter(RiderHistoryActivity.this, riderListDataArrayList);
+                            if(riderListDataArrayList.size() + passengerCountInCompleteTable[0] == resultList.size()){
+                                riderListAdapter = new RiderListAdapter(RiderHistoryActivity.this, riderListDataArrayList);
 
-                                        binding.listview.setAdapter(riderListAdapter);
-                                        binding.listview.setClickable(true);
-                                    }
-                                }
-                            });
-
-
+                                binding.listview.setAdapter(riderListAdapter);
+                                binding.listview.setClickable(true);
+                            }
                         }
                     });
-
                 }
 
             }
         });
-
-//        for (int i = 0; i < 10; i++){
-//            riderListData = new RiderListData("Rana" , "Messi " , "Amberkhana" , "Rajshahi" , "443");
-//            riderListDataArrayList.add(riderListData);
-//        }
-        System.out.println("database tone baraise ");
-
         binding.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(RiderHistoryActivity.this, RiderHistoryDetailsActivity.class);
-                intent.putExtra("name", passengerName);
-                intent.putExtra("RiderName", RiderName);
-                intent.putExtra("From", from);
-                intent.putExtra("To", to);
-                intent.putExtra("Fare", fare);
-                intent.putExtra("phone" , phoneNumber);
+                RiderListData data = riderListDataArrayList.get(i);
+                intent.putExtra("RiderName" , data.riderName);
+                Log.d(TAG, "onItemClick: riderName");
+                intent.putExtra("PassengerName" , data.passengerName);
+                intent.putExtra("Phone" , data.phone);
+                intent.putExtra("Fare" , data.Fare);
                 startActivity(intent);
             }
         });

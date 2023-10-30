@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.databinding.ActivityPassengerHisotryBinding;
+import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
 import com.example.myapplication.helper.GetUserNameCallback;
 import com.example.myapplication.ui.dashboard.RiderHistory.RiderListAdapter;
@@ -72,75 +73,53 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                         }
                         if(p.first.equals("RiderID")){
                             riderID=p.second;
+                            Log.d(TAG, "onGetDataFromCompletedTableComplete: " + riderID);
+
                         }
                         if(p.first.equals("PassengerID"))
                         {
                             passengerID = p.second;
+                            Log.d(TAG, "onGetDataFromCompletedTableComplete: " + passengerID);
                         }
                     }
                     if(type.equals("Rider")){
                         RiderCountInCompleteTable[0]++;
                         continue;
                     }
-
-                    locationDB.getUserName(riderID, new GetUserNameCallback() {
+                    Log.d(TAG, "test " + passengerID +" "+ riderID);
+                    locationDB.getUserNamePhone(riderID, passengerID, new Callback<String[]>() {
                         @Override
-                        public void onUserNameRecieved(String name , String phone ) {
-                            riderName = name ;
-                            phoneNumber = phone;
-                            locationDB.getUserName(passengerID, new GetUserNameCallback() {
-                                @Override
-                                public void onUserNameRecieved(String name, String phone) {
-                                    passengerName = name ;
-                                    System.out.println(riderName + passengerName + from + to + fare );
-                                    passengerListData = new PassengerListData(riderName , passengerName, from , to , fare , phoneNumber);
-                                    passengerListDataArrayList.add(passengerListData);
-                                    Log.d(TAG, "onUserNameRecieved:  size " + resultList.size() + " " + passengerListDataArrayList.size());
+                        public void onComplete(String[] response) {
+                            riderName = response[0];
+                            passengerName = response[2];
+                            phoneNumber = response[1];
+                            System.out.println(riderName + passengerName + from + to + fare );
+                            passengerListData = new PassengerListData (passengerName,riderName, from , to , fare , phoneNumber);
+                            passengerListDataArrayList.add(passengerListData);
 
-                                    if(passengerListDataArrayList.size()+ RiderCountInCompleteTable[0] == resultList.size()) {
-                                        passengerListAdapter = new PassengerListAdapter(PassengerHisotryActivity.this, passengerListDataArrayList);
-                                        binding.listview.setAdapter(passengerListAdapter);
-                                        binding.listview.setClickable(true);
-                                    }
-                                }
-                            });
-
+                            if(passengerListDataArrayList.size()+ RiderCountInCompleteTable[0] == resultList.size()) {
+                                passengerListAdapter = new PassengerListAdapter(PassengerHisotryActivity.this, passengerListDataArrayList);
+                                binding.listview.setAdapter(passengerListAdapter);
+                                binding.listview.setClickable(true);
+                            }
                         }
                     });
-
                 }
-
-
             }
         });
 
-//        for (int i = 0; i < 10; i++){
-//            passengerListData = new PassengerListData("Rana" , "Messi " , "Amberkhana" , "Rajshahi" , "443");
-//            passengerListDataArrayList.add(passengerListData);
-//        }
-//        passengerListAdapter = new PassengerListAdapter(PassengerHisotryActivity.this, passengerListDataArrayList);
-//        binding.listview.setAdapter(passengerListAdapter);
         binding.listview.setClickable(true);
         binding.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(PassengerHisotryActivity.this, PassengerHistoryDetailsActivity.class);
 
-                locationDB.getUserName(riderID, new GetUserNameCallback() {
-                    @Override
-                    public void onUserNameRecieved(String name , String phone) {
-                        riderName=name ;
-                        Log.d(TAG, "onUserNameRecieved: " + name );
-                        intent.putExtra("name", passengerName);
-                        intent.putExtra("RiderName", riderName);
-                        intent.putExtra("From", from);
-                        intent.putExtra("To", to);
-                        intent.putExtra("Fare", fare);
-                        intent.putExtra("phone" , phoneNumber);
-                        startActivity(intent);
-                    }
-                });
-
+                PassengerListData data = passengerListDataArrayList.get(i);
+                intent.putExtra("passengerName" , data.passengerName);
+                intent.putExtra("riderName" , data.RiderName);
+                intent.putExtra("phone" , data.phone);
+                intent.putExtra("fare" ,data.Fare);
+                startActivity(intent);
 
             }
         });

@@ -34,7 +34,7 @@ public class PassengerListAdapter extends ArrayAdapter<PassengerListData> {
         TextView listTime = view.findViewById(R.id.listTime);
         TextView listFare = view.findViewById(R.id.Fare);
 
-        listName.setText("Name: "+listData.RiderName);
+        listName.setText("Rider "+listData.RiderName);
         listTime.setText("Phone: "+listData.phone);
         listFare.setText("Fare: "+listData.Fare);
         return view;

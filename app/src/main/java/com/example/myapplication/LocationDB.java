@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.telecom.Call;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.TextView;
@@ -753,5 +754,38 @@ public class LocationDB {
                         Log.d(TAG, "onCancelled: getLiveLocation failed. error: " + error.getMessage());
                     }
                 });
+    }
+    public String[] getUserNamePhone(String riderID , String passengerID , Callback<String[]> callback)
+    {
+        String[] res = new String[4];
+
+        getUserName(riderID, new GetUserNameCallback() {
+            @Override
+            public void onUserNameRecieved(String name, String phone) {
+                res[0] = name ;
+                res[1]= phone ;
+                getUserName(passengerID, new GetUserNameCallback() {
+                    @Override
+                    public void onUserNameRecieved(String name, String phone) {
+                        res[2]=name;
+                        res[3] = phone;
+                        callback.onComplete(res);
+                    }
+                });
+            }
+
+        });
+        return res;
+    }
+
+    public void getUserNamePhoneUtil(String UID , Callback<String[]> callback)
+    {
+        DocumentReference userRef = db.collection("users").document(UID);
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+            }
+        });
     }
 }
