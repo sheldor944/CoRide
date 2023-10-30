@@ -36,6 +36,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import android.Manifest;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 //import com.google.firebase.firestore.DocumentData;
 
 public class Register extends AppCompatActivity {
@@ -43,7 +45,7 @@ public class Register extends AppCompatActivity {
     String email, name , phone ,password ;
     Button button ;
     private FirebaseAuth mAuth;
-    ImageView imageView ;
+    CircleImageView imageView ;
     private static final int REQUEST_STORAGE_PERMISSION = 1001;
 
     private void requestStoragePermission() {

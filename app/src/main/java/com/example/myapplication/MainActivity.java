@@ -36,6 +36,8 @@ import com.example.myapplication.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends testerActivity {
     private static final String TAG = "MainActivity";
 
@@ -127,7 +129,7 @@ public class MainActivity extends testerActivity {
             }
         });
 
-        ImageView profileImageView = mHeaderView.findViewById(R.id.leftNavViewImageView);
+        CircleImageView profileImageView = mHeaderView.findViewById(R.id.leftNavViewImageView);
         new LocationDB().getImageURL(new Callback<Uri>() {
             @Override
             public void onComplete(Uri response) {

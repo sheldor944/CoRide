@@ -11,11 +11,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageButton"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:scaleType="fitCenter"
             android:src="@drawable/empty_profile_picture"
             android:layout_marginTop="10dp"
             android:clickable="true"
@@ -37,7 +36,8 @@
         android:id="@+id/nameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" "
+        android:inputType="textPersonName"
+        android:text=""
         android:textSize="20sp"
         android:fontFamily="@font/josefin_sans_regular"/>
 
@@ -55,6 +55,7 @@
         android:id="@+id/emailRegistrationEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
         android:text=""
         android:textSize="20sp"
         android:fontFamily="@font/josefin_sans_regular"/>
@@ -71,7 +72,8 @@
         android:id="@+id/phoneEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" "
+        android:inputType="phone"
+        android:text=""
         android:textSize="20sp"
         android:fontFamily="@font/josefin_sans_regular"/>
 
@@ -82,33 +84,20 @@
         android:textSize="14sp"
         android:text="Password"
         android:fontFamily="@font/josefin_sans_regular"/>
-        <EditText
-            android:id="@+id/nationalID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:textSize="20sp"
-            android:fontFamily="@font/josefin_sans_regular"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:textSize="14sp"
-            android:text="National ID "
-            android:fontFamily="@font/josefin_sans_regular"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:maxLines="1"/>
 
 
 
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="20sp"
-        android:fontFamily="@font/josefin_sans_regular"/>
 
-    <androidx.appcompat.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

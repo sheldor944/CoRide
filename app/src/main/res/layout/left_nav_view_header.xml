@@ -9,12 +9,11 @@
     android:clickable="true"
     >
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/leftNavViewImageView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:src="@drawable/ic_face"
-        android:scaleType="fitCenter"
         android:layout_margin="10dp"
         />
     
