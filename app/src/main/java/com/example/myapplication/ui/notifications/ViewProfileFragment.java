@@ -30,6 +30,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ViewProfileFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
@@ -38,7 +40,7 @@ public class ViewProfileFragment extends Fragment {
     String email ;
     String name="" ;
     String phone="" , lastName="";
-    ImageView imageView;
+    CircleImageView imageView;
 
     private AppCompatButton mUpdateButton;
 

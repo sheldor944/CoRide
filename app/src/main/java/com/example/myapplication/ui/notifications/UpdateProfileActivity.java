@@ -29,6 +29,8 @@ import com.example.myapplication.helper.Callback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class UpdateProfileActivity extends AppCompatActivity {
 
     FirebaseFirestore firebaseFirestore;
@@ -36,7 +38,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     String userID;
     EditText nameEditText;
     EditText phoneEditText;
-    ImageView imageView ;
+    CircleImageView imageView ;
     String TAG = "UpdateProfile";
     private static final int REQUEST_STORAGE_PERMISSION = 1001;
 
