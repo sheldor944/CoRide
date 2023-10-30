@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
 import com.example.myapplication.helper.RideCheckCallback;
 import com.example.myapplication.ui.login.LoginActivity;
@@ -15,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
+import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 public class SplashScreenActivity extends AppCompatActivity {
@@ -22,21 +25,42 @@ public class SplashScreenActivity extends AppCompatActivity {
     private String TAG = "SplashScreenActivity";
     private FirebaseAuth  firebaseAuth;
 
+    private final long ANIMATION_TIME = 3000;
+    private boolean mRideChecked;
+    private boolean mAnimationCompleted;
+    private Intent intent;
+
+    private String mPassengerId="" , mPassengerStartLocation="" , mPassengerEndLocation="",
+            mRiderId="" , mRiderStartLocation="" , mRiderEndLocation="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         gifImageView = findViewById(R.id.gifImageView);
         firebaseAuth = FirebaseAuth.getInstance();
+        mRideChecked = false;
+        mAnimationCompleted = false;
 
-        if(firebaseAuth.getCurrentUser() != null)
-        {
-            checkForOnGoingRide();
+         if(firebaseAuth != null) checkForOnGoingRide();
+         else {
+             mRideChecked = true;
+             intent = new Intent(this, LoginActivity.class);
+         }
 
-        }
-        else{
-            animation();
-        }
+         new Handler().postDelayed(() -> {
+            mAnimationCompleted = true;
+            Log.d(TAG, "onCreate: animation is completed. ride check status: " + mRideChecked);
+            if(mRideChecked) {
+                startActivity(intent);
+                finish();
+            }
+            else {
+                Toast.makeText(this, "Internet is slow. Check your connection status.", Toast.LENGTH_LONG).show();
+                GifDrawable gifDrawable = (GifDrawable) gifImageView.getDrawable();
+                gifDrawable.stop();
+            }
+        }, ANIMATION_TIME);
     }
 
     private void animation()
@@ -46,7 +70,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             startActivity(mainIntent);
             finish();
 
-        }, 2400);
+        }, 3490);
     }
 
     private void   checkForOnGoingRide() {
@@ -59,10 +83,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                 if (result.size() > 0) {
                     // Do something if there's an ongoing ride
                     Log.d(TAG, "onRideCheckCompleted: this person has a ride ");
-                    Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
+                    intent = new Intent(getApplicationContext() , ChatActivity.class);
 
-                    String mPassengerId="" , mPassengerStartLocation="" , mPassengerEndLocation="",
-                            mRiderId="" , mRiderStartLocation="" , mRiderEndLocation="";
                     for(Pair<String , String> u : result)
                     {
                         if(u.first.equals("PassengerID")){
@@ -93,19 +115,15 @@ public class SplashScreenActivity extends AppCompatActivity {
                     intent.putExtra("rider_id", mRiderId);
                     intent.putExtra("rider_start_location", mRiderStartLocation);
                     intent.putExtra("rider_end_location", mRiderEndLocation);
-                    new Handler().postDelayed(() -> {
-                        startActivity(intent);
-                        finish();
-                    }, 2400);
-
                 } else {
                     Log.d(TAG, "onRideCheckCompleted:  goign to MainActivity from checkForOngoin");
                     // Do something else if there's no ongoing ride
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    new Handler().postDelayed(() -> {
-                        startActivity(intent);
-                        finish();
-                    }, 2400);
+                    intent = new Intent(getApplicationContext(), MainActivity.class);
+                }
+                mRideChecked = true;
+                if(mAnimationCompleted) {
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
