@@ -87,13 +87,14 @@ public class RiderHistoryActivity extends AppCompatActivity {
                         continue;
                     }
                     locationDB.getUserNamePhone(RiderID, passengerID, new Callback<String[]>() {
+                        String RID = RiderID , PID = passengerID;
                         @Override
                         public void onComplete(String[] response) {
                             riderName = response[0];
                             passengerName = response[2];
                             phoneNumber = response[3];
 
-                            riderListData = new RiderListData(riderName , passengerName, from , to , fare , phoneNumber);
+                            riderListData = new RiderListData(riderName , passengerName, from , to , fare , phoneNumber , RID,PID);
                             riderListDataArrayList.add(riderListData);
 
                             if(riderListDataArrayList.size() + passengerCountInCompleteTable[0] == resultList.size()){
