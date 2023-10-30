@@ -46,7 +46,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             startActivity(mainIntent);
             finish();
 
-        }, 3490);
+        }, 2400);
     }
 
     private void   checkForOnGoingRide() {
@@ -96,7 +96,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     new Handler().postDelayed(() -> {
                         startActivity(intent);
                         finish();
-                    }, 3490);
+                    }, 2400);
 
                 } else {
                     Log.d(TAG, "onRideCheckCompleted:  goign to MainActivity from checkForOngoin");
@@ -105,7 +105,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     new Handler().postDelayed(() -> {
                         startActivity(intent);
                         finish();
-                    }, 3490);
+                    }, 2400);
                 }
             }
         });
