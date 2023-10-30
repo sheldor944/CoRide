@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import com.example.myapplication.helper.PermissionCallback;
 import com.example.myapplication.ui.introduction.IntroductionActivity;
 import com.example.myapplication.ui.login.LoginActivity;
 import com.example.myapplication.ui.notifications.UpdateProfileActivity;
+import com.example.myapplication.ui.notifications.ViewProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -39,6 +41,7 @@ public class MainActivity extends testerActivity {
 
     private ActivityMainBinding binding;
     private DrawerLayout mDrawerLayout;
+    private View mHeaderView;
     private ActionBarDrawerToggle mToggle;
     private ActionBar mActionBar;
     private NavigationView mNavigationView;
@@ -48,6 +51,7 @@ public class MainActivity extends testerActivity {
 
     private ImageView imageView;
     private TextView textView ;
+    private String mUserId;
 
 
     @Override
@@ -56,6 +60,8 @@ public class MainActivity extends testerActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        mUserId = FirebaseAuth.getInstance().getUid();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -97,6 +103,8 @@ public class MainActivity extends testerActivity {
     }
 
     private void initNavigationView() {
+        mNavigationView = findViewById(R.id.left_nav_view);
+        mHeaderView = mNavigationView.getHeaderView(0);
         mDrawerLayout = findViewById(R.id.drawerLayout);
         mToggle = new ActionBarDrawerToggle(
                 this,
@@ -111,7 +119,22 @@ public class MainActivity extends testerActivity {
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
 
-        mNavigationView = findViewById(R.id.left_nav_view);
+        TextView nameTextView = mHeaderView.findViewById(R.id.leftNavViewNameText);
+        new LocationDB().getUserName(mUserId, new GetUserNameCallback() {
+            @Override
+            public void onUserNameRecieved(String name, String phone) {
+                nameTextView.setText(name);
+            }
+        });
+
+        ImageView profileImageView = mHeaderView.findViewById(R.id.leftNavViewImageView);
+        new LocationDB().getImageURL(new Callback<Uri>() {
+            @Override
+            public void onComplete(Uri response) {
+                Glide.with(MainActivity.this).load(response).into(profileImageView);
+            }
+        });
+
         mLogoutItem = mNavigationView.getMenu().findItem(R.id.logout);
         mLogoutItem.setOnMenuItemClickListener(item -> {
             askForConfirmation("Are you sure you want to logout?", new PermissionCallback() {
