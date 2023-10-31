@@ -63,9 +63,9 @@ public class RiderListAdapter extends  ArrayAdapter<RiderListData> {
         });
 
 
-        listName.setText("Passenger: "+listData.passengerName);
+        listName.setText(listData.passengerName);
         listTime.setText("Phone: "+ listData.phone);
-        listFare.setText("Fare: "+listData.Fare);
+        listFare.setText("Fare: "+listData.Fare+"৳");
         return view;
     }
 
