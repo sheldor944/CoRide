@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -43,6 +44,7 @@ import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.DistanceCalculatorCallback;
 import com.example.myapplication.helper.PlaceFetcherCallback;
+import com.example.myapplication.utils.LocationUtil;
 import com.example.myapplication.utils.PermissionUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -144,6 +146,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
     private boolean confirmDestinationPressed;
     private boolean stopThreads;
     private String mUserId;
+    private boolean initialized;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -160,11 +163,24 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
         mSearchingTextView = findViewById(R.id.searching_text_view);
         numberOfTimesSearched = 0;
         matchedPassengerData = null;
+        initialized = false;
 
         mUserId = FirebaseAuth.getInstance().getUid();
 
-        if(isServicesOK()) {
+        boolean mLocationEnabled = LocationUtil.isLocationEnabled(this);
+        if(isServicesOK() && mLocationEnabled) {
+            initialized = true;
             getLocationPermission();
+        }
+        else if(!mLocationEnabled) {
+            Toast.makeText(this, "Enable GPS to continue", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(this, "Error Loading Map!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -452,6 +468,17 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                         Log.d(TAG, "onComplete: Location fetch task completed");
                         if(task.isSuccessful()) {
                             currentLocation = (Location) task.getResult();
+                            if(currentLocation == null) {
+                                Toast.makeText(
+                                        ProvideARideActivity.this,
+                                        "Location Data has not been fetched yet. Please try again after some time.",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                                Log.d(TAG, "onComplete: could not fetch current location");
+                                Intent intent = new Intent(ProvideARideActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                return;
+                            }
                             Log.d(TAG, "onComplete: Device location fetched successfully. Location: lat " + currentLocation.getLatitude() + " lng " + currentLocation.getLongitude());
                             GoogleMapAPIHandler.moveCamera(
                                     new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),

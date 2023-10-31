@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.home;
 
+import static java.lang.Math.log;
 import static java.lang.Math.round;
 
 import android.Manifest;
@@ -10,10 +11,13 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -47,6 +51,7 @@ import com.example.myapplication.helper.DistanceCalculatorCallback;
 import com.example.myapplication.helper.PermissionCallback;
 import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.example.myapplication.service.RideServiceHandler;
+import com.example.myapplication.utils.LocationUtil;
 import com.example.myapplication.utils.PermissionUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -158,7 +163,6 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
     private boolean stopThreads;
     private boolean findARideButtonPressed;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
@@ -181,8 +185,20 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
         mUserId = FirebaseAuth.getInstance().getUid();
         mConfirmDestinationButton.setEnabled(false);
 
-        if(isServicesOK()) {
+        boolean mLocationEnabled = LocationUtil.isLocationEnabled(this);
+        Log.d(TAG, "onCreate: location service status: " + mLocationEnabled);
+        if(mLocationEnabled && isServicesOK()) {
             getLocationPermission();
+        }
+        else if(!mLocationEnabled) {
+            Toast.makeText(this, "Enable GPS to continue", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(this, "Error Loading Map!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -277,6 +293,7 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             Log.d(TAG, "init: destination confirmed");
             mConfirmDestinationCardView.setVisibility(View.GONE);
             mFindARideLinearLayout.setVisibility(View.VISIBLE);
+            numberOfTimesSearchedForRiders = 0;
 
             int cost = GoogleMapAPIHandler.getCostFromDistance(distance);
             mCostTextView.setText("~ " + cost + "৳");
@@ -517,6 +534,17 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
                         Log.d(TAG, "onComplete: Location fetch task completed");
                         if(task.isSuccessful()) {
                             currentLocation = (Location) task.getResult();
+                            if(currentLocation == null) {
+                                Toast.makeText(
+                                        StartRideActivity.this,
+                                        "Location Data has not been fetched yet. Please try again after some time.",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                                Log.d(TAG, "onComplete: could not fetch current location");
+                                Intent intent = new Intent(StartRideActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                return;
+                            }
                             Log.d(TAG, "onComplete: Device location fetched successfully. Location: lat " + currentLocation.getLatitude() + " lng " + currentLocation.getLongitude());
                             GoogleMapAPIHandler.moveCamera(
                                     new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),

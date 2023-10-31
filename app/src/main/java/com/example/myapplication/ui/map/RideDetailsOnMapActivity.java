@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -64,6 +65,7 @@ import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.example.myapplication.helper.SaveToCompletedTableCallback;
 import com.example.myapplication.testerActivity;
 import com.example.myapplication.ui.home.PlacesAutoCompleteAdapter;
+import com.example.myapplication.utils.LocationUtil;
 import com.example.myapplication.utils.PermissionUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -218,8 +220,19 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
         getInformationFromIntent();
 
-        if (isServicesOK()) {
+        boolean mLocationEnabled = LocationUtil.isLocationEnabled(this);
+        if(isServicesOK() && mLocationEnabled) {
             getLocationPermission();
+        }
+        else if(!mLocationEnabled) {
+            Toast.makeText(this, "Enable GPS to continue", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(this, "Error Loading Map!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
     }
 
