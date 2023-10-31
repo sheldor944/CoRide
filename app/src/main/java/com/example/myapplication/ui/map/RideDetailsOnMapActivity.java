@@ -147,7 +147,6 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_details_on_map);
-        mSearchText = (AutoCompleteTextView) findViewById(R.id.searchBar);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mNavigationView = findViewById(R.id.ride_nav_view);
         mUserId = FirebaseAuth.getInstance().getUid();
