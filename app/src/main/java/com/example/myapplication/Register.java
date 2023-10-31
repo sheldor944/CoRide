@@ -156,6 +156,13 @@ public class Register extends AppCompatActivity {
                 password = String.valueOf(pass.getText());
                 name = String.valueOf(nameText.getText());
                 phone = String.valueOf(numberText.getText());
+                if(email.length() == 0 || password.length() == 0 || name.length() == 0 || password.length() == 0 )
+                {
+                    progressDialog.dismiss();
+
+                    Toast.makeText(Register.this , "Fill up all the fields." , Toast.LENGTH_LONG).show();
+                    return;
+                }
                 String lastName = "";
                 Log.d(TAG, "onClick: o dukse ");
 
@@ -222,7 +229,8 @@ public class Register extends AppCompatActivity {
 
                                     }
                                     progressDialog.dismiss();
-
+                                    FirebaseAuth.getInstance().signOut();
+                                    Log.d(TAG, "onComplete: "+FirebaseAuth.getInstance().getCurrentUser());
                                     Intent intent = new Intent(getApplicationContext() , LoginActivity.class);
                                     startActivity(intent);
 //
