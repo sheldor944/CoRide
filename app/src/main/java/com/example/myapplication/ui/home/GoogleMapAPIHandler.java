@@ -221,6 +221,37 @@ public class GoogleMapAPIHandler {
         routeFetcherThread.start();
     }
 
+    public static void getDistanceBetweenTwoLatLng(String src, String dest, DistanceCalculatorCallback callback) {
+        RouteFetcherThread routeFetcherThread = new RouteFetcherThread(
+                API_KEY,
+                new RouteFetcherListener() {
+                    @Override
+                    public void onRouteFetchComplete(JSONObject jsonObject) {
+                        try {
+                            int distance = GoogleMapAPIHandler.parseDistanceFromJSON(jsonObject);
+//                            do callback here
+                            callback.onDistanceCalculated(distance);
+                        } catch(JSONException e) {
+                            Log.d(TAG, "onRouteFetchComplete: could not parse distance from json. JSONException: " + e.getMessage());
+                        }
+                    }
+                }
+        );
+        routeFetcherThread.setUrlString(
+                "https://maps.googleapis.com/" +
+                        "maps/" +
+                        "api/" +
+                        "directions/" +
+                        "json?" +
+                        "destination=" +
+                        dest +
+                        "&origin=" +
+                        src +
+                        "&key=" + API_KEY
+        );
+        routeFetcherThread.start();
+    }
+
     public static int parseDistanceFromJSON(JSONObject jsonResponseObj) throws JSONException {
         String status = jsonResponseObj.getString("status");
         int distanceValue = -1;

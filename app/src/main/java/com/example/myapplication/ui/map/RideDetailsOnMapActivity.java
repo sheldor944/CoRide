@@ -3,7 +3,6 @@ package com.example.myapplication.ui.map;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,109 +10,63 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.myapplication.ChatActivity;
 import com.example.myapplication.LocationDB;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.PushNotification;
 import com.example.myapplication.R;
-import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.data.model.MessageEvent;
-import com.example.myapplication.data.model.RiderTrip;
 import com.example.myapplication.helper.Callback;
-import com.example.myapplication.helper.DistanceCalculatorCallback;
-import com.example.myapplication.helper.PermissionCallback;
-import com.example.myapplication.helper.PlaceFetcherCallback;
 import com.example.myapplication.helper.SaveToCompletedTableCallback;
 import com.example.myapplication.testerActivity;
 import com.example.myapplication.ui.home.PlacesAutoCompleteAdapter;
+import com.example.myapplication.utils.DialogUtil;
 import com.example.myapplication.utils.LocationUtil;
-import com.example.myapplication.utils.PermissionUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.ktx.Firebase;
-import com.google.maps.android.PolyUtil;
 
 import com.example.myapplication.ui.home.GoogleMapAPIHandler;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class RideDetailsOnMapActivity extends testerActivity implements OnMapReadyCallback {
     @Override
@@ -486,7 +439,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         MenuItem pickedUpItem = mNavigationView.getMenu().findItem(R.id.picked_up_passenger);
         pickedUpItem.setOnMenuItemClickListener(item -> {
             Log.d(TAG, "init: user clicked on picked up passenger, updating database.");
-            PermissionUtil.askForConfirmation(
+            DialogUtil.askForConfirmation(
                     this,
                     "Are you sure you have picked up the passenger?",
                     () -> {
@@ -519,9 +472,6 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
         MenuItem completedRideItem = mNavigationView.getMenu().findItem(R.id.complete_ride);
         completedRideItem.setOnMenuItemClickListener(item -> {
-            // TODO: ২৬/১০/২৩ : completed ride, now?
-
-
             Log.d(TAG, "init: user clicked on completed ride");
 
 
@@ -546,26 +496,42 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                                     pushNotification.completeRide(response);
                                     Log.d(TAG, "run: calll oise push ");
 
+                                    GoogleMapAPIHandler.getDistanceBetweenTwoLatLng(
+                                            mPassengerStartLocation,
+                                            currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
+                                            routeTravelledDistance -> {
+                                                int fare = GoogleMapAPIHandler.getCostFromDistance(routeTravelledDistance);
+                                                Log.d(TAG, "onComplete: fare is: " + fare);
+                                                locationDB.saveToCompletedTable(mPassengerId, mRiderId, fare, new SaveToCompletedTableCallback() {
+                                                    @Override
+                                                    public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+
+                                                    }
+                                                });
+
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(RideDetailsOnMapActivity.this)
+                                                        .setTitle("Ride is completed.")
+                                                        .setMessage("Fare is: " + fare + "৳")
+                                                        .setPositiveButton("Return To Home", (dialog, id) -> {
+                                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                            startActivity(intent);
+                                                        });
+                                                AlertDialog dialog = builder.create();
+                                                dialog.show();
+                                            }
+                                    );
+
                                     // TODO: 10/27/2023 delete from booked and add to complete
                                     locationDB.deleteFromBookedPassenger(mPassengerId , mRiderId);
                                     // maybe there will be a problem if rider cancels the ride
-                                    locationDB.saveToCompletedTable(mPassengerId, mRiderId, 400, new SaveToCompletedTableCallback() {
-                                        @Override
-                                        public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
-
-                                        }
-                                    });
                                     Log.d(TAG, "onComplete: deleted and added as well ");
                                     stopThread = true;
-                                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
-                                    startActivity(intent);
                                 }
                             });
 //                            pushNotification.completeRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
                             Log.d(TAG, "run: calll oise push ");
                         }
                     }).start();
-                    // TODO: 10/27/2023 delete from booked and add to complete
                     stopThread = true;
                     Intent intent = new Intent(getApplicationContext() , MainActivity.class);
                     startActivity(intent);

@@ -42,7 +42,9 @@ public class SplashScreenActivity extends AppCompatActivity {
         mRideChecked = false;
         mAnimationCompleted = false;
 
-         if(firebaseAuth != null) checkForOnGoingRide();
+         if(firebaseAuth.getCurrentUser() != null) {
+             checkForOnGoingRide();
+         }
          else {
              mRideChecked = true;
              intent = new Intent(this, LoginActivity.class);
@@ -52,6 +54,8 @@ public class SplashScreenActivity extends AppCompatActivity {
             mAnimationCompleted = true;
             Log.d(TAG, "onCreate: animation is completed. ride check status: " + mRideChecked);
             if(mRideChecked) {
+                Log.d(TAG, "onCreate: intent: " + intent);
+                Log.d(TAG, "onCreate: " + FirebaseAuth.getInstance().getCurrentUser());
                 startActivity(intent);
                 finish();
             }
@@ -61,16 +65,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 gifDrawable.stop();
             }
         }, ANIMATION_TIME);
-    }
-
-    private void animation()
-    {
-        new Handler().postDelayed(() -> {
-            Intent mainIntent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-            startActivity(mainIntent);
-            finish();
-
-        }, 3490);
     }
 
     private void   checkForOnGoingRide() {

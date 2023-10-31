@@ -6,11 +6,11 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.PermissionCallback;
-import com.example.myapplication.ui.map.RideDetailsOnMapActivity;
 
-public class PermissionUtil {
-    private static final String TAG = "PermissionUtil";
+public class DialogUtil {
+    private static final String TAG = "DialogUtil";
     public static void askForConfirmation(Context context,
                                           String query,
                                           PermissionCallback callback) {

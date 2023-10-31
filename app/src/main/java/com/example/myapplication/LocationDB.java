@@ -61,10 +61,8 @@ public class LocationDB {
     public LocationDB() {
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         database = FirebaseDatabase.getInstance();
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
+        if(FirebaseAuth.getInstance() != null) userId = FirebaseAuth.getInstance().getUid();
         db = FirebaseFirestore.getInstance();
-        Log.d(TAG, "LocationDB: " +userId);
-
     }
 
     public void deleteFromPendingRider(String riderID )
@@ -98,7 +96,7 @@ public class LocationDB {
     }
     public void updatePendingDriverLocation(String currentLocation )
     {
-
+        userId = FirebaseAuth.getInstance().getUid();
         database.getReference().child("PendingRider").child(userId).child("start").setValue(currentLocation);
 
     }
