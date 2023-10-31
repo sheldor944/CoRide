@@ -200,7 +200,10 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                         Thread pickupStatusFetcherThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                if(mPickupStatus) return;
+                                if(mPickupStatus) {
+                                    mRouteEndLocation = mPassengerEndLocation;
+                                    return;
+                                }
                                 LocationDB locationDB = new LocationDB();
                                 locationDB.getPickupStatus(mRiderId, pickupStatus -> {
                                     Log.d(TAG, "run: pickup status: " + pickupStatus);
