@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -140,16 +141,28 @@ public class Register extends AppCompatActivity {
 
         });
 
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Creating...");
 
 
         button = findViewById(R.id.registerButton);
         button.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View view) {
+                progressDialog.show();
                 email = String.valueOf(emailText.getText());
                 password = String.valueOf(pass.getText());
                 name = String.valueOf(nameText.getText());
                 phone = String.valueOf(numberText.getText());
+                if(email.length() == 0 || password.length() == 0 || name.length() == 0 || password.length() == 0 )
+                {
+                    progressDialog.dismiss();
+
+                    Toast.makeText(Register.this , "Fill up all the fields." , Toast.LENGTH_LONG).show();
+                    return;
+                }
                 String lastName = "";
                 Log.d(TAG, "onClick: o dukse ");
 
@@ -177,6 +190,8 @@ public class Register extends AppCompatActivity {
                                                         Toast.LENGTH_SHORT).show();
                                             }
                                             else {
+                                                progressDialog.dismiss();
+
                                                 Toast.makeText(Register.this, "Authentication Failed." ,
                                                         Toast.LENGTH_SHORT).show();
                                             }
@@ -213,11 +228,16 @@ public class Register extends AppCompatActivity {
                                         locationDB.uploadImage(selectedImageUri);
 
                                     }
+                                    progressDialog.dismiss();
+                                    FirebaseAuth.getInstance().signOut();
+                                    Log.d(TAG, "onComplete: "+FirebaseAuth.getInstance().getCurrentUser());
                                     Intent intent = new Intent(getApplicationContext() , LoginActivity.class);
                                     startActivity(intent);
 //
                                 }
                                 else {
+
+                                    progressDialog.dismiss();
 
                                     // If sign in fails, display a message to the user.
                                     Log.w("TAG2", "createUserWithEmail:failure", task.getException());
