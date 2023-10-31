@@ -185,7 +185,6 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                 destLatLng.latitude + "," + destLatLng.longitude,
                 distance
         );
-
     }
 
 
@@ -340,6 +339,7 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
                                         "Unfortunately, no passenger found",
                                         Toast.LENGTH_LONG
                                 ).show();
+                                new LocationDB().deleteFromPendingRider(mUserId);
                                 Intent intent = new Intent(ProvideARideActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }
