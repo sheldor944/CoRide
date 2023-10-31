@@ -2,16 +2,13 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
-    android:layout_marginVertical="10dp"
-    android:layout_marginHorizontal="10dp"
-    app:cardCornerRadius="20dp"
+    android:layout_margin="15dp"
+    app:cardCornerRadius="10dp"
     app:cardElevation="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -25,42 +22,47 @@
             android:layout_marginTop="10dp"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded"/>
 
-        <TextView
-            android:id="@+id/listName"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="7dp"
-            android:layout_toEndOf="@+id/listImage"
-            android:text="Name"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/listTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/listName"
-            android:layout_marginStart="12dp"
+            <TextView
+                android:id="@+id/listName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
 
-            android:layout_marginTop="7dp"
-            android:layout_toEndOf="@+id/listImage"
-            android:text="time"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
+                android:text="Name"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:fontFamily="@font/josefin_sans_regular"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Fare"
-            android:text="Fare"
-            android:textSize="16sp"
-            android:layout_toEndOf="@id/listName"
-            android:layout_marginTop="25dp"
+            <TextView
+                android:id="@+id/listTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/listName"
+                android:layout_margin="5dp"
 
-            android:textColor="@color/black"/>
+                android:text="Time"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:fontFamily="@font/josefin_sans_regular"/>
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/Fare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+
+                android:text="Fare"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:fontFamily="@font/josefin_sans_regular"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>
