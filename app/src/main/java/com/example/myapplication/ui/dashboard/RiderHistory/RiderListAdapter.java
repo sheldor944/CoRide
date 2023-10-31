@@ -45,7 +45,7 @@ public class RiderListAdapter extends  ArrayAdapter<RiderListData> {
         locationDB.getImageURL(currentPassengerID,new Callback<Uri>() {
             @Override
             public void onComplete(Uri response) {
-                if (currentPassengerID.equals(listData.riderID)) {
+                if (currentPassengerID.equals(listData.passengerID)) {
                     Log.d("TAG", "onComplete: " + currentPassengerID + " "+ response);
 
                     Glide.with(getContext())
