@@ -72,9 +72,11 @@ public class testerActivity extends AppCompatActivity {
         }
         else if(event.message.equals("completeRide"))
         {
+            String fare = event.fare;
+            Log.d(TAG, "onMessageEvent: Fare is "+fare);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);  // 'this' is the current Activity context
-            builder.setTitle("Ride Completed!!");  // Set the title of the dialog
-            builder.setMessage("Congratulations, Ride completed!!");  // Set the message
+            builder.setTitle("Ride Completed!");  // Set the title of the dialog
+            builder.setMessage("Fare is "+fare+". Please pay the rider.");  // Set the message
 
             // Add positive button (usually "OK" or "Yes" button)
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

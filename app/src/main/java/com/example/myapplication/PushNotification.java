@@ -34,16 +34,20 @@ public class PushNotification {
             }
         }).start();
     }
-    public  void completeRide(String token)
+    public  void completeRide(String token, String fare )
     {
+        Log.d(TAG, "completeRideUtility:  fare is before thread "+fare);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                completeRideUtility(token);
+                Log.d(TAG, "completeRideUtility:  fare in the thread before utility "+fare);
+
+                completeRideUtility(token , fare);
             }
         }).start();
     }
-    public void completeRideUtility(String token)
+    public void completeRideUtility(String token, String fare )
     {
         
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -51,22 +55,29 @@ public class PushNotification {
         JSONObject notificationJsonObject = new JSONObject();
         JSONObject dataJsonObject = new JSONObject();  // Added this for the data payload
         JSONObject wholeObject = new JSONObject();
-        Log.d(TAG, "sendNotification: completeRide ");
+        JSONObject fareObject = new JSONObject();
+        Log.d(TAG, "completeRideUtility utility");
         try {
             notificationJsonObject.put("title", "Complete");
             notificationJsonObject.put("body", "RIDE HAS BEEN Completed");
 
             dataJsonObject.put("notification_id", "completeRide");  // Add your notification_id to the data payload
 
+            Log.d(TAG, "completeRideUtility:  fare is "+fare);
+            dataJsonObject.put("fare_id" , fare);
+
             wholeObject.put("to", token);
             wholeObject.put("notification", notificationJsonObject);
-            wholeObject.put("data", dataJsonObject);  // Include the data payload in the whole object
+            wholeObject.put("data", dataJsonObject);
+
+            // Include the data payload in the whole object
         } catch(Exception e) {
             Log.d("error", "sendNotification: " + e);
         }
 
 
         RequestBody requestBody = RequestBody.create(mediaType , wholeObject.toString());
+        Log.d(TAG, "completeRideUtility: "+ wholeObject.toString());
         Request request = new Request.Builder().url("https://fcm.googleapis.com/fcm/send")
                 .post(requestBody)
                 .addHeader("Authorization" , "key=AAAA6tg_1MQ:APA91bGpqnbF7JL_0WGE972cHOjRKZv0TqW7MuzgU0vhloZ9BSwfqGonqCmhNGjXohbBWxWIZRcVW7_iC7tg7kVdsztBPbJsT83etjR736p9gHng9zMl0Lx2ykWq32yQS7jAZtY4oumw")

@@ -485,35 +485,35 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                     // Code to execute when the button is clicked
                     // For example:
                     // Toast.makeText(getApplicationContext(), "OK clicked", Toast.LENGTH_SHORT).show();
-                    PushNotification pushNotification = new PushNotification() ;
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d(TAG, "run: push call hobe");
-                            locationDB.getTOKEN(mPassengerId, new Callback<String>() {
-                                @Override
-                                public void onComplete(String response) {
-                                    Log.d(TAG, "onComplete: Token is " + response);
-                                    pushNotification.completeRide(response);
-                                    Log.d(TAG, "run: calll oise push ");
-
-                                    // TODO: 10/27/2023 delete from booked and add to complete
-                                    locationDB.deleteFromBookedPassenger(mPassengerId , mRiderId);
-                                    // maybe there will be a problem if rider cancels the ride
-                                    Log.d(TAG, "onComplete: deleted and added as well ");
-                                    stopThread = true;
-                                }
-                            });
-//                            pushNotification.completeRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
-                            Log.d(TAG, "run: calll oise push ");
-                        }
-                    }).start();
 
                     GoogleMapAPIHandler.getDistanceBetweenTwoLatLng(
                             mPassengerStartLocation,
                             currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
                             routeTravelledDistance -> {
                                 int fare = GoogleMapAPIHandler.getCostFromDistance(routeTravelledDistance);
+                                PushNotification pushNotification = new PushNotification() ;
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "run: push call hobe");
+                                        locationDB.getTOKEN(mPassengerId, new Callback<String>() {
+                                            @Override
+                                            public void onComplete(String response) {
+                                                Log.d(TAG, "onComplete: Token is " + response);
+                                                pushNotification.completeRide(response , ""+fare);
+                                                Log.d(TAG, "run: calll oise push ");
+
+                                                // TODO: 10/27/2023 delete from booked and add to complete
+                                                locationDB.deleteFromBookedPassenger(mPassengerId , mRiderId);
+                                                // maybe there will be a problem if rider cancels the ride
+                                                Log.d(TAG, "onComplete: deleted and added as well ");
+                                                stopThread = true;
+                                            }
+                                        });
+//                            pushNotification.completeRide("fbyU3dlwQ56zm-KWgQqyzr:APA91bEoN-I15jP2D2yQjTO7wq3Y_CT4veFjc3cmph5in1IPsTOh9NsXV8VdxTh0BNMZT0NQNnZttLd7Y9-KDEh8fj6Sr9PHThfKKQgEDtTWBAyZK4h7gLQ1R3S3D9A9Tgh8og99wFMc");
+                                        Log.d(TAG, "run: calll oise push ");
+                                    }
+                                }).start();
                                 Log.d(TAG, "onComplete: fare is: " + fare);
                                 locationDB.saveToCompletedTable(mPassengerId, mRiderId, fare, new SaveToCompletedTableCallback() {
                                     @Override

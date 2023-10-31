@@ -59,7 +59,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (remoteMessage.getData().size() > 0) {
             String notificationId = remoteMessage.getData().get("notification_id");
-            Log.d(TAG, "onMessageReceived: id is  " + notificationId);
+            String fare = remoteMessage.getData().get("fare_id");
+
+            Log.d(TAG, "onMessageReceived: id is  " + notificationId + fare);
             if (notificationId != null) {
                 if ("cancelRide".equals(notificationId)) {
                     // Perform action based on this ID
@@ -74,8 +76,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     isPickedUP();
                 }
                 if ("completeRide".equals(notificationId)) {
-                    Log.d(TAG, "onMessageReceived: ride has been Completed bro ");
-                    EventBus.getDefault().post(new MessageEvent("completeRide"));
+                    Log.d(TAG, "onMessageReceived: ride has been Completed bro " + fare);
+                    EventBus.getDefault().post(new MessageEvent("completeRide" , fare ));
+
 
                     isRideCompleted();
                 }

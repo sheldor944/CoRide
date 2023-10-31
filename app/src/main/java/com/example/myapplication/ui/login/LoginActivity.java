@@ -196,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if(mAuth.getCurrentUser() != null){
-            checkForOnGoingRide();
+//            checkForOnGoingRide();
 //            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 //            startActivity(intent);
         }
