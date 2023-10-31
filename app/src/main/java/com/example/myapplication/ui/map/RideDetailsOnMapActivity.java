@@ -493,33 +493,9 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                             locationDB.getTOKEN(mPassengerId, new Callback<String>() {
                                 @Override
                                 public void onComplete(String response) {
+                                    Log.d(TAG, "onComplete: Token is " + response);
                                     pushNotification.completeRide(response);
                                     Log.d(TAG, "run: calll oise push ");
-
-                                    GoogleMapAPIHandler.getDistanceBetweenTwoLatLng(
-                                            mPassengerStartLocation,
-                                            currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
-                                            routeTravelledDistance -> {
-                                                int fare = GoogleMapAPIHandler.getCostFromDistance(routeTravelledDistance);
-                                                Log.d(TAG, "onComplete: fare is: " + fare);
-                                                locationDB.saveToCompletedTable(mPassengerId, mRiderId, fare, new SaveToCompletedTableCallback() {
-                                                    @Override
-                                                    public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
-
-                                                    }
-                                                });
-
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(RideDetailsOnMapActivity.this)
-                                                        .setTitle("Ride is completed.")
-                                                        .setMessage("Fare is: " + fare + "৳")
-                                                        .setPositiveButton("Return To Home", (dialog, id) -> {
-                                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                                            startActivity(intent);
-                                                        });
-                                                AlertDialog dialog = builder.create();
-                                                dialog.show();
-                                            }
-                                    );
 
                                     // TODO: 10/27/2023 delete from booked and add to complete
                                     locationDB.deleteFromBookedPassenger(mPassengerId , mRiderId);
@@ -532,9 +508,40 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                             Log.d(TAG, "run: calll oise push ");
                         }
                     }).start();
+
+                    GoogleMapAPIHandler.getDistanceBetweenTwoLatLng(
+                            mPassengerStartLocation,
+                            currentLocation.getLatitude() + "," + currentLocation.getLongitude(),
+                            routeTravelledDistance -> {
+                                int fare = GoogleMapAPIHandler.getCostFromDistance(routeTravelledDistance);
+                                Log.d(TAG, "onComplete: fare is: " + fare);
+                                locationDB.saveToCompletedTable(mPassengerId, mRiderId, fare, new SaveToCompletedTableCallback() {
+                                    @Override
+                                    public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+
+                                    }
+                                });
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(RideDetailsOnMapActivity.this)
+                                                .setTitle("Ride is completed.")
+                                                .setMessage("Fare is: " + fare + "৳")
+                                                .setPositiveButton("Return To Home", (dialog_, id) -> {
+                                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                    startActivity(intent);
+                                                });
+                                        AlertDialog dialog2 = builder.create();
+                                        dialog2.show();
+                                    }
+                                });
+                            }
+                    );
+
                     stopThread = true;
-                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+//                    startActivity(intent);
                 }
             });
 

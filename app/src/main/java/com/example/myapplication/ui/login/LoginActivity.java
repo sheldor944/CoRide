@@ -216,16 +216,31 @@ public class LoginActivity extends AppCompatActivity {
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+
                                     if (task.isSuccessful()) {
                                         // Login success
                                         FirebaseUser user = mAuth.getCurrentUser();
-                                        Toast.makeText(LoginActivity.this , "Success " , Toast.LENGTH_SHORT);
-                                        checkForOnGoingRide();
+                                        Log.d(TAG, "onComplete: succeesful o aise ");
+                                        if(user.isEmailVerified()){
+                                            Toast.makeText(LoginActivity.this , "Success " , Toast.LENGTH_SHORT).show();
+                                            checkForOnGoingRide();
+                                        }
+                                        else{
+                                            progressDialog.dismiss();
+
+                                            Toast.makeText(LoginActivity.this , "Verify your email! " , Toast.LENGTH_SHORT).show();
+
+                                        }
+
+
 //                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 //                                        startActivity(intent);
                                         // Update your UI with the user's information
-                                    } else {
-                                        Toast.makeText(LoginActivity.this , "Error " , Toast.LENGTH_SHORT);
+                                    }
+                                    else {
+                                        progressDialog.dismiss();
+
+                                        Toast.makeText(LoginActivity.this , "Error with Credentials" , Toast.LENGTH_LONG ).show();
                                         // Login failure
                                         // Handle the failure here
                                     }

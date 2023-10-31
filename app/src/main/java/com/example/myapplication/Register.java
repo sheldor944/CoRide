@@ -163,10 +163,25 @@ public class Register extends AppCompatActivity {
 
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
+
                                     Log.d("tag1", "createUserWithEmail:success");
-                                    Toast.makeText(Register.this, "Authentication Success." + email + password,
-                                            Toast.LENGTH_SHORT).show();
+
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d(TAG, "onComplete: sendEmailVerification");
+                                            if(task.isSuccessful())
+                                            {
+                                                Toast.makeText(Register.this, "Authentication Success. Login after verify" ,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                            else {
+                                                Toast.makeText(Register.this, "Authentication Failed." ,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                                     Log.d(TAG, "onComplete:1 " + user.getUid());
                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                                     // Create a new user with a first and last name
@@ -176,7 +191,7 @@ public class Register extends AppCompatActivity {
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
-                                   String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
+                                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assuming the user is already authenticated
                                     getFCMtoken(new TokenCallback() {
                                         @Override
                                         public void onTokenReceived(String token) {
@@ -192,9 +207,13 @@ public class Register extends AppCompatActivity {
 
                                     // Use the set() method on the DocumentReference instance to write the data to Firestore
                                     userRef.set(data);
-                                    LocationDB locationDB = new LocationDB();
-                                    locationDB.uploadImage(selectedImageUri);
-                                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                                    if(selectedImageUri!=null)
+                                    {
+                                        LocationDB locationDB = new LocationDB();
+                                        locationDB.uploadImage(selectedImageUri);
+
+                                    }
+                                    Intent intent = new Intent(getApplicationContext() , LoginActivity.class);
                                     startActivity(intent);
 //
                                 }

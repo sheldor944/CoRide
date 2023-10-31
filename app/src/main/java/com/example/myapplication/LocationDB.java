@@ -317,6 +317,7 @@ public class LocationDB {
 
     public void saveToCompletedTable(String passengerID , String riderID , double fare , SaveToCompletedTableCallback callback)
     {
+        Log.d(TAG, "saveToCompletedTable: ");
         checkForOngoingRide(new RideCheckCallback() {
             @Override
             public void onRideCheckCompleted(ArrayList<Pair<String, String>> result) {
@@ -710,22 +711,30 @@ public class LocationDB {
         });
     }
     public void getImageURL(Callback<Uri> callback) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
 
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        StorageReference userImageRef = storageRef.child("user_images/" + userId );
+        try
+        {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
 
-        userImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            // You can set this URL to an ImageView to display the image
-            Log.d(TAG, "getImageURL: Successful");
-            callback.onComplete(uri);
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            StorageReference userImageRef = storageRef.child("user_images/" + userId );
+            userImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                // You can set this URL to an ImageView to display the image
+                Log.d(TAG, "getImageURL: Successful");
+                callback.onComplete(uri);
 //            ImageView imageView = findViewById(R.id.yourImageViewId);
 //            Glide.with(this).load(uri).into(imageView); // Using Glide library to load the image
-        }).addOnFailureListener(exception -> {
-            Log.d(TAG, "getImageURL: error " + exception);
-            // Handle any errors
-        });
+            }).addOnFailureListener(exception -> {
+                Log.d(TAG, "getImageURL: error " + exception);
+                // Handle any errors
+            });
+        }
+        catch (Exception e )
+        {
+            Log.d(TAG, "getImageURL: " + e);
+        }
     }
 
     public void updateLiveLocation(String userId, String location) {
