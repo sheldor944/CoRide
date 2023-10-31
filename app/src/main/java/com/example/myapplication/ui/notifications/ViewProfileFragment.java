@@ -43,6 +43,7 @@ public class ViewProfileFragment extends Fragment {
     CircleImageView imageView;
 
     private AppCompatButton mUpdateButton;
+    private boolean mLeftFragment;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -57,44 +58,46 @@ public class ViewProfileFragment extends Fragment {
 
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        mLeftFragment = false;
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        if(user == null){
+        if (user == null) {
             Log.d(TAG, "onCreateView: user is null");
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userRef = db.collection("users").document(user.getUid());
         System.out.println(user.getUid());
-        Log.d("entered2" , "notificationFragment o dukse 2 ");
+        Log.d("entered2", "notificationFragment o dukse 2 ");
 
         imageView = root.findViewById(R.id.profile_picture);
         LocationDB locationDB = new LocationDB();
         locationDB.getImageURL(new Callback<Uri>() {
             @Override
             public void onComplete(Uri response) {
-            Glide.with(ViewProfileFragment.this).load(response).into(imageView); // Using Glide library to load the image
+                if(mLeftFragment) return;
+                Glide.with(ViewProfileFragment.this).load(response).into(imageView); // Using Glide library to load the image
 
 //                imageView.setImageURI(response);
             }
         });
 
 
-
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(Task<DocumentSnapshot> task) {
-                Log.d("entered3" , "notificationFragment o dukse3 ");
+                Log.d("entered3", "notificationFragment o dukse3 ");
+                if(mLeftFragment) return;
 
                 if (task.isSuccessful()) {
-                    Log.d("entered succesfull 4" , "successful o dukse 4 ");
+                    Log.d("entered succesfull 4", "successful o dukse 4 ");
 
 
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()) {
                         // Get the user's data from the DocumentSnapshot
-                        Log.d("entered5" , "document exists ");
+                        Log.d("entered5", "document exists ");
 
                         name = documentSnapshot.getString("firstName");
                         System.out.println(name);
@@ -117,7 +120,7 @@ public class ViewProfileFragment extends Fragment {
                         // Do something with the user's data
                     } else {
                         // The user's document does not exist
-                        Log.w("document " , " document not found ");
+                        Log.w("document ", " document not found ");
                     }
                 } else {
                     // An error occurred while getting the user's data
@@ -125,32 +128,11 @@ public class ViewProfileFragment extends Fragment {
             }
         });
 
-//        Button upload = root.findViewById(R.id.upload);
-//        upload.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(getActivity(), new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
-//                }
-//
-//                Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                int PICK_PHOTO_REQUEST = 1234;
-//                startActivityForResult(pickPhotoIntent, PICK_PHOTO_REQUEST);
-//            }
-//        });
-
-
-//        Intent intent = getIntent();
-
-        // Rest of your code
-
-//        imageView = root.findViewById(R.id.imageView);
-
         mUpdateButton = (AppCompatButton) root.findViewById(R.id.update_button);
         mUpdateButton.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), UpdateProfileActivity.class);
-            intent.putExtra("name" , name);
-            intent.putExtra("phone" , phone);
+            intent.putExtra("name", name);
+            intent.putExtra("phone", phone);
             startActivity(intent);
         });
 
@@ -208,6 +190,9 @@ public class ViewProfileFragment extends Fragment {
         binding = null;
     }
 
-
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        mLeftFragment = true;
+    }
 }
