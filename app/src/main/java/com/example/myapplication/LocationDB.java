@@ -693,7 +693,24 @@ public class LocationDB {
             Log.d(TAG, "uploadImage: error "+ e);
         });
     }
+    public void getImageURL(String UID , Callback<Uri> callback)
+    {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
 
+        StorageReference userImageRef = storageRef.child("user_images/" + UID );
+
+        userImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            // You can set this URL to an ImageView to display the image
+            Log.d(TAG, "getImageURL: Successful");
+            callback.onComplete(uri);
+//            ImageView imageView = findViewById(R.id.yourImageViewId);
+//            Glide.with(this).load(uri).into(imageView); // Using Glide library to load the image
+        }).addOnFailureListener(exception -> {
+            Log.d(TAG, "getImageURL: error " + exception);
+            // Handle any errors
+        });
+    }
     public void getImageURL(Callback<Uri> callback) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
