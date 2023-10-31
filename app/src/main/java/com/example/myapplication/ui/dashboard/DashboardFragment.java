@@ -35,6 +35,8 @@ public class DashboardFragment extends Fragment {
         DashboardViewModel dashboardViewModel =
                 new ViewModelProvider(this).get(DashboardViewModel.class);
 
+        getActivity().setTitle("History");
+
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         root = binding.getRoot();
 

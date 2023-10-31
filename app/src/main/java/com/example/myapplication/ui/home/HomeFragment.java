@@ -89,6 +89,8 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        getActivity().setTitle("Home");
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
         mOnGoigRide = root.findViewById(R.id.OnGoingRide);
