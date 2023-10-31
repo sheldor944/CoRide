@@ -35,7 +35,7 @@
 
                 android:text="Name"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:fontFamily="@font/josefin_sans_regular"/>
 
@@ -47,7 +47,6 @@
                 android:layout_margin="5dp"
 
                 android:text="Time"
-                android:textColor="@color/black"
                 android:textSize="15sp"
                 android:fontFamily="@font/josefin_sans_regular"/>
 
@@ -58,7 +57,6 @@
                 android:layout_margin="5dp"
 
                 android:text="Fare"
-                android:textColor="@color/black"
                 android:textSize="15sp"
                 android:fontFamily="@font/josefin_sans_regular"/>
 
