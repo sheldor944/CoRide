@@ -278,15 +278,16 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                             GoogleMapAPIHandler.getLatLngFromString(mRiderLiveLocation, ","),
                             routeEndLatLng,
                             mMap,
-                            (latLng, distance) -> {}
+                            (latLng, distance) -> {
+                                GoogleMapAPIHandler.addMarkerWithBikeIcon(
+                                        mMap,
+                                        GoogleMapAPIHandler.getLatLngFromString(mRiderLiveLocation, ","),
+                                        "Driver",
+                                        mBikeImageBitmapDescriptor
+                                );
+                            }
                     );
 
-                    GoogleMapAPIHandler.addMarkerWithBikeIcon(
-                            mMap,
-                            GoogleMapAPIHandler.getLatLngFromString(mRiderLiveLocation, ","),
-                            "Driver",
-                            mBikeImageBitmapDescriptor
-                    );
                 }
                 else {
                     Log.d(TAG, "onComplete: Could not fetch the last location");
