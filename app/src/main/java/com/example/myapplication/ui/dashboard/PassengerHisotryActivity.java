@@ -89,13 +89,14 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                     Log.d(TAG, "test " + passengerID +" "+ riderID);
                     locationDB.getUserNamePhone(riderID, passengerID, new Callback<String[]>() {
                         String RID = riderID , PID = passengerID;
+                        String Fare = fare , From = from , To =to ;
                         @Override
                         public void onComplete(String[] response) {
                             riderName = response[0];
                             passengerName = response[2];
                             phoneNumber = response[1];
                             System.out.println(riderName + passengerName + from + to + fare +" "+ PID +" "+ RID );
-                            passengerListData = new PassengerListData (passengerName,riderName, from , to , fare , phoneNumber , PID , RID);
+                            passengerListData = new PassengerListData (passengerName,riderName, From , To , Fare , phoneNumber , PID , RID);
                             passengerListDataArrayList.add(passengerListData);
 
                             if(passengerListDataArrayList.size()+ RiderCountInCompleteTable[0] == resultList.size()) {
