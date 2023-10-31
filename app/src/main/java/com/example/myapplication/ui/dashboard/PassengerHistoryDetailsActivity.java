@@ -21,7 +21,7 @@ public class PassengerHistoryDetailsActivity extends AppCompatActivity {
         if (intent != null){
             String passenger = intent.getStringExtra("passengerName");
             String RiderName = intent.getStringExtra("riderName");
-            String Fare = intent.getStringExtra("Fare");
+            String Fare = intent.getStringExtra("fare");
             String phone = intent.getStringExtra("phone" );
             binding.detailName.setText(passenger);
             binding.FromTextView.setText(RiderName);

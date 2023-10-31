@@ -26,7 +26,7 @@ public class PassengerHisotryActivity extends AppCompatActivity {
 
     private FirebaseDatabase database ;
     ActivityPassengerHisotryBinding binding;
-    String TAG = "PaasengerHistoryActivity";
+    String TAG = "PasengerHistoryActivity";
     PassengerListAdapter passengerListAdapter;
     ArrayList<PassengerListData> passengerListDataArrayList = new ArrayList<>();
     PassengerListData passengerListData;
@@ -120,6 +120,7 @@ public class PassengerHisotryActivity extends AppCompatActivity {
                 intent.putExtra("passengerName" , data.passengerName);
                 intent.putExtra("riderName" , data.RiderName);
                 intent.putExtra("phone" , data.phone);
+
                 intent.putExtra("fare" ,data.Fare);
                 startActivity(intent);
 
