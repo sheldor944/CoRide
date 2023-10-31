@@ -282,12 +282,17 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                             routeEndLatLng,
                             mMap,
                             (latLng, distance) -> {
-                                GoogleMapAPIHandler.addMarkerWithBikeIcon(
-                                        mMap,
-                                        GoogleMapAPIHandler.getLatLngFromString(mRiderLiveLocation, ","),
-                                        "Driver",
-                                        mBikeImageBitmapDescriptor
-                                );
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        GoogleMapAPIHandler.addMarkerWithBikeIcon(
+                                                mMap,
+                                                GoogleMapAPIHandler.getLatLngFromString(mRiderLiveLocation, ","),
+                                                "Driver",
+                                                mBikeImageBitmapDescriptor
+                                        );
+                                    }
+                                });
                             }
                     );
 
