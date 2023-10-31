@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -26,8 +27,8 @@ public class DashboardFragment extends Fragment {
     View root;
 
     private FragmentDashboardBinding binding;
-    private Button riderHisotory;
-    private Button passengerHisotry;
+    private CardView riderHisotory;
+    private CardView passengerHisotry;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -37,8 +38,8 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         root = binding.getRoot();
 
-        riderHisotory = root.findViewById(R.id.riderHistory);
-        passengerHisotry = root.findViewById(R.id.passengerHistory);
+        riderHisotory = root.findViewById(R.id.rider_history_card_view);
+        passengerHisotry = root.findViewById(R.id.passenger_history_card_view);
 
         riderHisotory.setOnClickListener(new View.OnClickListener() {
             @Override

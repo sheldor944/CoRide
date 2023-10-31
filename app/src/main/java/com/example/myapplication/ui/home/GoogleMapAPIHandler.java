@@ -158,6 +158,11 @@ public class GoogleMapAPIHandler {
                             googleMap.clear();
                             Log.d(TAG, "displayRoute: " + polylineOptions.toString());
                             googleMap.addPolyline(polylineOptions);
+                            addMarker(
+                                    googleMap,
+                                    destLatLng,
+                                    "Destination"
+                            );
                         }
                     });
                 }

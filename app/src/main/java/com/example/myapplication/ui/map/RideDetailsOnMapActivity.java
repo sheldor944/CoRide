@@ -301,6 +301,10 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                 Log.d(TAG, "onComplete: Location fetch task completed");
                 if(task.isSuccessful()) {
                     currentLocation = (Location) task.getResult();
+                    if(currentLocation == null) {
+                        Toast.makeText(RideDetailsOnMapActivity.this, "Please turn on Location Services", Toast.LENGTH_SHORT);
+                        return;
+                    }
                     Log.d(TAG, "onComplete: Device location fetched successfully. Location: lat " + currentLocation.getLatitude() + " lng " + currentLocation.getLongitude());
                     LatLng routeEndLatLng = GoogleMapAPIHandler.getLatLngFromString(
                             mRouteEndLocation,

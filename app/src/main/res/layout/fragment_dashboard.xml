@@ -2,44 +2,86 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.cardview.widget.CardView
+        android:id="@+id/rider_history_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:elevation="1dp"
-        >
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/riderHistory"
+        app:cardElevation="8dp"
+        android:clickable="true"
+        android:layout_marginVertical="15dp"
+        android:layout_marginHorizontal="50dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="10dp">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Rider History"
-            android:background="@drawable/rounded_button"
-            android:textColor="@color/white">
+            android:orientation="horizontal">
 
-        </androidx.appcompat.widget.AppCompatButton>
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:scaleType="centerInside"
+                android:layout_margin="10dp"
+                android:src="@drawable/history"
+                android:layout_gravity="center"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="AS A RIDER"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_margin="15dp"
+                android:padding="10dp"
+                />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/passenger_history_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:elevation="1dp"
-        >
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/passengerHistory"
+        app:cardElevation="8dp"
+        android:clickable="true"
+        android:layout_marginVertical="15dp"
+        android:layout_marginHorizontal="50dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="10dp">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Passenger History"
-            android:background="@drawable/rounded_button"
-            android:textColor="@color/white">
+            android:orientation="horizontal">
 
-        </androidx.appcompat.widget.AppCompatButton>
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:scaleType="centerInside"
+                android:layout_margin="10dp"
+                android:src="@drawable/history"
+                android:layout_gravity="center"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="AS A PASSENGER"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_margin="15dp"
+                android:padding="10dp"
+                />
 
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>
