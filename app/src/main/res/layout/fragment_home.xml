@@ -1,172 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.home.HomeFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="10dp"
+    android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/get_a_ride_cardview"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardElevation="8dp"
-        android:clickable="true"
-        android:layout_marginVertical="15dp"
-        android:layout_marginHorizontal="50dp"
-        app:cardCornerRadius="10dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.home.HomeFragment">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
+            android:id="@+id/get_a_ride_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="vertical">
+            app:cardElevation="8dp"
+            android:clickable="true"
+            android:layout_marginVertical="15dp"
+            android:layout_marginHorizontal="50dp"
+            app:cardCornerRadius="10dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/bike"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"/>
-
-            <View
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="10dp"
-                android:background="@color/gray"
-                android:outlineAmbientShadowColor="@color/black"/>
-
-            <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="WANT A RIDE?"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_margin="10dp"
-                />
+                android:weightSum="2"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/bike"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"/>
 
-    </androidx.cardview.widget.CardView>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="10dp"
+                    android:background="@color/gray"
+                    android:outlineAmbientShadowColor="@color/black"/>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/provide_a_ride_cardview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardElevation="8dp"
-        android:clickable="true"
-        android:layout_marginVertical="15dp"
-        android:layout_marginHorizontal="50dp"
-        app:cardCornerRadius="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="WANT A RIDE?"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_margin="10dp"
+                    />
 
-        <LinearLayout
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/provide_a_ride_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="vertical">
+            app:cardElevation="8dp"
+            android:clickable="true"
+            android:layout_marginVertical="15dp"
+            android:layout_marginHorizontal="50dp"
+            app:cardCornerRadius="10dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/bike_with_passenger"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"/>
-
-            <View
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="10dp"
-                android:background="@color/gray"
-                android:outlineAmbientShadowColor="@color/black"/>
-
-            <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="OFFER A RIDE"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_margin="10dp"
-                />
+                android:weightSum="2"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/bike_with_passenger"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"/>
 
-    </androidx.cardview.widget.CardView>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="10dp"
+                    android:background="@color/gray"
+                    android:outlineAmbientShadowColor="@color/black"/>
 
-    <Button
-        android:id="@+id/OnGoingRide"
-        android:visibility="gone"
-        android:clickable="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="OnGoingRide" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="OFFER A RIDE"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_margin="10dp"
+                    />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/OnGoingRide"
+            android:visibility="gone"
+            android:clickable="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OnGoingRide" />
 
 
-<!--    <androidx.cardview.widget.CardView-->
-<!--        android:id="@+id/OnGoingRide"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:cardElevation="8dp"-->
-<!--        android:enabled="false"-->
-<!--        android:clickable="true"-->
-<!--        android:layout_marginVertical="15dp"-->
-<!--        android:layout_marginHorizontal="50dp"-->
-<!--        app:cardCornerRadius="10dp">-->
+        <!--    <androidx.cardview.widget.CardView-->
+        <!--        android:id="@+id/OnGoingRide"-->
+        <!--        android:layout_width="match_parent"-->
+        <!--        android:layout_height="wrap_content"-->
+        <!--        app:cardElevation="8dp"-->
+        <!--        android:enabled="false"-->
+        <!--        android:clickable="true"-->
+        <!--        android:layout_marginVertical="15dp"-->
+        <!--        android:layout_marginHorizontal="50dp"-->
+        <!--        app:cardCornerRadius="10dp">-->
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:weightSum="2"-->
-<!--            android:orientation="vertical">-->
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:weightSum="2"-->
+        <!--            android:orientation="vertical">-->
 
-<!--            <ImageView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="100dp"-->
-<!--                android:scaleType="centerInside"-->
-<!--                android:src="@drawable/bike"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:layout_gravity="center"/>-->
+        <!--            <ImageView-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="100dp"-->
+        <!--                android:scaleType="centerInside"-->
+        <!--                android:src="@drawable/bike"-->
+        <!--                android:layout_marginTop="10dp"-->
+        <!--                android:layout_weight="1"-->
+        <!--                android:layout_gravity="center"/>-->
 
-<!--            <View-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="1dp"-->
-<!--                android:layout_margin="10dp"-->
-<!--                android:background="@color/gray"-->
-<!--                android:outlineAmbientShadowColor="@color/black"/>-->
+        <!--            <View-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="1dp"-->
+        <!--                android:layout_margin="10dp"-->
+        <!--                android:background="@color/gray"-->
+        <!--                android:outlineAmbientShadowColor="@color/black"/>-->
 
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:layout_weight="1"-->
-<!--                android:gravity="center"-->
-<!--                android:text="On Going Ride"-->
-<!--                android:textSize="15sp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:layout_margin="10dp"-->
-<!--                />-->
+        <!--            <TextView-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center"-->
+        <!--                android:layout_weight="1"-->
+        <!--                android:gravity="center"-->
+        <!--                android:text="On Going Ride"-->
+        <!--                android:textSize="15sp"-->
+        <!--                android:textStyle="bold"-->
+        <!--                android:layout_margin="10dp"-->
+        <!--                />-->
 
-<!--        </LinearLayout>-->
+        <!--        </LinearLayout>-->
 
-<!--    </androidx.cardview.widget.CardView>-->
+        <!--    </androidx.cardview.widget.CardView>-->
 
-    <Button
-        android:id="@+id/notificationTester"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:clickable="false"
-        android:text="notification" />
+        <Button
+            android:id="@+id/notificationTester"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:clickable="false"
+            android:text="notification" />
 
-</LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
