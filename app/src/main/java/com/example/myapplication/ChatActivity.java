@@ -101,15 +101,15 @@ public class ChatActivity extends testerActivity {
         if(!mPassengerId.equals(mUserId)) receiverUID = mPassengerId;
         else receiverUID = mRiderId;
 
-        LocationDB locationDB = new LocationDB();
-        locationDB.getUserName(receiverUID, new GetUserNameCallback() {
-            @Override
-            public void onUserNameRecieved(String name, String phone) {
-                receiverName= name ;
-                receiver.setText(name);
-
-            }
-        });
+//        LocationDB locationDB = new LocationDB();
+//        locationDB.getUserName(receiverUID, new GetUserNameCallback() {
+//            @Override
+//            public void onUserNameRecieved(String name, String phone) {
+//                receiverName= name ;
+//                receiver.setText(name);
+//
+//            }
+//        });
 
         messagesArrayList = new ArrayList<>();
 
