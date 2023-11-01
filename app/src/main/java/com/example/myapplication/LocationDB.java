@@ -630,6 +630,14 @@ public class LocationDB {
         String UID = riderId;
         Log.d(TAG, "getBookedPassenger: "+UID);
 
+        try {
+            if(database.getReference("bookedPassengerRider") == null) return;
+            Log.d(TAG, "getPickupStatus: bookedPassengerRider exists");
+        } catch (Exception e) {
+            Log.d(TAG, "getPickupStatus: error: " + e);
+            return;
+        }
+
         database.getReference("bookedPassengerRider").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
