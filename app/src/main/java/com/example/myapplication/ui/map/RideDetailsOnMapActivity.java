@@ -4,6 +4,7 @@ package com.example.myapplication.ui.map;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -142,10 +143,16 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
     private String mPassengerLiveLocation;
     private String mRiderLiveLocation;
 
+    private  ProgressDialog progressDialog ;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
         setContentView(R.layout.activity_ride_details_on_map);
         mGPS = (ImageView) findViewById(R.id.ic_gps);
         mNavigationView = findViewById(R.id.ride_nav_view);
@@ -659,6 +666,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                                     mMap
                             );
                             init();
+                            progressDialog.dismiss();
                         }
                         else {
                             Log.d(TAG, "onComplete: Could not fetch the last location");

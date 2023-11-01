@@ -2,6 +2,7 @@ package com.example.myapplication.ui.notifications;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -42,11 +43,33 @@ public class UpdateProfileActivity extends AppCompatActivity {
     String TAG = "UpdateProfile";
     private static final int REQUEST_STORAGE_PERMISSION = 1001;
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d(TAG, "onRequestPermissionsResult: called.");
+
+        switch (requestCode) {
+            case REQUEST_STORAGE_PERMISSION: {
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                            Log.d(TAG, "onRequestPermissionsResult: permission failed");
+                            return;
+                        }
+                    }
+                    Log.d(TAG, "onRequestPermissionsResult: permission granted");
+                    openGallery();
+                }
+            }
+        }
+    }
+
 
     private void requestStoragePermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
             Log.d(TAG, "requestStoragePermission: granted ");
+//            openGallery();
         }
     }
     private   int REQUEST_PICK_IMAGE = 1002;
@@ -104,7 +127,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "onClick: permission nai asking for it ");
                     requestStoragePermission();
-                    openGallery();
+//                    openGallery();
                 }
             }
 

@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -78,6 +79,7 @@ public class ChatActivity extends testerActivity {
     private String mRiderEndLocation;
 
     private boolean stopThreads = false;
+    private boolean isNotOnThisActivity;
 
 
     @Override
@@ -90,6 +92,7 @@ public class ChatActivity extends testerActivity {
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
         mUserId = auth.getUid();
+        isNotOnThisActivity = false;
 
         // data fetching system should be implemented
         // TODO: 10/22/2023
@@ -101,15 +104,20 @@ public class ChatActivity extends testerActivity {
         if(!mPassengerId.equals(mUserId)) receiverUID = mPassengerId;
         else receiverUID = mRiderId;
 
-//        LocationDB locationDB = new LocationDB();
-//        locationDB.getUserName(receiverUID, new GetUserNameCallback() {
-//            @Override
-//            public void onUserNameRecieved(String name, String phone) {
-//                receiverName= name ;
-//                receiver.setText(name);
-//
-//            }
-//        });
+        LocationDB locationDB = new LocationDB();
+        locationDB.getUserName(receiverUID, new GetUserNameCallback() {
+            @Override
+            public void onUserNameRecieved(String name, String phone) {
+                if(isNotOnThisActivity) return;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        receiverName = name;
+                        receiver.setText(name);
+                    }
+                });
+            }
+        });
 
         messagesArrayList = new ArrayList<>();
 
@@ -205,6 +213,10 @@ public class ChatActivity extends testerActivity {
 
         mMapIcon = findViewById(R.id.map_image);
         mMapIcon.setOnClickListener(view -> {
+            isNotOnThisActivity = true;
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
             Intent intent = new Intent(this, RideDetailsOnMapActivity.class);
 
             intent.putExtra("passenger_id", mPassengerId);
@@ -214,7 +226,9 @@ public class ChatActivity extends testerActivity {
             intent.putExtra("rider_id", mRiderId);
             intent.putExtra("rider_start_location", mRiderStartLocation);
             intent.putExtra("rider_end_location", mRiderEndLocation);
+
             startActivity(intent);
+            progressDialog.dismiss();
         });
     }
 
