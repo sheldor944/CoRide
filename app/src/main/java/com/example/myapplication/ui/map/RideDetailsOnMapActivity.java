@@ -412,12 +412,12 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
                                     // TODO: 10/27/2023 delete from booked and add to complete
                                     locationDB.deleteFromBookedPassenger(mPassengerId , mRiderId);
                                     // maybe there will be a problem if rider cancels the ride 
-                                    locationDB.saveToCompletedTable(mPassengerId, mRiderId, 400, new SaveToCompletedTableCallback() {
-                                        @Override
-                                        public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
-
-                                        }
-                                    });
+//                                    locationDB.saveToCompletedTable(mPassengerId, mRiderId, 400, new SaveToCompletedTableCallback() {
+//                                        @Override
+//                                        public void onSaveToCompletedTableComplete(ArrayList<Pair<String, String>> result) {
+//
+//                                        }
+//                                    });
                                     Log.d(TAG, "onComplete: deleted and added as well ");
                                     stopThread = true;
                                     Intent intent = new Intent(getApplicationContext() , MainActivity.class);

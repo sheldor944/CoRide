@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.telecom.Call;
 import android.util.Log;
@@ -26,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,7 +40,13 @@ import com.google.protobuf.DescriptorProtos;
 
 import org.checkerframework.checker.guieffect.qual.UI;
 
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
@@ -267,6 +275,20 @@ public class LocationDB {
 
 
                 if (callback != null) {
+                    Collections.sort(resultList, new Comparator<ArrayList<Pair<String, String>>>() {
+                        @Override
+                        public int compare(ArrayList<Pair<String, String>> t1, ArrayList<Pair<String, String>> t2) {
+                           String time1 =  t1.get(t1.size() - 1).second ;
+                           String time2 = t2.get(t2.size()-1).second ;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                LocalDateTime localDateTime1 = LocalDateTime.parse(time1);
+                                LocalDateTime localDateTime2 = LocalDateTime.parse(time2);
+                                return  localDateTime2.compareTo(localDateTime1);
+                            }
+                            Log.d(TAG, "compare: android version is lower for localdateTime");
+                            return  0;
+                        }
+                    });
                     callback.onGetDataFromCompletedTableComplete(resultList);
                 }
             }
@@ -327,6 +349,9 @@ public class LocationDB {
                 finalResult.add(new Pair<>("Fair", "" + fare));
                 finalResult.add(new Pair<>("RiderID" , riderID));
                 finalResult.add(new Pair<>("PassengerID" , passengerID));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    finalResult.add(new Pair<>("Time" , (LocalDateTime.now()).toString() ) );
+                }
                 for(Pair<String, String > u : finalResult){
                     System.out.println(u.first + " " + u.second);
                 }
