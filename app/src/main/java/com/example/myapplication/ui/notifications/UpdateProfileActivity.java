@@ -51,6 +51,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_STORAGE_PERMISSION: {
                 if (grantResults.length > 0) {
+                    Log.d(TAG, "onRequestPermissionsResult: " + grantResults.length);
                     for (int i = 0; i < grantResults.length; i++) {
                         if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             Log.d(TAG, "onRequestPermissionsResult: permission failed");
@@ -120,15 +121,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "onClick: o duke ");
                 // Check for storage permission
-                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "onClick: Permission ase ");
-                    openGallery();
-
-                } else {
-                    Log.d(TAG, "onClick: permission nai asking for it ");
-                    requestStoragePermission();
-//                    openGallery();
-                }
+                openGallery();
             }
 
         });
