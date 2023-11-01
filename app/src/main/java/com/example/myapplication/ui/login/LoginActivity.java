@@ -205,12 +205,13 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                progressDialog.show();
 
                 String email = String.valueOf(emailText.getText());
                 String password= String.valueOf(pass.getText());
                 if(email.length()>0 && password.length()>0)
                 {
+                    progressDialog.show();
+
 //                    button.setEnabled(true);
                     mAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

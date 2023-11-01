@@ -709,7 +709,7 @@ public class LocationDB {
                 .child("pickupStatus").setValue("true");
     }
 
-    public void uploadImage(Uri fileUri) {
+    public void uploadImage(Uri fileUri, Callback <Boolean> callback) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
 
@@ -720,6 +720,7 @@ public class LocationDB {
         uploadTask.addOnSuccessListener(taskSnapshot -> {
             // Image uploaded successfully
             Log.d(TAG, "uploadImage: Success");
+            callback.onComplete(true);
         }).addOnFailureListener(e -> {
             // Handle any errors
             Log.d(TAG, "uploadImage: error "+ e);
