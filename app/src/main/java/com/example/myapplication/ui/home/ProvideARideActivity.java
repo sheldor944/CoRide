@@ -82,8 +82,8 @@ public class ProvideARideActivity extends AppCompatActivity implements OnMapRead
             new LatLng(-40, -168),
             new LatLng(71, 136)
     );
-    private static final int SEARCH_INTERVAL = 3000;
-    private static final int MAX_SEARCH_COUNT = 10;
+    private static final int SEARCH_INTERVAL = 1500;
+    private static final int MAX_SEARCH_COUNT = 30;
 
     //vars
     private Boolean mLocationPermissionsGranted = false;

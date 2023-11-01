@@ -97,8 +97,8 @@ public class StartRideActivity extends AppCompatActivity implements OnMapReadyCa
             new LatLng(26.631450, 92.672720)
     );
 
-    private static final int MAX_SEARCH_COUNT = 15;
-    private static final int SEARCH_INTERVAL = 2000;
+    private static final int MAX_SEARCH_COUNT = 30;
+    private static final int SEARCH_INTERVAL = 1500;
     private static int numberOfTimesSearchedForRiders;
 
     //vars
