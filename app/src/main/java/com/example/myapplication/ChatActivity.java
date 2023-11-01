@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.data.Message;
+import com.example.myapplication.helper.GetUserNameCallback;
 import com.example.myapplication.ui.map.RideDetailsOnMapActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -95,10 +96,20 @@ public class ChatActivity extends testerActivity {
         //receiver id should come from database or something
 //        receiverUID = getIntent().getStringExtra("UID");
 
-        receiverName = "messi";
+        receiverName = "";
         receiverUID = null;
         if(!mPassengerId.equals(mUserId)) receiverUID = mPassengerId;
         else receiverUID = mRiderId;
+
+        LocationDB locationDB = new LocationDB();
+        locationDB.getUserName(receiverUID, new GetUserNameCallback() {
+            @Override
+            public void onUserNameRecieved(String name, String phone) {
+                receiverName= name ;
+                receiver.setText(name);
+
+            }
+        });
 
         messagesArrayList = new ArrayList<>();
 
@@ -117,7 +128,6 @@ public class ChatActivity extends testerActivity {
         msgAdapter = new MessageAdapter(ChatActivity.this, messagesArrayList);
         recycleView.setAdapter(msgAdapter);
 
-        receiver.setText(receiverName);
 
         SenderUID = auth.getUid();
 
