@@ -129,10 +129,12 @@ public class MainActivity extends testerActivity {
             }
         });
 
+        Log.d(TAG, "initNavigationView: going to search for image");
         CircleImageView profileImageView = mHeaderView.findViewById(R.id.leftNavViewImageView);
         new LocationDB().getImageURL(new Callback<Uri>() {
             @Override
             public void onComplete(Uri response) {
+                Log.d(TAG, "onComplete: updating image");
                 Glide.with(MainActivity.this).load(response).into(profileImageView);
             }
         });

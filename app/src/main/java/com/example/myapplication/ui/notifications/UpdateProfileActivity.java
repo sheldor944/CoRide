@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -140,13 +141,17 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     Log.d(TAG, "onClick: exception " + e);
                 }
 
-
+                ProgressDialog progressDialog = new ProgressDialog(UpdateProfileActivity.this);
+                progressDialog.setMessage("Updating...");
+                progressDialog.show();
                 LocationDB locationDB = new LocationDB() ;
                 if(selectedImageUri != null) {
-                    locationDB.uploadImage(selectedImageUri);
+                    locationDB.uploadImage(selectedImageUri, response -> {
+                        progressDialog.dismiss();
+                        Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                        startActivity(intent);
+                    });
                 }
-                Intent intent = new Intent(getApplicationContext() , MainActivity.class);
-                startActivity(intent);
 //                FragmentManager fragmentManager = getSupportFragmentManager();
 //                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 //

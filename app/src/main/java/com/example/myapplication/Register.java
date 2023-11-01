@@ -217,7 +217,9 @@ public class Register extends AppCompatActivity {
                                     if(selectedImageUri!=null)
                                     {
                                         LocationDB locationDB = new LocationDB();
-                                        locationDB.uploadImage(selectedImageUri);
+                                        locationDB.uploadImage(selectedImageUri, response -> {
+
+                                        });
 
                                     }
                                     progressDialog.dismiss();
