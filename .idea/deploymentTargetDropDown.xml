@@ -6,6 +6,7 @@
         <type value="QUICK_BOOT_TARGET" />
         <deviceKey>
           <Key>
+<<<<<<< HEAD
             <type value="VIRTUAL_DEVICE_PATH" />
             <value value="C:\Users\sheld\.android\avd\Pixel1.avd" />
           </Key>
@@ -13,5 +14,23 @@
       </Target>
     </targetSelectedWithDropDown>
     <timeTargetWasSelectedWithDropDown value="2023-11-01T17:11:39.556188600Z" />
+=======
+<<<<<<< HEAD
+            <type value="VIRTUAL_DEVICE_PATH" />
+            <value value="$USER_HOME$/.android/avd/Pixel_API_UpsideDownCakePrivacySandbox.avd" />
+=======
+            <type value="SERIAL_NUMBER" />
+            <value value="3588fe0d" />
+>>>>>>> 2126518c2cedeafe866c962547b77c8182d61a0f
+          </Key>
+        </deviceKey>
+      </Target>
+    </runningDeviceTargetSelectedWithDropDown>
+<<<<<<< HEAD
+    <timeTargetWasSelectedWithDropDown value="2023-11-01T10:47:37.842504738Z" />
+=======
+    <timeTargetWasSelectedWithDropDown value="2023-11-01T12:56:12.840896900Z" />
+>>>>>>> 2126518c2cedeafe866c962547b77c8182d61a0f
+>>>>>>> 7506df17daa7ee6a2e74e6da41bdbd22792a6602
   </component>
 </project>
