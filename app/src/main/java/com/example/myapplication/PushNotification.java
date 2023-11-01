@@ -98,7 +98,7 @@ public class PushNotification {
     }
     public void cancelRideUtility(String token)
     {
-        Log.d(TAG, "cancelRideUtility: aise ");
+        Log.d(TAG, "cancelRideUtility: cancel aise ");
         OkHttpClient okHttpClient = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
         JSONObject notificationJsonObject = new JSONObject();
