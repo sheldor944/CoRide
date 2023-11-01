@@ -233,4 +233,9 @@ public class ChatActivity extends testerActivity {
         Log.d(TAG, "getInformationFromIntent: rider: " + mRiderId + " "
                 + mRiderStartLocation + " " + mRiderEndLocation);
     }
+
+    @Override
+    public void onBackPressed() {
+
+    }
 }

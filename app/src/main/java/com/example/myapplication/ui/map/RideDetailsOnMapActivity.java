@@ -701,4 +701,9 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(drawableName, "drawable", getPackageName()));
         return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
+
+    @Override
+    public void onBackPressed() {
+
+    }
 }
