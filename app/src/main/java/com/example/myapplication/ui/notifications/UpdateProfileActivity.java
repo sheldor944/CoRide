@@ -83,7 +83,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_PICK_IMAGE);
         Log.d(TAG, "openGallery: ");
     }
-    Uri selectedImageUri = null;
+    private Uri selectedImageUri;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -109,6 +109,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         Button saveButton = findViewById(R.id.save_button);
         imageView = findViewById(R.id.updateImageView);
         LocationDB locationDB = new LocationDB();
+        selectedImageUri = null;
         locationDB.getImageURL(new Callback<Uri>() {
             @Override
             public void onComplete(Uri response) {
@@ -151,6 +152,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext() , MainActivity.class);
                         startActivity(intent);
                     });
+                }
+                else {
+                    progressDialog.dismiss();
+                    Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+                    startActivity(intent);
                 }
 //                FragmentManager fragmentManager = getSupportFragmentManager();
 //                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
