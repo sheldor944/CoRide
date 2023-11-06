@@ -5,6 +5,12 @@
 
     <group android:checkableBehavior="none">
         <item
+            android:id="@+id/move_to_chat"
+            android:title="CHAT"
+            android:icon="@drawable/ic_chat"
+            />
+
+        <item
             android:id="@+id/cancel_ride"
             android:title="CANCEL RIDE"
             android:icon="@drawable/ic_cancel"
@@ -14,12 +20,6 @@
             android:id="@+id/picked_up_passenger"
             android:title="PICKED UP PASSENGER"
             android:icon="@drawable/ic_group"
-            />
-
-        <item
-            android:id="@+id/move_to_chat"
-            android:title="CHAT"
-            android:icon="@drawable/ic_chat"
             />
 
         <item

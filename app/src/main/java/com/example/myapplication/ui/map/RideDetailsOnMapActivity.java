@@ -574,8 +574,8 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
         });
 
         if(mUserId.equals(mPassengerId)) {
-            completedRideItem.setEnabled(false);
-            pickedUpItem.setEnabled(false);
+            completedRideItem.setVisible(false);
+            pickedUpItem.setVisible(false);
         }
     }
 
