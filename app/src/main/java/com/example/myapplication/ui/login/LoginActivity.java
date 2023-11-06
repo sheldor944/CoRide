@@ -1,16 +1,6 @@
 package com.example.myapplication.ui.login;
 
-import android.app.Activity;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
-
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -20,40 +10,32 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myapplication.ChatActivity;
-import com.example.myapplication.LocationDB;
-import com.example.myapplication.MainActivity;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
+
 import com.example.myapplication.R;
-import com.example.myapplication.Register;
+import com.example.myapplication.databinding.ActivityLoginBinding;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
 import com.example.myapplication.helper.RideCheckCallback;
-import com.example.myapplication.ui.login.LoginViewModel;
-import com.example.myapplication.ui.login.LoginViewModelFactory;
-import com.example.myapplication.databinding.ActivityLoginBinding;
+import com.example.myapplication.service.LocationDB;
+import com.example.myapplication.ui.ChatActivity;
+import com.example.myapplication.ui.MainActivity;
+import com.example.myapplication.ui.Register;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 
@@ -73,10 +55,10 @@ public class LoginActivity extends AppCompatActivity {
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    // FCM SDK (and your app) can post notifications.
+                    // FCM SDK (and your app) can post profile.
                     Log.d("permission", "granted: ");
                 } else {
-                    // TODO: Inform user that that your app will not show notifications.
+                    // TODO: Inform user that that your app will not show profile.
                 }
             });
 
@@ -85,12 +67,12 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                     PackageManager.PERMISSION_GRANTED) {
-                // FCM SDK (and your app) can post notifications.
+                // FCM SDK (and your app) can post profile.
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
                 // TODO: display an educational UI explaining to the user the features that will be enabled
                 //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
                 //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-                //       If the user selects "No thanks," allow the user to continue without notifications.
+                //       If the user selects "No thanks," allow the user to continue without profile.
             } else {
                 // Directly ask for the permission
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);

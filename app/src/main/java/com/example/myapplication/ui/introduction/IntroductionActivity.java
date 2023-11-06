@@ -1,13 +1,13 @@
 package com.example.myapplication.ui.introduction;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.myapplication.MainActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+
 import com.example.myapplication.R;
+import com.example.myapplication.ui.MainActivity;
 
 public class IntroductionActivity extends AppCompatActivity {
 

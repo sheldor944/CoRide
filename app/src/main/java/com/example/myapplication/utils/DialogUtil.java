@@ -6,7 +6,6 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.PermissionCallback;
 
 public class DialogUtil {

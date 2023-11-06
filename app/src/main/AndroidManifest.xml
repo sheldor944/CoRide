@@ -38,23 +38,23 @@
         tools:targetApi="31"
         >
         <activity
-            android:name=".ui.dashboard.RiderHistory.RiderHistoryDetailsActivity"
+            android:name=".ui.history.RiderHistory.RiderHistoryDetailsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".testerActivity"
+            android:name=".service.testerActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.dashboard.PassengerHistoryDetailsActivity"
+            android:name=".ui.history.PassengerHistoryDetailsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.dashboard.PassengerHisotryActivity"
+            android:name=".ui.history.PassengerHisotryActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.dashboard.RiderHistoryActivity"
+            android:name=".ui.history.RiderHistoryActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -62,7 +62,7 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.notifications.UpdateProfileActivity"
+            android:name=".ui.profile.UpdateProfileActivity"
             android:label="Update Profile"
             android:screenOrientation="portrait"/>
         <activity
@@ -78,7 +78,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".ChatActivity"
+            android:name=".ui.ChatActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -86,15 +86,15 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.home.ProvideARideActivity"
+            android:name=".ui.map.ProvideARideActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.home.StartRideActivity"
+            android:name=".ui.map.StartRideActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".Register"
+            android:name=".ui.Register"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
@@ -110,7 +110,7 @@
             </intent-filter>-->
 
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".ui.SplashScreenActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -119,13 +119,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter> </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             />
 
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".service.MyFirebaseMessagingService"
             android:directBootAware="true"
             android:exported="false">
             <intent-filter>

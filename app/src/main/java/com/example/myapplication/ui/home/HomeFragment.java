@@ -1,9 +1,6 @@
 package com.example.myapplication.ui.home;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -12,26 +9,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapplication.ChatActivity;
-import com.example.myapplication.LocationDB;
 import com.example.myapplication.R;
-import com.example.myapplication.Register;
-import com.example.myapplication.data.model.LocationData;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.GetDataFromCompletedTableCallback;
-import com.example.myapplication.helper.LocationCallback;
 import com.example.myapplication.helper.RideCheckCallback;
-import com.example.myapplication.helper.SaveToCompletedTableCallback;
-import com.example.myapplication.testerActivity;
-import com.example.myapplication.ui.dashboard.RiderHistoryActivity;
+import com.example.myapplication.service.LocationDB;
+import com.example.myapplication.service.testerActivity;
+import com.example.myapplication.ui.Register;
+import com.example.myapplication.ui.map.ProvideARideActivity;
+import com.example.myapplication.ui.map.StartRideActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -39,7 +32,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.rpc.context.AttributeContext;
 
 import java.util.ArrayList;
 

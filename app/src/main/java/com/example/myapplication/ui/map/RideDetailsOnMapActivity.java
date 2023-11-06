@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.map;
 
 
-
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -35,37 +34,36 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.myapplication.ChatActivity;
-import com.example.myapplication.LocationDB;
-import com.example.myapplication.MainActivity;
-import com.example.myapplication.PushNotification;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.MessageEvent;
 import com.example.myapplication.helper.Callback;
 import com.example.myapplication.helper.SaveToCompletedTableCallback;
-import com.example.myapplication.testerActivity;
-import com.example.myapplication.ui.home.PlacesAutoCompleteAdapter;
+import com.example.myapplication.service.GoogleMapAPIHandler;
+import com.example.myapplication.service.LocationDB;
+import com.example.myapplication.service.PlacesAutoCompleteAdapter;
+import com.example.myapplication.service.PushNotification;
+import com.example.myapplication.service.testerActivity;
+import com.example.myapplication.ui.ChatActivity;
+import com.example.myapplication.ui.MainActivity;
 import com.example.myapplication.utils.DialogUtil;
 import com.example.myapplication.utils.LocationUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.libraries.places.api.Places;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-
-import com.example.myapplication.ui.home.GoogleMapAPIHandler;
 
 import java.util.ArrayList;
 
