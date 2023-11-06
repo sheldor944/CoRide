@@ -89,7 +89,7 @@ public class RideDetailsOnMapActivity extends testerActivity implements OnMapRea
 
     private static final int SEARCH_INTERVAL = 3000;
     private static final String TAG = "RideDetailsOnMapActivity";
-    private static final String API_KEY = "AIzaSyDICnj_kc22dTrmOIUJg46B5fOgu6QhxFM";
+    private static final String API_KEY = "API KEY REMOVED";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
